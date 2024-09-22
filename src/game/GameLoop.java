@@ -194,9 +194,13 @@ public class GameLoop {
 	}
 	
 	private static void manageCleanupQueue() {
+		int i = 0;
 		Runnable action = null;
 		while ((action = Janitor.poll()) != null) {
 			action.run();
+			i += 1;
+
+			if (i > 2_000) break; // I've seen up to 500K objects being queued. This is so stuff is cleaned over multiple frames to avoid stutters.
 		}
 	}
 

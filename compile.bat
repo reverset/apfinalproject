@@ -2,6 +2,6 @@ javac --class-path .\jaylib.jar .\src\game\*.java .\src\game\ecs\*.java .\src\ga
 
 cd .\test\
 @rem jar xvf ..\jaylib.jar
-java -XX:+UseZGC -XX:+ZGenerational game.Game
+java -XX:+UseZGC -XX:+ZGenerational -Xmx500m -verbose:gc game.Game
 cd ..\
 
