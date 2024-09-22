@@ -109,6 +109,9 @@ public class GameLoop {
 
 	public static void clearAllEntities() {
 		GameLoop.defer(() -> {
+			for (Entity entity : entities) {
+				entity.destroy();
+			}
 			entities.clear();
 		});
 	}
@@ -141,12 +144,12 @@ public class GameLoop {
 	
 	public static void deinit() {
 		onShutdown.emit(Duration.ofMillis((long) (Raylib.GetTime()*1_000)));
+		clearAllEntities();
+		System.gc();
+		manageCleanupQueue();
 		if (Raylib.IsWindowReady()) {			
 			Raylib.CloseWindow();
 		}
-		entities.clear();
-		System.gc();
-		manageCleanupQueue();
 	}
 
 	public static Vec2 getMousePosition() {
