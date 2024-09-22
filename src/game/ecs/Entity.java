@@ -1,0 +1,115 @@
+package game.ecs;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import game.Binded;
+import game.Signal;
+
+public class Entity {
+	private final ArrayList<ECSystem> systems = new ArrayList<>();
+	private final ArrayList<Component> components = new ArrayList<>();
+
+	private final ArrayList<Object> tags = new ArrayList<>();
+
+	private final ArrayList<Binded> binded = new ArrayList<>();
+	
+	public final String name;
+	
+	public Entity(String name) {
+		this.name = name;
+	}
+
+	public Entity addTag(Object tag) {
+		tags.add(tag);
+		return this;
+	}
+
+	public boolean hasTag(Object desiredTag) {
+		for (Object tag : tags) {
+			if (tag.equals(desiredTag)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void bind(Binded bind) {
+		if (!binded.contains(bind)) binded.add(bind);
+	}
+	
+	public void ready() {
+		systems.forEach(ECSystem::ready);
+	}
+	
+	public void frame() {
+		systems.forEach(ECSystem::frame);
+	}
+	
+	public void render() {
+		systems.forEach(ECSystem::render);
+	}
+
+	public void hudRender() {
+		systems.forEach(ECSystem::hudRender);
+	}
+
+	public void destroy() {
+		systems.forEach(ECSystem::destroy);
+		binded.forEach((bind) -> bind.unbind(this));
+		binded.clear();
+	}
+	
+	public Iterator<Component> componentIterator() {
+		return components.iterator();
+	}
+
+	public Iterator<ECSystem> systemIterator() {
+		return systems.iterator();
+	}
+
+	public Entity register(ECSystem system) {
+		system.entity = this;
+		systems.add(system);
+		system.setup();
+		return this;
+	}
+	
+	public Entity addComponent(Component component) {
+		components.add(component);
+		return this;
+	}
+
+	public Entity addComponent(Supplier<Component> comSupplier) {
+		addComponent(comSupplier.get());
+		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends ECSystem> Optional<T> getSystem(Class<T> sys) {
+		Iterator<ECSystem> iter = systemIterator();
+		
+		while (iter.hasNext()) {
+			ECSystem c = iter.next();
+			if (c.getClass() == sys) {
+				return Optional.of((T) c);
+			}
+		}
+		return Optional.empty();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends Component> Optional<T> getComponent(Class<T> sys) {
+		Iterator<Component> iter = componentIterator();
+		
+		while (iter.hasNext()) {
+			Component c = iter.next();
+			if (c.getClass() == sys) {
+				return Optional.of((T) c);
+			}
+		}
+		return Optional.empty();
+	}
+}

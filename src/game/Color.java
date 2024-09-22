@@ -1,0 +1,76 @@
+package game;
+
+import com.raylib.Raylib;
+
+public class Color {
+	public static final Color WHITE = new ImmutableColor(255, 255, 255, 255);
+	public static final Color RED = new ImmutableColor(255, 0, 0, 255);
+	public static final Color BLUE = new ImmutableColor(0, 0, 255, 255);
+	public static final Color GREEN = new ImmutableColor(0, 255, 0, 255);
+	public static final Color AQUA = new ImmutableColor(0, 200, 255, 255);
+	public static final Color GRAY = new ImmutableColor(25, 25, 25, 255);
+	
+	private final Raylib.Color internal;
+	
+	public byte r;
+	public byte g;
+	public byte b;
+	public byte a;
+	
+	public Color(Raylib.Color internal) {
+		this(internal.r(), internal.g(), internal.b(), internal.a(), internal);
+	}
+
+	public Color(byte r, byte g, byte b, byte a, Raylib.Color internal) {
+		this.internal = internal;
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		this.a = a;
+		
+		internal.r(r).g(g).b(b).a(a);
+		
+		Janitor.register(this, internal::close);
+	}
+	
+	public Color(byte r, byte g, byte b, byte a) {
+		this(r, g, b, a, new Raylib.Color());
+		
+	}
+	
+	public Color(byte r, byte g, byte b) {
+		this(r, g, b, (byte)255, new Raylib.Color());
+		
+	}
+	
+	public Color(int r, int g, int b) {
+		this((byte)r,(byte)g,(byte)b);
+	}
+	
+	public Color(int r, int g, int b, int a) {
+		this((byte)r, (byte)g, (byte)b, (byte)a);
+	}
+	
+	public Raylib.Color getPointer() {
+		internal.r(r).g(g).b(b).a(a);
+		return internal;
+	}
+	
+	public Raylib.Color getPointerNoUpdate() {
+		return internal;
+	}
+
+	public float magnitude() {
+		return (float) Math.sqrt(r*r+g*g*b*b*a*a);
+	}
+
+	public float[] normalize() {
+		float mag = magnitude();
+		return new float[]{(r/mag), (g/mag), (b/mag), (a/mag)};
+	}
+
+	@Override
+	public String toString() {
+		return "Color(" + r + ", " + g + ", " + b + ", " + a + ")";
+	}
+}
