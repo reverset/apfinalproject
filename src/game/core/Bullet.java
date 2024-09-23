@@ -48,6 +48,8 @@ public class Bullet extends ECSystem {
     @Override
     public void render() {
         Vec2 center = rect.getCenter(trans.position);
-        Raylib.DrawLineEx(center.getPointer(), center.minus(tangible.velocity.normalize().multiply(20)).getPointer(), 10f, rect.color.getPointer());
+        Color col = rect.color.clone();
+        col.a = (byte) 64;
+        Raylib.DrawLineEx(center.getPointer(), center.minus(tangible.velocity.normalize().multiply(20)).getPointer(), 10f, col.getPointer());
     }
 }

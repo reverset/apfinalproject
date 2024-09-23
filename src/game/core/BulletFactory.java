@@ -24,7 +24,7 @@ public class BulletFactory {
                 .addComponent(new Rect(STANDARD_BULLET_SIZE, STANDARD_BULLET_SIZE, color))
                 .register(new Physics())
                 .register(new RectRender())
-                .register(new RemoveAfter(Duration.ofSeconds(2)))
+                .register(new RemoveAfter(Duration.ofSeconds(8)))
                 .register(new Bullet(owner));
     }
 }

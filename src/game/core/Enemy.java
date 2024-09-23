@@ -20,31 +20,27 @@ import game.ecs.comps.Transform;
 
 public class Enemy extends ECSystem {
 
-    @SuppressWarnings("unchecked")
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
         Rect rect = new Rect(50, 50, Color.RED);
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
-        Entity entity = new EntityOf<>("Enemy", Enemy.class)
+        EntityOf<Enemy> entity = new EntityOf<>("Enemy", Enemy.class);
+        entity
             .addComponent(new Shader("resources/enemy.frag"))
             .addComponent(new Transform(position))
             .addComponent(rect)
             .addComponent(new Tangible())
+            .addComponent(new Health(20))
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new RectRender())
             .register(new Physics())
+            .register(new HealthBar(
+                new Vec2(-rect.width*0.5f, -20), "Enemy"
+            ))
             .register(new Enemy())
             .addTag(GameTags.ENEMY);
-        
-        entity.addComponent(() -> { // move this probably to ready, specifically because of the listen();
-            Health health = new Health(20);
-            health.onDeath.listen((v) -> GameLoop.safeDestroy(entity), entity);
-            return health;
-        }).register(new HealthBar(
-            new Vec2(-rect.width*0.5f, -20), "Enemy"
-        ));
 
-        return (EntityOf<Enemy>) entity;
+        return entity;
     }
 
     public Health health;
@@ -67,6 +63,7 @@ public class Enemy extends ECSystem {
         trans = require(Transform.class);
         tangible = require(Tangible.class);
         rect = require(Rect.class);
+        health = require(Health.class);
         
         player = GameLoop.findEntityByTag(GameTags.PLAYER);
         player.ifPresent((p) -> {
@@ -80,7 +77,10 @@ public class Enemy extends ECSystem {
     
     @Override
     public void ready() {
-        health = require(Health.class);
+        health.onDeath.listen(n -> {
+            GameLoop.safeDestroy(entity);
+            GameLoop.safeTrack(DestroyEffect.makeEntity(rect.dimensions(), trans.position.clone()));
+        }, entity);
     }
 
     @Override

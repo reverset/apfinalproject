@@ -28,6 +28,10 @@ public class Rect implements Component {
         return result;
     }
 
+    public Vec2 dimensions() {
+        return new Vec2(width, height);
+    }
+
     public Vec2 getCenter(Vec2 position) { // Position is the top left corner.
         return new Vec2(position.x + width*0.5f, position.y + height*0.5f);
     }

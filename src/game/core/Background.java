@@ -28,7 +28,6 @@ public class Background extends ECSystem {
 
     @Override
     public void render() {
-        // Parallax magic.
         Vec2 initial = GameLoop.getMainCamera().trans.position.minus(new Vec2(background.width()*2, background.height()*2)).roundEq(1f / background.width(), 1f / background.height());
         
         for (int i = 0; i < 4; i++) {

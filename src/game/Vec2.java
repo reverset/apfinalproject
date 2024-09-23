@@ -42,6 +42,13 @@ public class Vec2 {
 			(float) MoreMath.random(min.y, max.y)
 		);
 	}
+
+	public static Vec2 randomUnit() {
+		return new Vec2(
+			(float) MoreMath.random(-1, 1),
+			(float) MoreMath.random(-1, 1)
+		).normalizeEq();
+	}
 	
 	
 	public Vec2(float x, float y, Raylib.Vector2 internal) {
@@ -81,6 +88,10 @@ public class Vec2 {
 	
 	public float magnitude() {
 		return (float) Math.sqrt(x*x + y*y);
+	}
+
+	public Vec2 negate() {
+		return new Vec2(-x, -y);
 	}
 	
 	public Vec2 normalize() {
@@ -127,6 +138,10 @@ public class Vec2 {
 		return new Vec2(x + other.x, y + other.y);
 	}
 
+	public Vec2 add(float ox, float oy) {
+		return new Vec2(x+ox, y+oy);
+	}
+
 	public Vec2 add(float scalar) {
 		return new Vec2(x + scalar, y + scalar);
 	}
@@ -142,6 +157,18 @@ public class Vec2 {
 
 	public Vec2 minus(float other) {
 		return new Vec2(x - other, y - other);
+	}
+
+	public Vec2 minusEq(Vec2 other) {
+		x -= other.x;
+		y -= other.y;
+		return this;
+	}
+
+	public Vec2 minusEq(float ox, float oy) {
+		x -= ox;
+		y -= oy;
+		return this;
 	}
 
 	public Vec2 clamp(Vec2 minimums, Vec2 maximums) {

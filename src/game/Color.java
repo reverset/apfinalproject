@@ -69,6 +69,10 @@ public class Color {
 		return new float[]{(r/mag), (g/mag), (b/mag), (a/mag)};
 	}
 
+	public Color clone() {
+		return new Color(r, g, b, a);
+	}
+
 	@Override
 	public String toString() {
 		return "Color(" + r + ", " + g + ", " + b + ", " + a + ")";
