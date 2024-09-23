@@ -19,6 +19,7 @@ import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
 public class Enemy extends ECSystem {
+    public static final float SPEED = 200;
 
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
         Rect rect = new Rect(50, 50, Color.RED);
@@ -88,7 +89,7 @@ public class Enemy extends ECSystem {
         if (playerTransform == null) return;
 
         if (movementStopwatch.hasElapsedSecondsAdvance(timeOffset)) {
-            desiredDirection = trans.position.directionTo(playerTransform.position);;
+            desiredDirection = trans.position.directionTo(playerTransform.position).multiplyEq(SPEED);
         }
 
         if (shootStopwatch.hasElapsedSecondsAdvance(1)) {
@@ -101,7 +102,7 @@ public class Enemy extends ECSystem {
         if (desiredDirection == null) return;
 
         
-        tangible.velocity.moveTowardsEq(desiredDirection.multiply(200), 100f*delta());
+        tangible.velocity.moveTowardsEq(desiredDirection, 100f*delta());
 
     }
     

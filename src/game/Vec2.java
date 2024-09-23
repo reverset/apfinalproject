@@ -165,6 +165,12 @@ public class Vec2 {
 	public Vec2 multiply(float scalar) {
 		return new Vec2(x * scalar, y * scalar);
 	}
+
+	public Vec2 multiplyEq(float scalar) {
+		x *= scalar;
+		y *= scalar;
+		return this;
+	}
 	
 	public Vec2 add(Vec2 other) {
 		return new Vec2(x + other.x, y + other.y);
