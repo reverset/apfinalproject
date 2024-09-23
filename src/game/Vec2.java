@@ -29,6 +29,10 @@ public class Vec2 {
 		return new Vec2();
 	}
 
+	public static Vec2 one() {
+		return new Vec2(1, 1);
+	}
+
 	public static Vec2 screen() {
 		return new Vec2(
 			Raylib.GetScreenWidth(),
@@ -125,6 +129,34 @@ public class Vec2 {
 		y /= divisor;
 		return this;
 	}
+
+	public Vec2 divideEq(Vec2 divisor) {
+		x /= divisor.x;
+		y /= divisor.y;
+		return this;
+	}
+
+	public Vec2 minAllowedValue(float min) {
+		x = Math.max(min, x);
+		y = Math.max(min, y);
+		return this;
+	}
+
+	public Vec2 absMinAllowedValue(float min) {
+		if (x < 0) {
+			x = Math.min(-min, x);
+		} else {
+			x = Math.max(min, x);
+		}
+
+		if (y < 0) {
+			y = Math.min(-min, y);
+		} else {
+			y = Math.max(min, y);
+		}
+
+		return this;
+	}
 	
 	public Vec2 multiply(Vec2 other) {
 		return new Vec2(x * other.x, y * other.y);
@@ -155,6 +187,10 @@ public class Vec2 {
 		return new Vec2(x - other.x, y - other.y);
 	}
 
+	public Vec2 minus(float ox, float oy) {
+		return new Vec2(x-ox, y-oy);
+	}
+
 	public Vec2 minus(float other) {
 		return new Vec2(x - other, y - other);
 	}
@@ -180,6 +216,13 @@ public class Vec2 {
 	public void clampEq(float minX, float minY, float maxX, float maxY) {
 		x = MoreMath.clamp(x, minX, maxX);
 		y = MoreMath.clamp(y, minY, maxY);
+	}
+
+	public void clampEq(Vec2 maxMag) {
+		if (magnitude() > maxMag.magnitude()) {
+			x = Math.copySign(maxMag.x, x);
+			y = Math.copySign(maxMag.y, y);
+		}
 	}
 
 	public Vec2 moveTowards(Vec2 other, float delta) {
@@ -259,7 +302,7 @@ public class Vec2 {
 				&& Math.abs(this.y - y) < epsilon;
 	}
 
-	public boolean is_approx(float x, float y) {
+	public boolean isApprox(float x, float y) {
 		final float EPSILON = 1e-7f;
 		return is_approx(x, y, EPSILON);
 	}

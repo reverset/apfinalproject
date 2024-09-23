@@ -1,8 +1,11 @@
 package game.core;
 
+import com.raylib.Raylib;
+
 import game.Color;
 import game.Game;
 import game.GameLoop;
+import game.MoreMath;
 import game.Text;
 import game.Vec2;
 import game.core.rendering.Rect;
@@ -11,17 +14,16 @@ import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
-import com.raylib.Raylib;
-
 public class Player extends ECSystem implements Controllable {
     public static final float BULLET_SPEED = 500;
+    public static final float MAX_SPEED = 200;
 
     public final Text healthText = new Text("N/A", new Vec2(Vec2.screen().x-100, 15), 54, Color.WHITE);
 
     public static Entity makeEntity() {
         return new Entity("Player")
             .addComponent(new Transform())
-            .addComponent(new Health(5))
+            .addComponent(new Health(50))
             .addComponent(new Rect(30, 30, Color.GREEN))
             .addComponent(new Tangible())
             .register(new RectRender())
@@ -83,10 +85,13 @@ public class Player extends ECSystem implements Controllable {
     @Override
     public void frame() {
         Vec2 moveVector = controlledMoveVector();
-        physics.applyForce(moveVector.multiply(300));
+        physics.applyForce(moveVector.multiply(500));
+        // physics.applyForce(moveVector.multiply(800).divideEq(tangible.velocity.clone().absMinAllowedValue(1)));
         
         // Friction
-        if (moveVector.is_approx(0, 0)) tangible.velocity.moveTowardsEq(new Vec2(), 500 * delta());
+        if (MoreMath.isApprox(moveVector.x, 0)) tangible.velocity.x = MoreMath.moveTowards(tangible.velocity.x, 0, 500 * delta());
+        if (MoreMath.isApprox(moveVector.y, 0)) tangible.velocity.y = MoreMath.moveTowards(tangible.velocity.y, 0, 500 * delta());
+        // tangible.velocity.clampEq(Vec2.one().multiply(100));
 
         GameLoop.getMainCamera().trans.position.lerpEq(trans.position, 2*delta());
     }

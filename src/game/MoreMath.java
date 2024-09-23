@@ -43,4 +43,12 @@ public class MoreMath {
     public static double random(double min, double max) {
         return (Math.random() * (1+max-min)) + min;
     }
+
+    public static boolean isApprox(float a, float b, float epsilon) {
+        return Math.abs(a - b) < epsilon;
+    }
+
+    public static boolean isApprox(float a, float b) {
+        return isApprox(a, b, 1e-7f);
+    }
 }
