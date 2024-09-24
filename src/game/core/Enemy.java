@@ -20,9 +20,10 @@ import game.ecs.comps.Transform;
 
 public class Enemy extends ECSystem {
     public static final float SPEED = 200;
+    public static final int SIZE = 50;
 
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
-        Rect rect = new Rect(50, 50, Color.RED);
+        Rect rect = new Rect(SIZE, SIZE, Color.RED);
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
         EntityOf<Enemy> entity = new EntityOf<>("Enemy", Enemy.class);
