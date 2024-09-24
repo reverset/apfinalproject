@@ -4,13 +4,11 @@ subprocess.run(
     "javac --class-path ./jaylib.jar ./src/game/*.java ./src/game/ecs/*.java ./src/game/ecs/comps/*.java ./src/game/core/*.java ./src/game/core/rendering/*.java -d ./test/",
     shell=True,
     check=True,
-    capture_output=True
 )
 
 subprocess.run(
     "java -XX:+UseZGC -XX:+ZGenerational -Xmx500m -verbose:gc game.Game",
     shell=True,
     check=True,
-    capture_output=True,
     cwd="./test/"
 )
