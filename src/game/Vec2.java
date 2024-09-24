@@ -61,14 +61,15 @@ public class Vec2 {
 		this.y = y;
 		internal.x(x).y(y);
 		
-		Janitor.register(this, internal::close);
+		Janitor.registerAsyncSafe(this, internal::close);
 	}
 
-	public Vec2(Raylib.Vector2 internal) { // TODO: cleanup repetitiveness eventually
-		this.internal = internal;
-		this.x = internal.x();
-		this.y = internal.y();
-		Janitor.register(this, internal::close);
+	public Vec2(Raylib.Vector2 internal) {
+		this(internal.x(), internal.y(), internal);
+		// this.internal = internal;
+		// this.x = internal.x();
+		// this.y = internal.y();
+		// Janitor.register(this, internal::close);
 	}
 	
 	public Vec2(float x, float y) {

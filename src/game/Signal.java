@@ -35,14 +35,15 @@ public class Signal<T> implements Binded {
     }
 
     public void unlinkAllFromEntity(Entity entity) {
-        ArrayList<SignalCallback<?>> removals = new ArrayList<>();
-        callbacks.iterator().forEachRemaining((callback) -> {
-            if (callback.entityAssociation == entity) {
-                removals.add(callback);
-            }
-        });
+        ListIterator<SignalCallback<T>> iter = callbacks.listIterator();
 
-        removals.forEach(callbacks::remove);
+        while (iter.hasNext()) {
+            SignalCallback<T> call = iter.next();
+            if (call.entityAssociation == entity) {
+                iter.remove();
+            }
+        }
+
     }
 
     public void emit(T value) {

@@ -14,6 +14,10 @@ public class Janitor { // Raylib is single-threaded. So make sure to free on the
 			// System.out.println("Queuing a cleanup action...");
 		});
 	}
+
+	public static void registerAsyncSafe(Object obj, Runnable action) {
+		CLEANER.register(obj, action);
+	}
 	
 	public static Runnable poll() {
 		return cleanupQueue.poll();

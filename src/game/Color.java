@@ -30,7 +30,7 @@ public class Color {
 		
 		internal.r(r).g(g).b(b).a(a);
 		
-		Janitor.register(this, internal::close);
+		Janitor.registerAsyncSafe(this, internal::close);
 	}
 	
 	public Color(byte r, byte g, byte b, byte a) {

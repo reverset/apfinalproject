@@ -1,5 +1,7 @@
 package game.core;
 
+import java.util.List;
+
 import com.raylib.Raylib;
 
 import game.Color;
@@ -7,6 +9,8 @@ import game.Game;
 import game.GameLoop;
 import game.MoreMath;
 import game.Text;
+import game.Tween;
+import game.TweenAnimation;
 import game.Vec2;
 import game.core.rendering.Rect;
 import game.core.rendering.RectRender;
@@ -18,7 +22,7 @@ public class Player extends ECSystem implements Controllable {
     public static final float BULLET_SPEED = 500;
     public static final float MAX_SPEED = 200;
 
-    public final Text healthText = new Text("N/A", new Vec2(Vec2.screen().x-100, 15), 54, Color.WHITE);
+    public final Text healthText = new Text("N/A", new Vec2(15, Vec2.screen().y-64), 54, Color.WHITE);
 
     public static Entity makeEntity() {
         return new Entity("Player")
@@ -38,6 +42,7 @@ public class Player extends ECSystem implements Controllable {
     private Transform trans;
     private Rect rect;
     private Health health;
+    private TweenAnimation tweenAnimation;
 
     @Override
     public void setup() {
@@ -46,10 +51,28 @@ public class Player extends ECSystem implements Controllable {
         trans = require(Transform.class);
         rect = require(Rect.class);
         health = require(Health.class);
+
+        tweenAnimation = new TweenAnimation(
+            List.of(
+                new Tween<>(Tween.lerp(54, 128), 0.1, v -> { // use constants TODO
+                healthText.fontSize = v.intValue();
+                healthText.position.y = Vec2.screen().y-64-healthText.fontSize+54;
+            }),
+            new Tween<>(Tween.lerp(128, 54), 0.1, v -> {
+                healthText.fontSize = v.intValue();
+            })
+        ));
+
+        entity.register(tweenAnimation);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void ready() {
+        health.onDamage.listen(v -> {
+            tweenAnimation.start();
+        }, entity);
+
         health.onDeath.listenOnce((v) -> {
             GameLoop.safeDestroy(entity);
             GameLoop.safeTrack(new Entity("Death Screen")
