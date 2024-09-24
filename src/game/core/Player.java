@@ -54,12 +54,13 @@ public class Player extends ECSystem implements Controllable {
 
         tweenAnimation = new TweenAnimation(
             List.of(
-                new Tween<>(Tween.lerp(54, 128), 0.1, v -> { // use constants TODO
+                new Tween<>(Tween.lerp(54, 108), 0.1, v -> { // use constants TODO
                 healthText.fontSize = v.intValue();
-                healthText.position.y = Vec2.screen().y-64-healthText.fontSize+54;
+                healthText.position.y = Vec2.screen().y - 10 - healthText.fontSize;
             }),
-            new Tween<>(Tween.lerp(128, 54), 0.1, v -> {
+            new Tween<>(Tween.lerp(108, 54), 2, v -> { // Comodification error??
                 healthText.fontSize = v.intValue();
+                healthText.position.y = Vec2.screen().y - 10 - healthText.fontSize;
             })
         ));
 
@@ -115,6 +116,7 @@ public class Player extends ECSystem implements Controllable {
         if (MoreMath.isApprox(moveVector.x, 0)) tangible.velocity.x = MoreMath.moveTowards(tangible.velocity.x, 0, 500 * delta());
         if (MoreMath.isApprox(moveVector.y, 0)) tangible.velocity.y = MoreMath.moveTowards(tangible.velocity.y, 0, 500 * delta());
         // tangible.velocity.clampEq(Vec2.one().multiply(100));
+
 
         GameLoop.getMainCamera().trans.position.lerpEq(trans.position, 2*delta());
     }
