@@ -60,8 +60,16 @@ public class Tween<T> extends ECSystem {
     }
 
     public void stopAndDestroy() {
-        startTime = -1;
+        startTime = -2;
         if (shouldDestroy) GameLoop.safeDestroy(entity);
+    }
+
+    public boolean isFinished() {
+        return startTime == -2;
+    }
+
+    public void reset() {
+        startTime = -1;
     }
 
     public static <T> Tween<T> makeAndSchedule(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
@@ -83,7 +91,7 @@ public class Tween<T> extends ECSystem {
 
     @Override
     public void frame() {
-        if (startTime == -1) return;
+        if (startTime == -1 || startTime == -2) return;
 
         double elapsed = timeDouble() - startTime;
         double percent = Math.min(elapsed / durationSeconds, 1.0);

@@ -20,7 +20,7 @@ public class TweenAnimation extends ECSystem {
         if (restart) {
             var tween = tweens.get(pointer);
             tween.stop();
-            tween.onFinish.unbind(entity);
+            // tween.onFinish.unbind(entity);
             pointer = 0;
         } else if (pointer >= tweens.size()) {
             pointer = 0;
@@ -29,10 +29,10 @@ public class TweenAnimation extends ECSystem {
 
         var tween = tweens.get(pointer);
 
-        tween.onFinish.listenOnce(n -> {
-            pointer += 1;
-            start(false);
-        });
+        // tween.onFinish.listenOnce(n -> {
+        //     pointer += 1;
+        //     start(false);
+        // });
 
         tween.start();
     }
@@ -43,7 +43,13 @@ public class TweenAnimation extends ECSystem {
 
     @Override
     public void frame() {
-        tweens.get(pointer).frame();
+        var tween = tweens.get(pointer);
+        tween.frame();
+        if (tween.isFinished()) {
+            tween.reset();
+            pointer += 1;
+            start(false);
+        }
     }
 
     @Override

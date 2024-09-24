@@ -27,7 +27,7 @@ public class Player extends ECSystem implements Controllable {
     public static Entity makeEntity() {
         return new Entity("Player")
             .addComponent(new Transform())
-            .addComponent(new Health(50))
+            .addComponent(new Health(500))
             .addComponent(new Rect(30, 30, Color.GREEN))
             .addComponent(new Tangible())
             .register(new RectRender())
@@ -58,7 +58,7 @@ public class Player extends ECSystem implements Controllable {
                 healthText.fontSize = v.intValue();
                 healthText.position.y = Vec2.screen().y - 10 - healthText.fontSize;
             }),
-            new Tween<>(Tween.lerp(108, 54), 2, v -> { // Comodification error??
+            new Tween<>(Tween.lerp(108, 54), 2, v -> { // Comodification error?? probably fixed
                 healthText.fontSize = v.intValue();
                 healthText.position.y = Vec2.screen().y - 10 - healthText.fontSize;
             })
