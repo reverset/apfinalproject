@@ -40,6 +40,10 @@ public class Vec2 {
 		);
 	}
 
+	public static Vec2 screenCenter() {
+		return screen().multiplyEq(0.5f);
+	}
+
 	public static Vec2 random(Vec2 min, Vec2 max) {
 		return new Vec2(
 			(float) MoreMath.random(min.x, max.x), 
@@ -185,9 +189,10 @@ public class Vec2 {
 		return new Vec2(x + scalar, y + scalar);
 	}
 
-	public void addEq(Vec2 other) {
+	public Vec2 addEq(Vec2 other) {
 		x += other.x;
 		y += other.y;
+		return this;
 	}
 
 	public Vec2 minus(Vec2 other) {

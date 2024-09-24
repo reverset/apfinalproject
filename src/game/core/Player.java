@@ -42,7 +42,8 @@ public class Player extends ECSystem implements Controllable {
     private Transform trans;
     private Rect rect;
     private Health health;
-    private TweenAnimation tweenAnimation;
+
+    private TweenAnimation healthPulseAnimation;
 
     @Override
     public void setup() {
@@ -52,26 +53,30 @@ public class Player extends ECSystem implements Controllable {
         rect = require(Rect.class);
         health = require(Health.class);
 
-        tweenAnimation = new TweenAnimation(
+        final int INITIAL_FONT_SIZE = 54;
+        final double HEALTH_PULSE_LENGTH = 0.1;
+        final double HEALTH_DEFLATE_LENGTH = 2;
+
+        healthPulseAnimation = new TweenAnimation(
             List.of(
-                new Tween<>(Tween.lerp(54, 108), 0.1, v -> { // use constants TODO
+                new Tween<>(Tween.lerp(INITIAL_FONT_SIZE, INITIAL_FONT_SIZE * 1.5), HEALTH_PULSE_LENGTH, v -> {
                 healthText.fontSize = v.intValue();
                 healthText.position.y = Vec2.screen().y - 10 - healthText.fontSize;
             }),
-            new Tween<>(Tween.lerp(108, 54), 2, v -> { // Comodification error?? probably fixed
+            new Tween<>(Tween.lerp(INITIAL_FONT_SIZE*1.5, INITIAL_FONT_SIZE), HEALTH_DEFLATE_LENGTH, v -> {
                 healthText.fontSize = v.intValue();
                 healthText.position.y = Vec2.screen().y - 10 - healthText.fontSize;
             })
         ));
 
-        entity.register(tweenAnimation);
+        entity.register(healthPulseAnimation);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void ready() {
         health.onDamage.listen(v -> {
-            tweenAnimation.start();
+            healthPulseAnimation.start();
         }, entity);
 
         health.onDeath.listenOnce((v) -> {
