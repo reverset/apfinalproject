@@ -23,7 +23,7 @@ public class EnemySpawner extends ECSystem {
     public void frame() {
         if (enemies.size() < 100 && stopwatch.hasElapsedSecondsAdvance(0.5)) {
             Vec2 offset = Vec2.randomUnit().multiplyEq(Vec2.screen().x + Enemy.SIZE);
-            EntityOf<Enemy> entity = Enemy.makeEntity(Vec2.screenCenter().addEq(offset));
+            EntityOf<Enemy> entity = Enemy.makeEntity(Vec2.screenCenter().screenToWorldEq().addEq(offset));
             
             enemies.add(entity);
             GameLoop.safeTrack(entity);
