@@ -29,7 +29,6 @@ public class Bullet extends ECSystem {
         tangible = require(Tangible.class);
         trans = require(Transform.class);
         rect = require(Rect.class);
-        
 
         entity.addTag(GameTags.BULLET);
     }

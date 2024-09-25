@@ -44,12 +44,12 @@ public class Physics extends ECSystem {
     public void frame() {
         if (kind == Kind.STATIC) return;
 
-        trans.position.addEq(tangible.velocity.multiply(delta()));
+        trans.position.addEq(tangible.velocity.x * delta(), tangible.velocity.y * delta());
 
         checkCollisions();
     }
 
-    private void checkCollisions() {
+    private void checkCollisions() { // Consider using layers so that objects don't check unneccessary collisions.
         for (var obj : physicsObjects) {
             if (obj == this) continue;
 

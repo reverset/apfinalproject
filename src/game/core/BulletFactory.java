@@ -12,13 +12,14 @@ import game.ecs.comps.Transform;
 
 public class BulletFactory {
     public static final int STANDARD_BULLET_SIZE = 10;
+    public static final float STANDARD_BULLET_SPEED = 300;
 
-    public static Entity standardBullet(Transform trans, Vec2 direction, float speed, Color color, Entity owner) {
+    public static Entity standardBullet(Transform trans, Vec2 direction, Color color, Entity owner) {
         return new Entity("Bullet")
                 .addComponent(trans.withPosition(trans.position.minus(STANDARD_BULLET_SIZE*0.5f)))
                 .addComponent(() -> {
                     var tangible = new Tangible();
-                    tangible.velocity = direction.multiply(speed);
+                    tangible.velocity = direction.multiply(STANDARD_BULLET_SPEED);
                     return tangible;
                 })
                 .addComponent(new Rect(STANDARD_BULLET_SIZE, STANDARD_BULLET_SIZE, color))

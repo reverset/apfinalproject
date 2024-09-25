@@ -195,6 +195,12 @@ public class Vec2 {
 		return this;
 	}
 
+	public Vec2 addEq(float ox, float oy) {
+		x += ox;
+		y += oy;
+		return this;
+	}
+
 	public Vec2 minus(Vec2 other) {
 		return new Vec2(x - other.x, y - other.y);
 	}

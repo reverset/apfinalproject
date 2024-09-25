@@ -1,6 +1,7 @@
 package game.core.rendering;
 
 import game.Color;
+import game.Janitor;
 import game.Vec2;
 import game.ecs.Component;
 
@@ -10,20 +11,29 @@ public class Rect implements Component {
     public int width;
     public int height;
     public Color color;
+
+    private Raylib.Rectangle internal;
     
     public Rect(int width, int height, Color color) {
         this.width = width;
         this.height = height;
         this.color = color;
+        internal = raylibFromPosition(Vec2.zero());
+
+        Janitor.registerAsyncSafe(this, internal::close);
     }
     
     public boolean overlaps(Vec2 position, Vec2 otherPosition, Rect other) {
-        var rect = raylibFromPosition(position);
-        var otherR = other.raylibFromPosition(otherPosition);
-        boolean result = Raylib.CheckCollisionRecs(rect, otherR);
+        // var rect = raylibFromPosition(position);
+        internal.x(position.x).y(position.y);
 
-        rect.close();
-        otherR.close();
+        // var otherR = other.raylibFromPosition(otherPosition);
+        var otherPointer = other.getPointer().x(otherPosition.x).y(otherPosition.y);
+
+        boolean result = Raylib.CheckCollisionRecs(internal, otherPointer);
+
+        // rect.close();
+        // otherR.close();
 
         return result;
     }
@@ -44,6 +54,10 @@ public class Rect implements Component {
         var rec = raylibFromPosition(position);
         Raylib.DrawRectangleRounded(rec, roundness, segments, color.getPointer());
         rec.close();
+    }
+
+    public Raylib.Rectangle getPointer() {
+        return internal;
     }
 
     protected Raylib.Rectangle raylibFromPosition(Vec2 pos) {

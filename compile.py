@@ -7,7 +7,7 @@ subprocess.run(
 )
 
 subprocess.run(
-    "java -XX:+UseZGC -XX:+ZGenerational -Xmx500m -verbose:gc game.Game",
+    "java -XX:+UseZGC -XX:+ZGenerational -verbose:gc game.Game",
     shell=True,
     check=True,
     cwd="./test/"

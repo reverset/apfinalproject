@@ -21,7 +21,7 @@ public class EnemySpawner extends ECSystem {
 
     @Override
     public void frame() {
-        if (enemies.size() < 50 && stopwatch.hasElapsedSecondsAdvance(1)) {
+        if (enemies.size() < 100 && stopwatch.hasElapsedSecondsAdvance(0.5)) {
             Vec2 offset = Vec2.randomUnit().multiplyEq(Vec2.screen().x + Enemy.SIZE);
             EntityOf<Enemy> entity = Enemy.makeEntity(Vec2.screenCenter().addEq(offset));
             

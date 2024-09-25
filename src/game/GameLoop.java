@@ -36,6 +36,10 @@ public class GameLoop {
 		return mainCameraSystem;
 	}
 
+	public static int entityCount() {
+		return entities.size();
+	}
+
 	public static Entity getMainCameraEntity() {
 		return mainCamera;
 	}

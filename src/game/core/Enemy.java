@@ -95,7 +95,7 @@ public class Enemy extends ECSystem {
 
         if (shootStopwatch.hasElapsedSecondsAdvance(1)) {
             Entity bullet = BulletFactory.standardBullet(
-                new Transform(rect.getCenter(trans.position), trans.rotation), trans.position.directionTo(playerTransform.position), 300, Color.RED, entity);
+                new Transform(rect.getCenter(trans.position), trans.rotation), trans.position.directionTo(playerTransform.position), Color.RED, entity);
 
             GameLoop.safeTrack(bullet);
         }

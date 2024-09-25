@@ -19,15 +19,14 @@ import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
 public class Player extends ECSystem implements Controllable {
-    public static final float BULLET_SPEED = 500;
     public static final float MAX_SPEED = 200;
 
-    public final Text healthText = new Text("N/A", new Vec2(15, Vec2.screen().y-64), 54, Color.WHITE);
+    public final Text healthText = new Text("N/A", new Vec2(15, Vec2.screen().y-64), 54, new Color(255, 255, 255, 255));
 
     public static Entity makeEntity() {
         return new Entity("Player")
             .addComponent(new Transform())
-            .addComponent(new Health(500))
+            .addComponent(new Health(5000))
             .addComponent(new Rect(30, 30, Color.GREEN))
             .addComponent(new Tangible())
             .register(new RectRender())
@@ -72,7 +71,6 @@ public class Player extends ECSystem implements Controllable {
         entity.register(healthPulseAnimation);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void ready() {
         health.onDamage.listen(v -> {
@@ -122,14 +120,13 @@ public class Player extends ECSystem implements Controllable {
         if (MoreMath.isApprox(moveVector.y, 0)) tangible.velocity.y = MoreMath.moveTowards(tangible.velocity.y, 0, 500 * delta());
         // tangible.velocity.clampEq(Vec2.one().multiply(100));
 
-
         GameLoop.getMainCamera().trans.position.lerpEq(trans.position, 2*delta());
     }
 
     private void fireBullet() {
         Vec2 direction = trans.position.add(new Vec2(rect.width*0.5f, rect.height*0.5f)).directionTo(GameLoop.getMousePosition());
 
-        GameLoop.safeTrack(BulletFactory.standardBullet(new Transform(rect.getCenter(trans.position), trans.rotation), direction, BULLET_SPEED, Color.AQUA, entity));
+        GameLoop.safeTrack(BulletFactory.standardBullet(new Transform(rect.getCenter(trans.position), trans.rotation), direction, Color.AQUA, entity));
     }
 
     @Override
@@ -140,6 +137,14 @@ public class Player extends ECSystem implements Controllable {
     @Override
     public void hudRender() {
         healthText.text = "" + health.getHealth();
+        if (health.isCritical()) {
+
+            var calc = (byte) ((255 / 2) * Math.sin(timeDouble()*10) + (255/2));
+            
+            healthText.color.g = calc;
+            healthText.color.b = calc;
+        }
+
         healthText.render();
     }
 
