@@ -44,6 +44,9 @@ public class Player extends ECSystem implements Controllable {
 
     private TweenAnimation healthPulseAnimation;
 
+    private Weapon weapon = WeaponFactory.standardWeapon(Color.AQUA, entity, new Object[]{GameTags.PLAYER_TEAM})
+        .setCooldown(0.2f);
+
     @Override
     public void setup() {
         tangible = require(Tangible.class);
@@ -123,17 +126,18 @@ public class Player extends ECSystem implements Controllable {
         GameLoop.getMainCamera().trans.position.lerpEq(trans.position, 2*delta());
     }
 
-    private void fireBullet() {
+    private void tryFireWeapon() {
         Vec2 direction = trans.position.add(new Vec2(rect.width*0.5f, rect.height*0.5f)).directionTo(GameLoop.getMousePosition());
 
-        GameLoop.safeTrack(
-            BulletFactory.standardBullet(
-                new Transform(rect.getCenter(trans.position), trans.rotation), direction, Color.AQUA, entity, new Object[]{GameTags.PLAYER_TEAM}));
+        // GameLoop.safeTrack(
+        //     BulletFactory.standardBullet(
+        //         new Transform(rect.getCenter(trans.position), trans.rotation), direction, Color.AQUA, entity, new Object[]{GameTags.PLAYER_TEAM}));
+        weapon.fire(rect.getCenter(trans.position), direction);
     }
 
     @Override
-    public void controlledClickOnce() {
-        fireBullet();
+    public void controlledClick() {
+        tryFireWeapon();
     }
 
     @Override

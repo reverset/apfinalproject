@@ -16,12 +16,12 @@ public class Bullet extends ECSystem {
 
     public Entity owner;
 
-    private Tangible tangible;
-    private Transform trans;
+    public Transform trans;
+    public Tangible tangible;
     private Rect rect;
     private Object[] ignoreTags;
 
-public Bullet(Entity owner, Object[] ignoreTags) {
+    public Bullet(Entity owner, Object[] ignoreTags) {
         this.owner = owner;
         this.ignoreTags = ignoreTags;
     }

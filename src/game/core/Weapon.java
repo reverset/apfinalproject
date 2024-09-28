@@ -1,21 +1,48 @@
 package game.core;
 
-import game.ecs.Component;
-import game.ecs.Entity;
+import java.util.function.Supplier;
 
-public class Weapon implements Component {
+import game.EntityOf;
+import game.GameLoop;
+import game.Stopwatch;
+import game.Vec2;
+
+public class Weapon {
     
-    private int bulletsPerShot;
-    private boolean burst;
-    private int cooldown;
+    private Stopwatch coolDownStopwatch = new Stopwatch();
+    private Supplier<EntityOf<Bullet>> bulletSupplier;
+    
+    private float cooldown;
+    private float speed;
 
-    public Weapon(int bulletsPerShot, int cooldown, boolean burst) {
-        this.bulletsPerShot = bulletsPerShot;
-        this.burst = burst;
+    public Weapon(Supplier<EntityOf<Bullet>> bulletSupplier, float cooldown, float speed) {
+        this.bulletSupplier = bulletSupplier;
         this.cooldown = cooldown;
+        this.speed = speed;
     }
 
-    public void fire() {
+    public Weapon setSpeed(float speed) {
+        this.speed = speed;
+        return this;
+    }
 
+    public Weapon setCooldown(float cooldown) {
+        this.cooldown = cooldown;
+        return this;
+    }
+
+    public boolean canFire() {
+        return coolDownStopwatch.hasElapsedSeconds(cooldown);
+    }
+
+    public void fire(Vec2 position, Vec2 direction) {
+        if (coolDownStopwatch.hasElapsedSecondsAdvance(cooldown)) {
+            EntityOf<Bullet> bullet = bulletSupplier.get();
+            Bullet sys = bullet.getMainSystem();
+            sys.trans.position = position;
+            sys.tangible.velocity = direction.multiply(speed);
+
+            GameLoop.safeTrack(bullet);
+        }
     }
 }

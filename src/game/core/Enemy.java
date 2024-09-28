@@ -58,6 +58,8 @@ public class Enemy extends ECSystem {
 
     private Vec2 desiredDirection = null;
 
+    private Weapon weapon = WeaponFactory.standardWeapon(Color.RED, entity, new Object[]{GameTags.ENEMY_TEAM});
+
     double timeOffset = 0;
 
     @Override
@@ -93,13 +95,7 @@ public class Enemy extends ECSystem {
             desiredDirection = trans.position.directionTo(playerTransform.position).multiplyEq(SPEED);
         }
 
-        if (shootStopwatch.hasElapsedSecondsAdvance(1)) {
-            Entity bullet = BulletFactory.standardBullet(
-                new Transform(rect.getCenter(trans.position), trans.rotation), trans.position.directionTo(playerTransform.position), 
-                Color.RED, entity, new Object[]{GameTags.ENEMY_TEAM});
-
-            GameLoop.safeTrack(bullet);
-        }
+        if (weapon.canFire()) weapon.fire(rect.getCenter(trans.position), trans.position.directionTo(playerTransform.position));
 
         if (desiredDirection == null) return;
 
