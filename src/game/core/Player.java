@@ -115,8 +115,12 @@ public class Player extends ECSystem implements Controllable {
     @Override
     public void frame() {
         Vec2 moveVector = controlledMoveVector();
+        
+        if (tangible.velocity.magnitude() > 600) {
+            tangible.velocity.minusEq(tangible.velocity.normalize().multiplyEq(50));
+        }
+            
         physics.applyForce(moveVector.multiplyEq(500));
-        // physics.applyForce(moveVector.multiply(800).divideEq(tangible.velocity.clone().absMinAllowedValue(1)));
         
         // Friction
         if (MoreMath.isApprox(moveVector.x, 0)) tangible.velocity.x = MoreMath.moveTowards(tangible.velocity.x, 0, 500 * delta());
@@ -151,7 +155,9 @@ public class Player extends ECSystem implements Controllable {
 
         healthText.render();
 
-        Raylib.DrawText("Objs: " + GameLoop.entityCount(), 15, 50, 24, Color.WHITE.getPointer());
+        // Raylib.DrawText("Objs: " + GameLoop.entityCount(), 15, 50, 24, Color.WHITE.getPointer());
+        // Raylib.DrawText("Velocity: " + tangible.velocity, 15, 75, 24, Color.WHITE.getPointer());
+        // Raylib.DrawText("Speed: " + tangible.velocity.magnitude(), 15, 105, 24, Color.WHITE.getPointer());
     }
 
     // @Override

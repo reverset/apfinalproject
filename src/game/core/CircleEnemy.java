@@ -1,16 +1,22 @@
 package game.core;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import game.Color;
 import game.DespawnDistance;
 import game.EntityOf;
 import game.GameLoop;
+import game.Shader;
+import game.ShaderUpdater;
 import game.Stopwatch;
+import game.Tuple;
 import game.Vec2;
 import game.core.rendering.Circle;
 import game.core.rendering.CircleRenderer;
 import game.core.rendering.Rect;
+import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
@@ -21,16 +27,16 @@ public class CircleEnemy extends Enemy {
 
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
         
-        // Supplier<Float> timeSupplier = ECSystem::time; // ????
+        Supplier<Float> timeSupplier = ECSystem::time; // ????
         EntityOf<Enemy> entity = new EntityOf<>("CircleEnemy", Enemy.class);
         entity
-            // .addComponent(new Shader("resources/enemy.frag"))
+            .addComponent(new Shader("resources/circle.frag"))
             .addComponent(new Circle(RADIUS, Color.RED))
             .addComponent(new Transform(position))
             .addComponent(new Tangible())
             .addComponent(new Health(10))
             .addComponent(new Rect((int) RADIUS*2, (int) RADIUS*2, Color.WHITE))
-            // .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
+            .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new CircleRenderer())
             .register(new Physics(0, 1, new Vec2(-RADIUS, -RADIUS)))
             .register(new HealthBar(

@@ -102,6 +102,12 @@ public class Vec2 {
 	public Vec2 negate() {
 		return new Vec2(-x, -y);
 	}
+
+	public Vec2 negateEq() {
+		x = -x;
+		y = -y;
+		return this;
+	}
 	
 	public Vec2 normalize() {
 		float mag = magnitude();
@@ -216,6 +222,12 @@ public class Vec2 {
 	public Vec2 minusEq(Vec2 other) {
 		x -= other.x;
 		y -= other.y;
+		return this;
+	}
+
+	public Vec2 minusEq(float scalar) {
+		x -= scalar;
+		y -= scalar;
 		return this;
 	}
 
