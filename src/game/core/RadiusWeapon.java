@@ -25,6 +25,12 @@ public class RadiusWeapon extends Weapon {
     }
 
     @Override
+    public RadiusWeapon setSpeed(float speed) {
+        super.setSpeed(speed);
+        return this;
+    }
+
+    @Override
     public void forceFire(Vec2 position, Vec2 direction) {
         for (float rad = 0; rad < Math.PI*2; rad += radianPerBullet) {
             Vec2 dir = Vec2.fromAngle(rad);

@@ -41,6 +41,8 @@ public class Entity {
 	}
 
 	public boolean hasTags(Object[] desiredTags) {
+		if (desiredTags.length == 0) return false;
+
 		int tags = 0;
 		for (Object tag : desiredTags) {
 			if (hasTag(tag)) {

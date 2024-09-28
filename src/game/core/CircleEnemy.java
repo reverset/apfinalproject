@@ -28,7 +28,7 @@ public class CircleEnemy extends Enemy {
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
-        EntityOf<Enemy> entity = new EntityOf<>("CircleEnemy", Enemy.class);
+        EntityOf<Enemy> entity = new EntityOf<>("Circle Enemy", Enemy.class);
         entity
             .addComponent(new Shader("resources/circle.frag"))
             .addComponent(new Circle(RADIUS, Color.RED))
@@ -40,7 +40,7 @@ public class CircleEnemy extends Enemy {
             .register(new CircleRenderer())
             .register(new Physics(0, 1, new Vec2(-RADIUS, -RADIUS)))
             .register(new HealthBar(
-                new Vec2(-RADIUS*2, -50), "Circle Enemy"
+                new Vec2(-RADIUS*2, -50), entity.name
             ))
             .register(new CircleEnemy())
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
@@ -58,6 +58,11 @@ public class CircleEnemy extends Enemy {
     private RadiusWeapon weapon = WeaponFactory.radiusWeapon(Color.PINK, entity, new Object[]{GameTags.ENEMY_TEAM})
         .setDegreePerBullet(15)    
         .setDamage(15);
+
+    private RadiusWeapon deathWeapon = WeaponFactory.radiusWeapon(Color.PINK, entity, new Object[]{})
+        .setDegreePerBullet(10)
+        .setDamage(5)
+        .setSpeed(100);
 
     @Override
     public void setup() {
@@ -78,10 +83,7 @@ public class CircleEnemy extends Enemy {
     @Override
     public void ready() {
         health.onDeath.listen(n -> {
-            weapon
-                .setDegreePerBullet(5)
-                .setSpeed(100)
-                .forceFire(trans.position, null);
+            deathWeapon.forceFire(trans.position, null);
             GameLoop.safeDestroy(entity);
         }, entity);
     }

@@ -37,9 +37,9 @@ public class Enemy extends ECSystem {
             .addComponent(new Health(20))
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new RectRender())
-            .register(new Physics(0, 1))
+            .register(new Physics(0, 0))
             .register(new HealthBar(
-                new Vec2(-rect.width*0.5f, -20), "Enemy"
+                new Vec2(-rect.width*0.5f, -20), entity.name
             ))
             .register(new Enemy())
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);

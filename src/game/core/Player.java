@@ -30,7 +30,7 @@ public class Player extends ECSystem implements Controllable {
             .addComponent(new Rect(30, 30, Color.GREEN))
             .addComponent(new Tangible())
             .register(new RectRender())
-            .register(new Physics(0, 1))
+            .register(new Physics(0, 0))
             .register(new Player())
             .register(new Controller<>(Player.class))
             .addTags(GameTags.PLAYER, GameTags.PLAYER_TEAM);
@@ -117,7 +117,7 @@ public class Player extends ECSystem implements Controllable {
     public void frame() {
         Vec2 moveVector = controlledMoveVector();
         
-        if (tangible.velocity.magnitude() > 600) {
+        if (tangible.velocity.magnitude() > 300) {
             tangible.velocity.minusEq(tangible.velocity.normalize().multiplyEq(50));
         }
             

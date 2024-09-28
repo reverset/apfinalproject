@@ -8,6 +8,9 @@ import game.core.rendering.RectRender;
 import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
+
+import java.util.Arrays;
+
 import com.raylib.Raylib;
 
 

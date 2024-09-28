@@ -8,13 +8,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.stream.IntStream;
 
 import com.raylib.Jaylib;
 import com.raylib.Raylib;
 
 import game.ecs.Entity;
-import game.ecs.comps.Transform;
 
 public class GameLoop {
 	public static final int SCREEN_WIDTH = 850;
@@ -37,7 +35,9 @@ public class GameLoop {
 	private static boolean shouldShutdown = false;
 
 	private static Stopwatch infrequentUpdateStopwatch = new Stopwatch();
-	public static final float INFREQUENT_UPDATE_RATE = 1f / 24;
+	public static final float INFREQUENT_UPDATE_RATE = 1f / 32;
+
+	private static final PollingIterator<Runnable> deferIterator = new PollingIterator<>(deferments);
 
 	public static Camera getMainCamera() {
 		return mainCameraSystem;
@@ -280,6 +280,6 @@ public class GameLoop {
 	}
 
 	private static void runAllDeferred() {
-		new PollingIterator<>(deferments).forEachRemaining(Runnable::run);
+		deferIterator.forEachRemaining(Runnable::run);
 	}
 }
