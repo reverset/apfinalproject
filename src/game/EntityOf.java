@@ -13,6 +13,9 @@ public class EntityOf<T extends ECSystem> extends Entity {
     }
 
     public T getMainSystem() {
+        if (actualSystem == null) {
+            actualSystem = getSystem(systemClass).orElseThrow();
+        }
         return actualSystem;
     }
 
@@ -20,7 +23,7 @@ public class EntityOf<T extends ECSystem> extends Entity {
     @Override
     public Entity register(ECSystem system) {
         super.register(system);
-        if (system.getClass() == systemClass) {
+        if (systemClass.isAssignableFrom(system.getClass())) {
             actualSystem = (T) system;
         }
         return this;

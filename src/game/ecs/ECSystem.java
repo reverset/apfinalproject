@@ -79,6 +79,10 @@ public abstract class ECSystem {
 		return Raylib.GetFrameTime();
 	}
 
+	protected static float infreqDelta() {
+		return GameLoop.INFREQUENT_UPDATE_RATE;
+	}
+
 	protected static float time() {
 		return (float) Raylib.GetTime();
 	}
@@ -89,6 +93,7 @@ public abstract class ECSystem {
 	
 	public void ready() {} // Called when an object is added to a scene. Or if it is already in one, immediately.
 	public void frame() {} // Called every frame.
+	public void infrequentUpdate() {} // Called less frequently compared to frame.
 	public void render() {} // Also called every frame, but with the frame buffer ready and after the frame call.
 	public void hudRender() {} // Called every frame to render UI. Does not follow camera.
 	public void destroy() {} // Called when an Entity is removed from the game.

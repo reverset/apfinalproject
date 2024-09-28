@@ -14,8 +14,9 @@ import game.ecs.comps.Transform;
 public class BulletFactory {
     public static final int STANDARD_BULLET_SIZE = 10;
     public static final float STANDARD_BULLET_SPEED = 300;
+    public static final Duration STANDARD_BULLET_LIFE = Duration.ofSeconds(8);
 
-    public static EntityOf<Bullet> standardBullet(Transform trans, Vec2 direction, Color color, Entity owner, Object[] ignoreTags) {
+    public static EntityOf<Bullet> standardBullet(Transform trans, Vec2 direction, Color color, Entity owner, Object[] ignoreTags, Duration lifetime) {
         EntityOf<Bullet> entity = new EntityOf<>("Bullet", Bullet.class);
         entity
             .addComponent(trans.withPosition(trans.position.minus(STANDARD_BULLET_SIZE*0.5f)))
@@ -27,7 +28,7 @@ public class BulletFactory {
             .addComponent(new Rect(STANDARD_BULLET_SIZE, STANDARD_BULLET_SIZE, color))
             .register(new Physics(1, 0))
             .register(new RectRender())
-            .register(new RemoveAfter(Duration.ofSeconds(8)))
+            .register(new RemoveAfter(lifetime))
             .register(new Bullet(owner, ignoreTags));
         
         return entity;

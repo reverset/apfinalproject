@@ -56,6 +56,10 @@ public class Rect implements Component {
         rec.close();
     }
 
+    public void renderLines(Vec2 position) {
+        Raylib.DrawRectangleLines(position.xInt(), position.yInt(), width, height, color.getPointer());
+    }
+
     public Raylib.Rectangle getPointer() {
         return internal;
     }

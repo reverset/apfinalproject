@@ -46,9 +46,9 @@ public class Enemy extends ECSystem {
     }
 
     public Health health;
-    private Transform trans;
-    private Tangible tangible;
-    private Rect rect;
+    public Rect rect;
+    public Transform trans;
+    public Tangible tangible;
 
     private Stopwatch movementStopwatch = new Stopwatch();
     private Stopwatch shootStopwatch = new Stopwatch();

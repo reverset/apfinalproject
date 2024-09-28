@@ -9,11 +9,11 @@ import game.Vec2;
 
 public class Weapon {
     
-    private Stopwatch coolDownStopwatch = new Stopwatch();
-    private Supplier<EntityOf<Bullet>> bulletSupplier;
+    Stopwatch coolDownStopwatch = new Stopwatch();
+    Supplier<EntityOf<Bullet>> bulletSupplier;
     
-    private float cooldown;
-    private float speed;
+    float cooldown;
+    float speed;
 
     public Weapon(Supplier<EntityOf<Bullet>> bulletSupplier, float cooldown, float speed) {
         this.bulletSupplier = bulletSupplier;
@@ -39,6 +39,7 @@ public class Weapon {
         if (coolDownStopwatch.hasElapsedSecondsAdvance(cooldown)) {
             EntityOf<Bullet> bullet = bulletSupplier.get();
             Bullet sys = bullet.getMainSystem();
+            
             sys.trans.position = position;
             sys.tangible.velocity = direction.multiply(speed);
 

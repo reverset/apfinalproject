@@ -34,6 +34,9 @@ public class GameLoop {
 
 	private static Shader postProcesShader = null;
 
+	private static Stopwatch infrequentUpdateStopwatch = new Stopwatch();
+	public static final float INFREQUENT_UPDATE_RATE = 1f / 24;
+
 	public static Camera getMainCamera() {
 		return mainCameraSystem;
 	}
@@ -140,12 +143,19 @@ public class GameLoop {
 	public static void runBlocking() {
 		while (!Raylib.WindowShouldClose()) {
 			frameUpdate();
+			infrequentUpdate();
 			renderUpdate();
 			updateSchedule();
 			runAllDeferred();
 			manageCleanupQueue();
 		}
 		deinit();
+	}
+
+	public static void infrequentUpdate() {
+		if (infrequentUpdateStopwatch.hasElapsedSecondsAdvance(INFREQUENT_UPDATE_RATE)) {
+			getEntitiesIterator().forEachRemaining(Entity::infrequentUpdate);
+		}
 	}
 	
 	public static void deinit() {

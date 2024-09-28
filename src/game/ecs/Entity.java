@@ -69,6 +69,10 @@ public class Entity {
 		systems.forEach(ECSystem::hudRender);
 	}
 
+	public void infrequentUpdate() {
+		systems.forEach(ECSystem::infrequentUpdate);
+	}
+
 	public void destroy() {
 		systems.forEach(ECSystem::destroy);
 		binded.forEach((bind) -> bind.unbind(this));
@@ -106,7 +110,7 @@ public class Entity {
 		
 		while (iter.hasNext()) {
 			ECSystem c = iter.next();
-			if (c.getClass() == sys) {
+			if (c.getClass().isAssignableFrom(sys)) {
 				return Optional.of((T) c);
 			}
 		}
