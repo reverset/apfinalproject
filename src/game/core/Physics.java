@@ -12,25 +12,40 @@ public class Physics extends ECSystem {
         DYNAMIC,
         STATIC,
     }
-    private static final ArrayList<Physics> physicsObjects = new ArrayList<>();
+    private static final ArrayList<ArrayList<Physics>> physicsObjects = new ArrayList<>();
+
+    static {
+        physicsObjects.add(new ArrayList<>());
+        physicsObjects.add(new ArrayList<>());
+        physicsObjects.add(new ArrayList<>());
+    }
 
     private Rect collisionRect;
     private Transform trans;
     private Tangible tangible;
     private Kind kind;
 
+    private int layer;
+    private int layerMask;
     
-    public Physics(Kind kind) {
+    public Physics(Kind kind, int layer, int layerMask) {
         this.kind = kind;
-        physicsObjects.add(this);
+        this.layer = layer;
+        this.layerMask = layerMask;
+        physicsObjects.get(layer).add(this);
     } 
 
-    public Physics() {
-        this(Kind.DYNAMIC);    
+    public Physics(int layer, int layerMask) {
+        this(Kind.DYNAMIC, layer, layerMask);    
     }
 
     public void unregister() {
-        physicsObjects.remove(this);
+        for (var list : physicsObjects) {
+            if (list.contains(this)) {
+                list.remove(this);
+                return;
+            }
+        }
     }
 
     @Override
@@ -49,10 +64,10 @@ public class Physics extends ECSystem {
         checkCollisions();
     }
 
-    private void checkCollisions() { // Consider using layers so that objects don't check unneccessary collisions.
-        for (var obj : physicsObjects) {
+    private void checkCollisions() { // Consider using layers so that objects don't check unneccessary collisions. >> FIXME: huge performance issue
+        for (var obj : physicsObjects.get(layerMask)) {
             if (obj == this) continue;
-
+            
             if (obj.collisionRect.overlaps(obj.trans.position, trans.position, collisionRect)) {
                 tangible.onCollision.emit(obj);
             }

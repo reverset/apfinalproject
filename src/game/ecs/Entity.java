@@ -22,8 +22,10 @@ public class Entity {
 		this.name = name;
 	}
 
-	public Entity addTag(Object tag) {
-		tags.add(tag);
+	public Entity addTags(Object... tag) {
+		for (var t : tag) {
+			tags.add(t);
+		}
 		return this;
 	}
 
@@ -34,6 +36,17 @@ public class Entity {
 			}
 		}
 		return false;
+	}
+
+	public boolean hasTags(Object[] desiredTags) {
+		int tags = 0;
+		for (Object tag : desiredTags) {
+			if (hasTag(tag)) {
+				tags += 1;
+			}
+		}
+
+		return tags == desiredTags.length;
 	}
 
 	public void bind(Binded bind) {

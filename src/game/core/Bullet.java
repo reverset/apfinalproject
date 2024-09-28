@@ -19,9 +19,11 @@ public class Bullet extends ECSystem {
     private Tangible tangible;
     private Transform trans;
     private Rect rect;
+    private Object[] ignoreTags;
 
-    public Bullet(Entity owner) {
+public Bullet(Entity owner, Object[] ignoreTags) {
         this.owner = owner;
+        this.ignoreTags = ignoreTags;
     }
 
     @Override
@@ -30,13 +32,13 @@ public class Bullet extends ECSystem {
         trans = require(Transform.class);
         rect = require(Rect.class);
 
-        entity.addTag(GameTags.BULLET);
+        entity.addTags(GameTags.BULLET);
     }
 
     @Override
     public void ready() {
         tangible.onCollision.listen((otherPhysics) -> {
-            if (otherPhysics.entity != owner && !otherPhysics.entity.hasTag(GameTags.BULLET)) {
+            if (otherPhysics.entity != owner && !otherPhysics.entity.hasTag(GameTags.BULLET) && !otherPhysics.entity.hasTags(ignoreTags)) {
                 otherPhysics.entity.getComponent(Health.class).ifPresent((health) -> health.damage(BULLET_DAMAGE));
                 otherPhysics.entity.getSystem(Physics.class).ifPresent((physics) -> physics.impulse(tangible.velocity.normalize().multiply(100)));
                 GameLoop.safeDestroy(entity);

@@ -35,12 +35,12 @@ public class Enemy extends ECSystem {
             .addComponent(new Health(20))
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new RectRender())
-            .register(new Physics())
+            .register(new Physics(0, 1))
             .register(new HealthBar(
                 new Vec2(-rect.width*0.5f, -20), "Enemy"
             ))
             .register(new Enemy())
-            .addTag(GameTags.ENEMY);
+            .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
 
         return entity;
     }
@@ -95,7 +95,8 @@ public class Enemy extends ECSystem {
 
         if (shootStopwatch.hasElapsedSecondsAdvance(1)) {
             Entity bullet = BulletFactory.standardBullet(
-                new Transform(rect.getCenter(trans.position), trans.rotation), trans.position.directionTo(playerTransform.position), Color.RED, entity);
+                new Transform(rect.getCenter(trans.position), trans.rotation), trans.position.directionTo(playerTransform.position), 
+                Color.RED, entity, new Object[]{GameTags.ENEMY_TEAM});
 
             GameLoop.safeTrack(bullet);
         }

@@ -14,7 +14,7 @@ public class BulletFactory {
     public static final int STANDARD_BULLET_SIZE = 10;
     public static final float STANDARD_BULLET_SPEED = 300;
 
-    public static Entity standardBullet(Transform trans, Vec2 direction, Color color, Entity owner) {
+    public static Entity standardBullet(Transform trans, Vec2 direction, Color color, Entity owner, Object[] ignoreTags) {
         return new Entity("Bullet")
                 .addComponent(trans.withPosition(trans.position.minus(STANDARD_BULLET_SIZE*0.5f)))
                 .addComponent(() -> {
@@ -23,9 +23,9 @@ public class BulletFactory {
                     return tangible;
                 })
                 .addComponent(new Rect(STANDARD_BULLET_SIZE, STANDARD_BULLET_SIZE, color))
-                .register(new Physics())
+                .register(new Physics(1, 0))
                 .register(new RectRender())
                 .register(new RemoveAfter(Duration.ofSeconds(8)))
-                .register(new Bullet(owner));
+                .register(new Bullet(owner, ignoreTags));
     }
 }

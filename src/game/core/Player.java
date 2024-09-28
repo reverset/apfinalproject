@@ -26,14 +26,14 @@ public class Player extends ECSystem implements Controllable {
     public static Entity makeEntity() {
         return new Entity("Player")
             .addComponent(new Transform())
-            .addComponent(new Health(5000))
+            .addComponent(new Health(200))
             .addComponent(new Rect(30, 30, Color.GREEN))
             .addComponent(new Tangible())
             .register(new RectRender())
-            .register(new Physics())
+            .register(new Physics(0, 1))
             .register(new Player())
             .register(new Controller<>(Player.class))
-            .addTag(GameTags.PLAYER);
+            .addTags(GameTags.PLAYER, GameTags.PLAYER_TEAM);
     }
 
     private Tangible tangible;
@@ -126,7 +126,9 @@ public class Player extends ECSystem implements Controllable {
     private void fireBullet() {
         Vec2 direction = trans.position.add(new Vec2(rect.width*0.5f, rect.height*0.5f)).directionTo(GameLoop.getMousePosition());
 
-        GameLoop.safeTrack(BulletFactory.standardBullet(new Transform(rect.getCenter(trans.position), trans.rotation), direction, Color.AQUA, entity));
+        GameLoop.safeTrack(
+            BulletFactory.standardBullet(
+                new Transform(rect.getCenter(trans.position), trans.rotation), direction, Color.AQUA, entity, new Object[]{GameTags.PLAYER_TEAM}));
     }
 
     @Override
@@ -146,6 +148,8 @@ public class Player extends ECSystem implements Controllable {
         }
 
         healthText.render();
+
+        Raylib.DrawText("Objs: " + GameLoop.entityCount(), 15, 50, 24, Color.WHITE.getPointer());
     }
 
     // @Override

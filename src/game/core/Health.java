@@ -33,9 +33,8 @@ public class Health implements Component {
         return (float)health / (float) maxHealth;
     }
 
-    // Returns true if health is less than 15%
     public boolean isCritical() {
-        return getHealthPercentage() < 0.15;
+        return getHealthPercentage() < 0.25;
     }
     
 }

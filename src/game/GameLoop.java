@@ -4,9 +4,11 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.stream.IntStream;
 
 import com.raylib.Jaylib;
 import com.raylib.Raylib;
@@ -92,15 +94,15 @@ public class GameLoop {
 	}
 
 	public static Optional<Entity> findEntityByTag(Object tag) {
-		Iterator<Entity> iter = getEntitiesIterator();
-		
-		while (iter.hasNext()) {
-			Entity entity = iter.next();
+		return entities.stream()
+			.filter(e -> e.hasTag(tag))
+			.findFirst();
+	}
 
-			if (entity.hasTag(tag)) return Optional.of(entity);
-		}
-
-		return Optional.empty();
+	public static List<Entity> findEntitiesByTag(Object tag) {
+		return entities.stream()
+			.filter(e -> e.hasTag(tag))
+			.toList();
 	}
 
 	public static void defer(Runnable action) {
