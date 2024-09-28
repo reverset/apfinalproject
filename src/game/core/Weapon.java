@@ -14,15 +14,22 @@ public class Weapon {
     
     float cooldown;
     float speed;
+    int damage;
 
     public Weapon(Supplier<EntityOf<Bullet>> bulletSupplier, float cooldown, float speed) {
         this.bulletSupplier = bulletSupplier;
         this.cooldown = cooldown;
         this.speed = speed;
+        this.damage = Bullet.BULLET_DAMAGE;
     }
 
     public Weapon setSpeed(float speed) {
         this.speed = speed;
+        return this;
+    }
+
+    public Weapon setDamage(int damage) {
+        this.damage = damage;
         return this;
     }
 
@@ -40,6 +47,7 @@ public class Weapon {
             EntityOf<Bullet> bullet = bulletSupplier.get();
             Bullet sys = bullet.getMainSystem();
             
+            sys.damage = damage;
             sys.trans.position = position;
             sys.tangible.velocity = direction.multiply(speed);
 

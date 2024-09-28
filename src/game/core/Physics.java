@@ -74,6 +74,11 @@ public class Physics extends ECSystem {
 
         trans.position.addEq(tangible.velocity.x * delta(), tangible.velocity.y * delta());
 
+        // checkCollisions();
+    }
+
+    @Override
+    public void infrequentUpdate() {
         checkCollisions();
     }
 

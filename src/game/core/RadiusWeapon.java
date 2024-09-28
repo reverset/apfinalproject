@@ -26,6 +26,8 @@ public class RadiusWeapon extends Weapon {
 
                 EntityOf<Bullet> bullet = bulletSupplier.get();
                 Bullet sys = bullet.getMainSystem();
+
+                sys.damage = damage;
                 sys.trans.position = position.clone();
                 sys.tangible.velocity = dir.multiplyEq(speed);
 

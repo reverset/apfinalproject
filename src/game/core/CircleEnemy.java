@@ -3,6 +3,7 @@ package game.core;
 import java.util.Optional;
 
 import game.Color;
+import game.DespawnDistance;
 import game.EntityOf;
 import game.GameLoop;
 import game.Stopwatch;
@@ -16,7 +17,7 @@ import game.ecs.comps.Transform;
 public class CircleEnemy extends Enemy {
     public static final float RADIUS = 20;
     public static final float SPEED = 1_000;
-    public static final float MOVE_DELAY = 5;
+    public static final float MOVE_DELAY = 3;
 
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
         
@@ -48,7 +49,9 @@ public class CircleEnemy extends Enemy {
     private Stopwatch movementStopwatch = new Stopwatch();
     private Vec2 desiredPosition;
 
-    private Weapon weapon = WeaponFactory.radiusWeapon(Color.RED, entity, new Object[]{GameTags.ENEMY_TEAM});
+    private Weapon weapon = WeaponFactory.radiusWeapon(Color.PINK, entity, new Object[]{GameTags.ENEMY_TEAM})
+        .setDegreePerBullet(15)    
+        .setDamage(30);
 
     @Override
     public void setup() {
@@ -60,6 +63,9 @@ public class CircleEnemy extends Enemy {
         player = GameLoop.findEntityByTag(GameTags.PLAYER);
         player.ifPresent(p -> {
             playerTransform = p.getComponent(Transform.class).orElseThrow();
+            GameLoop.defer(() -> {
+                entity.register(new DespawnDistance(playerTransform, DESPAWN_DISTANCE));
+            });
         });
     }
 
@@ -75,17 +81,19 @@ public class CircleEnemy extends Enemy {
         if (playerTransform == null) return;
 
         if (movementStopwatch.hasElapsedSecondsAdvance(MOVE_DELAY)) {
-            desiredPosition = playerTransform.position.add(Vec2.randomUnit().multiply(300));
+            desiredPosition = playerTransform.position.add(Vec2.randomUnit().multiply(50));
         }
-
-        if (weapon.canFire()) weapon.fire(trans.position, null);
-
-        
     }
     
     @Override
     public void infrequentUpdate() {
+        if (playerTransform == null) return;
+        
+        float dist = trans.position.distance(playerTransform.position);
+        if (dist < 100 && weapon.canFire()) weapon.fire(trans.position, null);
+
         if (desiredPosition == null) return;
-        tangible.velocity.moveTowardsEq(trans.position.directionTo(desiredPosition).multiplyEq(400), SPEED*infreqDelta());
+
+        tangible.velocity.moveTowardsEq(trans.position.directionTo(desiredPosition).multiplyEq(5 * dist), SPEED*infreqDelta());
     }
 }

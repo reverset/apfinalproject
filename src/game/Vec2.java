@@ -303,6 +303,11 @@ public class Vec2 {
 		return (other.minus(this)).normalizeEq();
 	}
 
+	public float distance(Vec2 other) {
+		// return (other.minus(this)).magnitude();
+		return (float) Math.sqrt(Math.pow(other.x-x, 2) + Math.pow(other.y-y, 2));
+	}
+
 	public float getAngle() {
 		return (float) Math.atan2(y, x);
 	}

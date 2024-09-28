@@ -9,6 +9,8 @@ import game.Binded;
 import game.Signal;
 
 public class Entity {
+	public final Signal<Void> onDestroy = new Signal<>();
+
 	private final ArrayList<ECSystem> systems = new ArrayList<>();
 	private final ArrayList<Component> components = new ArrayList<>();
 
@@ -75,6 +77,7 @@ public class Entity {
 
 	public void destroy() {
 		systems.forEach(ECSystem::destroy);
+		onDestroy.emit(null);
 		binded.forEach((bind) -> bind.unbind(this));
 		binded.clear();
 	}

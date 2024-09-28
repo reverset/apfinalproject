@@ -9,6 +9,7 @@ public class Color {
 	public static final Color GREEN = new ImmutableColor(0, 255, 0, 255);
 	public static final Color AQUA = new ImmutableColor(0, 200, 255, 255);
 	public static final Color GRAY = new ImmutableColor(25, 25, 25, 255);
+	public static final Color PINK = new ImmutableColor(255, 105, 180, 255);
 	
 	private final Raylib.Color internal;
 	

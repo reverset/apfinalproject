@@ -16,13 +16,15 @@ public class Bullet extends ECSystem {
 
     public Entity owner;
 
+    public int damage;
     public Transform trans;
     public Tangible tangible;
     private Rect rect;
     private Object[] ignoreTags;
 
-    public Bullet(Entity owner, Object[] ignoreTags) {
+    public Bullet(Entity owner, int damage, Object[] ignoreTags) {
         this.owner = owner;
+        this.damage = damage;
         this.ignoreTags = ignoreTags;
     }
 
@@ -35,12 +37,16 @@ public class Bullet extends ECSystem {
         entity.addTags(GameTags.BULLET);
     }
 
+    public int getDamage() {
+        return damage;
+    }
+
     @Override
     public void ready() {
         tangible.onCollision.listen((otherPhysics) -> {
             if (otherPhysics.entity != owner && !otherPhysics.entity.hasTag(GameTags.BULLET) && !otherPhysics.entity.hasTags(ignoreTags)) {
-                otherPhysics.entity.getComponent(Health.class).ifPresent((health) -> health.damage(BULLET_DAMAGE));
-                otherPhysics.entity.getSystem(Physics.class).ifPresent((physics) -> physics.impulse(tangible.velocity.normalize().multiply(100)));
+                otherPhysics.entity.getComponent(Health.class).ifPresent((health) -> health.damage(getDamage()));
+                otherPhysics.entity.getSystem(Physics.class).ifPresent((physics) -> physics.impulse(tangible.velocity.normalize().multiplyEq(100)));
                 GameLoop.safeDestroy(entity);
             }
         }, entity);

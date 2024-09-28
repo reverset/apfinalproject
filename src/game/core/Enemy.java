@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import game.Color;
+import game.DespawnDistance;
 import game.EntityOf;
 import game.GameLoop;
 import game.Shader;
@@ -21,6 +22,7 @@ import game.ecs.comps.Transform;
 public class Enemy extends ECSystem {
     public static final float SPEED = 200;
     public static final int SIZE = 50;
+    public static final float DESPAWN_DISTANCE = 2_000;
 
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
         Rect rect = new Rect(SIZE, SIZE, Color.RED);
@@ -72,6 +74,9 @@ public class Enemy extends ECSystem {
         player = GameLoop.findEntityByTag(GameTags.PLAYER);
         player.ifPresent((p) -> {
             playerTransform = p.getComponent(Transform.class).orElseThrow();
+            GameLoop.defer(() -> {
+                entity.register(new DespawnDistance(playerTransform, DESPAWN_DISTANCE));
+            });
         });
         
         timeOffset = (Math.random()+0.5) * 2;
