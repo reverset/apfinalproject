@@ -55,7 +55,7 @@ public class CircleEnemy extends Enemy {
     private Stopwatch movementStopwatch = new Stopwatch();
     private Vec2 desiredPosition;
 
-    private Weapon weapon = WeaponFactory.radiusWeapon(Color.PINK, entity, new Object[]{GameTags.ENEMY_TEAM})
+    private RadiusWeapon weapon = WeaponFactory.radiusWeapon(Color.PINK, entity, new Object[]{GameTags.ENEMY_TEAM})
         .setDegreePerBullet(15)    
         .setDamage(15);
 
@@ -78,6 +78,10 @@ public class CircleEnemy extends Enemy {
     @Override
     public void ready() {
         health.onDeath.listen(n -> {
+            weapon
+                .setDegreePerBullet(5)
+                .setSpeed(100)
+                .forceFire(trans.position, null);
             GameLoop.safeDestroy(entity);
         }, entity);
     }

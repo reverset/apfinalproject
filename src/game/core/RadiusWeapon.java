@@ -19,20 +19,31 @@ public class RadiusWeapon extends Weapon {
     }
 
     @Override
+    public RadiusWeapon setDamage(int damage) {
+        super.setDamage(damage);
+        return this;
+    }
+
+    @Override
+    public void forceFire(Vec2 position, Vec2 direction) {
+        for (float rad = 0; rad < Math.PI*2; rad += radianPerBullet) {
+            Vec2 dir = Vec2.fromAngle(rad);
+
+            EntityOf<Bullet> bullet = bulletSupplier.get();
+            Bullet sys = bullet.getMainSystem();
+
+            sys.damage = damage;
+            sys.trans.position = position.clone();
+            sys.tangible.velocity = dir.multiplyEq(speed);
+
+            GameLoop.safeTrack(bullet);
+        }
+    }
+
+    @Override
     public void fire(Vec2 position, Vec2 direction) {
         if (coolDownStopwatch.hasElapsedSecondsAdvance(cooldown)) {
-            for (float rad = 0; rad < Math.PI*2; rad += radianPerBullet) {
-                Vec2 dir = Vec2.fromAngle(rad);
-
-                EntityOf<Bullet> bullet = bulletSupplier.get();
-                Bullet sys = bullet.getMainSystem();
-
-                sys.damage = damage;
-                sys.trans.position = position.clone();
-                sys.tangible.velocity = dir.multiplyEq(speed);
-
-                GameLoop.safeTrack(bullet);
-            }
+            forceFire(position, direction);
         }
     }
 }

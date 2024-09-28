@@ -42,16 +42,20 @@ public class Weapon {
         return coolDownStopwatch.hasElapsedSeconds(cooldown);
     }
 
+    public void forceFire(Vec2 position, Vec2 direction) {
+        EntityOf<Bullet> bullet = bulletSupplier.get();
+        Bullet sys = bullet.getMainSystem();
+        
+        sys.damage = damage;
+        sys.trans.position = position.clone();
+        sys.tangible.velocity = direction.multiply(speed);
+    
+        GameLoop.safeTrack(bullet);
+    }
+
     public void fire(Vec2 position, Vec2 direction) {
         if (coolDownStopwatch.hasElapsedSecondsAdvance(cooldown)) {
-            EntityOf<Bullet> bullet = bulletSupplier.get();
-            Bullet sys = bullet.getMainSystem();
-            
-            sys.damage = damage;
-            sys.trans.position = position.clone();
-            sys.tangible.velocity = direction.multiply(speed);
-
-            GameLoop.safeTrack(bullet);
+            forceFire(position, direction);
         }
     }
 }

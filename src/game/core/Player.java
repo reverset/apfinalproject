@@ -26,7 +26,7 @@ public class Player extends ECSystem implements Controllable {
     public static Entity makeEntity() {
         return new Entity("Player")
             .addComponent(new Transform())
-            .addComponent(new Health(2000))
+            .addComponent(new Health(200))
             .addComponent(new Rect(30, 30, Color.GREEN))
             .addComponent(new Tangible())
             .register(new RectRender())
@@ -45,7 +45,8 @@ public class Player extends ECSystem implements Controllable {
     private TweenAnimation healthPulseAnimation;
 
     private Weapon weapon = WeaponFactory.standardWeapon(Color.AQUA, entity, new Object[]{GameTags.PLAYER_TEAM})
-        .setCooldown(0.2f);
+        .setCooldown(0.2f)
+        .setSpeed(800);
 
     @Override
     public void setup() {
