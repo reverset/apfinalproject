@@ -34,6 +34,8 @@ public class GameLoop {
 
 	private static Shader postProcesShader = null;
 
+	private static boolean shouldShutdown = false;
+
 	private static Stopwatch infrequentUpdateStopwatch = new Stopwatch();
 	public static final float INFREQUENT_UPDATE_RATE = 1f / 24;
 
@@ -118,11 +120,29 @@ public class GameLoop {
 
 	public static void clearAllEntities() {
 		GameLoop.defer(() -> {
-			for (Entity entity : entities) {
+			ListIterator<Entity> iter = entities.listIterator();
+			while (iter.hasNext()) {
+				Entity entity = iter.next();
 				entity.destroy();
+				iter.remove();
 			}
-			entities.clear();
 		});
+	}
+
+	public static void clearAllEntitiesAsync() {
+		Thread thread = new Thread(() -> {
+			synchronized (entities) {
+				ListIterator<Entity> iter = entities.listIterator();
+				
+				while (iter.hasNext()) {
+					Entity entity = iter.next();
+					entity.destroy();
+					iter.remove();
+				}
+			}
+		});
+
+		thread.start();
 	}
 	
 	public static void init() {
@@ -137,11 +157,11 @@ public class GameLoop {
 	}
 	
 	public static void quit() {
-		Raylib.CloseWindow();
+		shouldShutdown = true;
 	}
 	
 	public static void runBlocking() {
-		while (!Raylib.WindowShouldClose()) {
+		while (!Raylib.WindowShouldClose() && !shouldShutdown) {
 			frameUpdate();
 			infrequentUpdate();
 			renderUpdate();
@@ -160,7 +180,21 @@ public class GameLoop {
 	
 	public static void deinit() {
 		onShutdown.emit(Duration.ofMillis((long) (Raylib.GetTime()*1_000)));
-		clearAllEntities();
+
+		clearAllEntitiesAsync();
+		while (true) {
+			Raylib.BeginDrawing();
+			Raylib.ClearBackground(Color.BLACK.getPointer());
+
+			Raylib.DrawText("Closing game ... (This may take some time)", 15, 15, 24, Color.WHITE.getPointer());
+
+			Raylib.EndDrawing();
+
+			synchronized (entities) {
+				if (entities.size() <= 0) break;
+			}
+		}
+
 		System.gc();
 		manageCleanupQueue();
 		if (Raylib.IsWindowReady()) {			
