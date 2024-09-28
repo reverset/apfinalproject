@@ -159,49 +159,4 @@ public class Player extends ECSystem implements Controllable {
         // Raylib.DrawText("Velocity: " + tangible.velocity, 15, 75, 24, Color.WHITE.getPointer());
         // Raylib.DrawText("Speed: " + tangible.velocity.magnitude(), 15, 105, 24, Color.WHITE.getPointer());
     }
-
-    // @Override
-    // public void controlledLeftOnce() {
-    //     tangible.velocity.x = 0;
-    //     physics.impulse(Vec2.left().multiply(100));
-    // }
-
-    // @Override
-    // public void controlledRightOnce() {
-    //     tangible.velocity.x = 0;
-    //     physics.impulse(Vec2.right().multiply(100));
-    // }
-
-    // @Override
-    // public void controlledLeft() {
-    //    physics.applyForce(Vec2.left().multiply(100));
-    // }
-
-    // @Override
-    // public void controlledRight() {
-    //     physics.applyForce(Vec2.right().multiply(100));
-    // }
-
-    // @Override
-    // public void controlledDownOnce() {
-    //     tangible.velocity.y = 0;
-    //     physics.impulse(Vec2.down().multiply(100));
-    // }
-
-    // @Override
-    // public void controlledDown() {
-    //     physics.applyForce(Vec2.down().multiply(100));
-    // }
-    
-    // @Override
-    // public void controlledUpOnce() {
-    //     tangible.velocity.y = 0;
-    //     physics.impulse(Vec2.up().multiply(100));
-    // }
-
-    // @Override
-    // public void controlledUp() {
-    //     physics.applyForce(Vec2.up().multiply(100));
-    // }
-    
 }
