@@ -58,7 +58,6 @@ public class Vec2 {
 		).normalizeEq();
 	}
 	
-	
 	public Vec2(float x, float y, Raylib.Vector2 internal) {
 		this.internal = internal;
 		this.x = x;

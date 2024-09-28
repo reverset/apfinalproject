@@ -26,7 +26,7 @@ public class Player extends ECSystem implements Controllable {
     public static Entity makeEntity() {
         return new Entity("Player")
             .addComponent(new Transform())
-            .addComponent(new Health(200))
+            .addComponent(new Health(2000))
             .addComponent(new Rect(30, 30, Color.GREEN))
             .addComponent(new Tangible())
             .register(new RectRender())
