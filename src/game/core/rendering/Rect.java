@@ -13,7 +13,8 @@ public class Rect implements Component {
     public Color color;
 
     private Raylib.Rectangle internal;
-    
+    private Vec2 center = Vec2.zero();
+
     public Rect(int width, int height, Color color) {
         this.width = width;
         this.height = height;
@@ -43,7 +44,9 @@ public class Rect implements Component {
     }
 
     public Vec2 getCenter(Vec2 position) { // Position is the top left corner.
-        return new Vec2(position.x + width*0.5f, position.y + height*0.5f);
+        center.x = position.x + width*0.5f;
+        center.y = position.y + height*0.5f;
+        return center;
     }
 
     public void render(Vec2 position) {

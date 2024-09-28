@@ -64,7 +64,8 @@ public class Vec2 {
 		this.y = y;
 		internal.x(x).y(y);
 		
-		Janitor.registerAsyncSafe(this, internal::close);
+		// May have never been necessary to begin with
+		// Janitor.registerAsyncSafe(this, internal::close);
 	}
 
 	public Vec2(Raylib.Vector2 internal) {

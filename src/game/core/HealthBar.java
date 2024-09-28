@@ -74,7 +74,7 @@ public class HealthBar extends ECSystem {
         background.renderRound(pos, 5, 5);
         healthBar.renderRound(pos, 5, 5);
 
-        message.position = pos.add(new Vec2(0, -10));
+        message.position = pos.addEq(0, -10);
         message.render();
     }
     

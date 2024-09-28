@@ -48,7 +48,7 @@ public class Weapon {
             Bullet sys = bullet.getMainSystem();
             
             sys.damage = damage;
-            sys.trans.position = position;
+            sys.trans.position = position.clone();
             sys.tangible.velocity = direction.multiply(speed);
 
             GameLoop.safeTrack(bullet);

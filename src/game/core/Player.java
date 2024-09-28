@@ -115,7 +115,7 @@ public class Player extends ECSystem implements Controllable {
     @Override
     public void frame() {
         Vec2 moveVector = controlledMoveVector();
-        physics.applyForce(moveVector.multiply(500));
+        physics.applyForce(moveVector.multiplyEq(500));
         // physics.applyForce(moveVector.multiply(800).divideEq(tangible.velocity.clone().absMinAllowedValue(1)));
         
         // Friction
@@ -127,12 +127,10 @@ public class Player extends ECSystem implements Controllable {
     }
 
     private void tryFireWeapon() {
-        Vec2 direction = trans.position.add(new Vec2(rect.width*0.5f, rect.height*0.5f)).directionTo(GameLoop.getMousePosition());
-
-        // GameLoop.safeTrack(
-        //     BulletFactory.standardBullet(
-        //         new Transform(rect.getCenter(trans.position), trans.rotation), direction, Color.AQUA, entity, new Object[]{GameTags.PLAYER_TEAM}));
-        weapon.fire(rect.getCenter(trans.position), direction);
+        if (weapon.canFire()) {
+            Vec2 direction = trans.position.add(new Vec2(rect.width*0.5f, rect.height*0.5f)).directionTo(GameLoop.getMousePosition());
+            weapon.fire(rect.getCenter(trans.position), direction);
+        }
     }
 
     @Override

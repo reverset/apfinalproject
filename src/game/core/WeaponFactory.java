@@ -8,6 +8,8 @@ import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
 public class WeaponFactory {
+    public static final Duration RADIUS_BULLET_LIFETIME = Duration.ofSeconds(1);
+
     public static Weapon standardWeapon(Color color, Entity owner, Object[] ignoreTags) {
         return new Weapon(() -> {
             return BulletFactory.standardBullet(5, new Transform(), new Vec2(), color, owner, ignoreTags, BulletFactory.STANDARD_BULLET_LIFE);
@@ -16,7 +18,7 @@ public class WeaponFactory {
 
     public static RadiusWeapon radiusWeapon(Color color, Entity owner, Object[] ignoreTags) {
         return new RadiusWeapon(() -> {
-            return BulletFactory.standardBullet(5, new Transform(), new Vec2(), color, owner, ignoreTags, Duration.ofSeconds(1));
+            return BulletFactory.standardBullet(5, new Transform(), new Vec2(), color, owner, ignoreTags, RADIUS_BULLET_LIFETIME);
         }, 3, 600f, 45);
     }
 }

@@ -14,7 +14,8 @@ import game.ecs.comps.Transform;
 public class BulletFactory {
     public static final int STANDARD_BULLET_SIZE = 10;
     public static final float STANDARD_BULLET_SPEED = 300;
-    public static final Duration STANDARD_BULLET_LIFE = Duration.ofSeconds(8);
+    
+    public static final Duration STANDARD_BULLET_LIFE = Duration.ofSeconds(5);
 
     public static EntityOf<Bullet> standardBullet(int damage, Transform trans, Vec2 direction, Color color, Entity owner, Object[] ignoreTags, Duration lifetime) {
         EntityOf<Bullet> entity = new EntityOf<>("Bullet", Bullet.class);
