@@ -22,7 +22,7 @@ import game.ecs.comps.Transform;
 public class Enemy extends ECSystem {
     public static final float SPEED = 200;
     public static final int SIZE = 50;
-    public static final float DESPAWN_DISTANCE = 2_000;
+    public static final float DESPAWN_DISTANCE = 5_000;
 
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
         Rect rect = new Rect(SIZE, SIZE, Color.RED);

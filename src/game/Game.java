@@ -25,6 +25,7 @@ public class Game {
 		loadLevel();
 
 		GameLoop.runBlocking();
+		// System.exit(0);
 	}
 	
 	public static void loadLevel() {

@@ -131,17 +131,25 @@ public class GameLoop {
 
 	public static void clearAllEntitiesAsync() {
 		Thread thread = new Thread(() -> {
+			ListIterator<Entity> iter = null;
 			synchronized (entities) {
-				ListIterator<Entity> iter = entities.listIterator();
-				
-				while (iter.hasNext()) {
-					Entity entity = iter.next();
-					entity.destroy();
-					iter.remove();
+				iter = entities.listIterator();
+			}
+			
+			while (true) { // this is ugly yes, but I did it so that the thread doesn't hold the lock on entities, so that I can update a progress bar.
+				synchronized (entities) {
+					if (iter.hasNext()) {
+						Entity entity = iter.next();
+						entity.destroy();
+						iter.remove();
+					} else break;
 				}
+				try {
+					Thread.sleep(10);
+				} catch (Exception e) {}
 			}
 		});
-
+		thread.setName("Entity Clearer");
 		thread.start();
 	}
 	
@@ -181,18 +189,24 @@ public class GameLoop {
 	public static void deinit() {
 		onShutdown.emit(Duration.ofMillis((long) (Raylib.GetTime()*1_000)));
 
+		int entitiesToClear = entities.size();
+		int entitiesLeft = entitiesToClear;
 		clearAllEntitiesAsync();
 		while (true) {
+			synchronized (entities) {
+				int size = entities.size();
+				entitiesLeft = entitiesToClear-size;
+				if (size <= 0) break;
+			}
+
 			Raylib.BeginDrawing();
 			Raylib.ClearBackground(Color.BLACK.getPointer());
-
-			Raylib.DrawText("Closing game ... (This may take some time)", 15, 15, 24, Color.WHITE.getPointer());
+			
+			long percentage = Math.round((entitiesLeft/(double)entitiesToClear)*100);
+			Raylib.DrawText("Closing game ... (This may take some time) " + percentage + "%", 15, 15, 24, Color.WHITE.getPointer());
 
 			Raylib.EndDrawing();
 
-			synchronized (entities) {
-				if (entities.size() <= 0) break;
-			}
 		}
 
 		System.gc();

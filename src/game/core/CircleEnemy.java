@@ -51,7 +51,7 @@ public class CircleEnemy extends Enemy {
 
     private Weapon weapon = WeaponFactory.radiusWeapon(Color.PINK, entity, new Object[]{GameTags.ENEMY_TEAM})
         .setDegreePerBullet(15)    
-        .setDamage(30);
+        .setDamage(15);
 
     @Override
     public void setup() {
