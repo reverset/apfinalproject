@@ -96,5 +96,5 @@ public abstract class ECSystem {
 	public void infrequentUpdate() {} // Called less frequently compared to frame.
 	public void render() {} // Also called every frame, but with the frame buffer ready and after the frame call.
 	public void hudRender() {} // Called every frame to render UI. Does not follow camera.
-	public void destroy() {} // Called when an Entity is removed from the game.
+	public void destroy() {} // Called when an Entity is removed from the game. It is possible for this method to be called asynchronously.
 }
