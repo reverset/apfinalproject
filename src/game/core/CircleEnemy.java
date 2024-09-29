@@ -1,7 +1,6 @@
 package game.core;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import game.Color;
@@ -10,14 +9,12 @@ import game.EntityOf;
 import game.GameLoop;
 import game.Shader;
 import game.ShaderUpdater;
-import game.Stopwatch;
 import game.Tuple;
 import game.Vec2;
 import game.core.rendering.Circle;
 import game.core.rendering.CircleRenderer;
 import game.core.rendering.Rect;
 import game.ecs.ECSystem;
-import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
 public class CircleEnemy extends Enemy {
@@ -25,10 +22,6 @@ public class CircleEnemy extends Enemy {
     public static final float SPEED = 1_000;
     public static final float MOVE_DELAY = 3;
 
-    private Optional<Entity> player;
-    private Transform playerTransform;
-
-    private Stopwatch movementStopwatch = new Stopwatch();
     private Vec2 desiredPosition;
     
     public static EntityOf<Enemy> makeEntity(Vec2 position) {

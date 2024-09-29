@@ -30,11 +30,10 @@ public class Enemy extends ECSystem {
     public Transform trans;
     public Tangible tangible;
 
-    private Stopwatch movementStopwatch = new Stopwatch();
-    private Stopwatch shootStopwatch = new Stopwatch();
+    Stopwatch movementStopwatch = new Stopwatch();
     
-    private Optional<Entity> player;
-    private Transform playerTransform;
+    Optional<Entity> player;
+    Transform playerTransform;
 
     private Vec2 desiredDirection = null;
 
@@ -85,7 +84,6 @@ public class Enemy extends ECSystem {
         
         timeOffset = (Math.random()+0.5) * 2;
         movementStopwatch.start();
-        shootStopwatch.start();
     }
     
     @Override
