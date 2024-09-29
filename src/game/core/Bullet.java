@@ -51,6 +51,8 @@ public class Bullet extends ECSystem {
                 otherPhysics.entity.getComponent(Health.class).ifPresent((health) -> health.damage(getDamage()));
                 otherPhysics.entity.getSystem(Physics.class).ifPresent((physics) -> physics.impulse(tangible.velocity.normalize().multiplyEq(100)));
                 GameLoop.safeDestroy(entity);
+
+                GameLoop.safeTrack(DamageNumber.makeEntity(trans.position, getDamage(), Color.YELLOW));
             }
         }, entity);
     }

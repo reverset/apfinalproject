@@ -60,17 +60,15 @@ public class Player extends ECSystem implements Controllable {
         final double HEALTH_PULSE_LENGTH = 0.1;
         final double HEALTH_DEFLATE_LENGTH = 2;
 
-        healthPulseAnimation = new TweenAnimation(
-            List.of(
-                new Tween<>(Tween.lerp(INITIAL_FONT_SIZE, INITIAL_FONT_SIZE * 1.5), HEALTH_PULSE_LENGTH, v -> {
+        healthPulseAnimation = new TweenAnimation(List.of(
+            new Tween<>(Tween.lerp(INITIAL_FONT_SIZE, INITIAL_FONT_SIZE * 1.5), HEALTH_PULSE_LENGTH, v -> {
                 healthText.fontSize = v.intValue();
                 healthText.position.y = Vec2.screen().y - 10 - healthText.fontSize;
             }),
             new Tween<>(Tween.lerp(INITIAL_FONT_SIZE*1.5, INITIAL_FONT_SIZE), HEALTH_DEFLATE_LENGTH, v -> {
                 healthText.fontSize = v.intValue();
                 healthText.position.y = Vec2.screen().y - 10 - healthText.fontSize;
-            })
-        ));
+        })));
 
         entity.register(healthPulseAnimation);
     }

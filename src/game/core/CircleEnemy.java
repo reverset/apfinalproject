@@ -61,7 +61,7 @@ public class CircleEnemy extends Enemy {
 
     private RadiusWeapon deathWeapon = WeaponFactory.radiusWeapon(Color.PINK, entity, new Object[]{})
         .setDegreePerBullet(10)
-        .setDamage(5)
+        .setDamage(50)
         .setSpeed(100);
 
     @Override
