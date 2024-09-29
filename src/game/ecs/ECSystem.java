@@ -76,11 +76,15 @@ public abstract class ECSystem {
 	}
 	
 	protected static float delta() {
+		return Raylib.GetFrameTime() * GameLoop.timeScale;
+	}
+
+	protected static float deltaNoTimeScale() {
 		return Raylib.GetFrameTime();
 	}
 
 	protected static float infreqDelta() {
-		return GameLoop.INFREQUENT_UPDATE_RATE;
+		return GameLoop.INFREQUENT_UPDATE_RATE * GameLoop.timeScale;
 	}
 
 	protected static float time() {

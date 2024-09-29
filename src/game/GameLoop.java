@@ -17,6 +17,8 @@ import game.ecs.Entity;
 public class GameLoop {
 	public static final int SCREEN_WIDTH = 850;
 	public static final int SCREEN_HEIGHT = 450;
+	public static final float INFREQUENT_UPDATE_RATE = 1f / 32;
+	public static float timeScale = 1f;
 
 	public static final Signal<Duration> onShutdown = new Signal<>();
 
@@ -35,7 +37,6 @@ public class GameLoop {
 	private static boolean shouldShutdown = false;
 
 	private static Stopwatch infrequentUpdateStopwatch = new Stopwatch();
-	public static final float INFREQUENT_UPDATE_RATE = 1f / 32;
 
 	private static final PollingIterator<Runnable> deferIterator = new PollingIterator<>(deferments);
 
