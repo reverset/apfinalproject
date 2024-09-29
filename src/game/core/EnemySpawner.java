@@ -38,9 +38,9 @@ public class EnemySpawner extends ECSystem {
             enemies.add(entity);
             GameLoop.safeTrack(entity);
             GameLoop.defer(() -> {
-                entity.onDestroy.listen(n -> {
+                entity.onDestroy.listenOnce(n -> {
                     enemies.remove(entity);
-                }, entity);
+                });
             });
         }
     }

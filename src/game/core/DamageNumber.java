@@ -48,10 +48,17 @@ public class DamageNumber extends ECSystem {
     public void setup() {
         trans = require(Transform.class);
         text.position = trans.position;
+        
         text.color = color;
         text.text = String.valueOf(value);
-
+        
         int desiredPoppedSize = BASE_POPPED_FONT_SIZE + value*2;
+        
+        int orig = text.fontSize;
+        text.fontSize = desiredPoppedSize;
+        text.position.x -= text.measure()*0.5;
+        text.fontSize = orig;
+
         animation = new TweenAnimation(List.of(
             new Tween<>(Tween.lerp(24, desiredPoppedSize), POP_DURATION, v -> {
                 text.fontSize = v.intValue();
