@@ -21,7 +21,7 @@ public class EnemySpawner extends ECSystem {
 
     public static EntityOf<Enemy> randomEntity(Vec2 pos) {
         double rand = Math.random();
-        if (rand < 0.5) {
+        if (rand < 0.9) {
             return Enemy.makeEntity(pos);
         }
 

@@ -146,28 +146,6 @@ public class Vec2 {
 		y /= divisor.y;
 		return this;
 	}
-
-	public Vec2 minAllowedValue(float min) {
-		x = Math.max(min, x);
-		y = Math.max(min, y);
-		return this;
-	}
-
-	public Vec2 absMinAllowedValue(float min) {
-		if (x < 0) {
-			x = Math.min(-min, x);
-		} else {
-			x = Math.max(min, x);
-		}
-
-		if (y < 0) {
-			y = Math.min(-min, y);
-		} else {
-			y = Math.max(min, y);
-		}
-
-		return this;
-	}
 	
 	public Vec2 multiply(Vec2 other) {
 		return new Vec2(x * other.x, y * other.y);
@@ -246,13 +224,6 @@ public class Vec2 {
 	public void clampEq(float minX, float minY, float maxX, float maxY) {
 		x = MoreMath.clamp(x, minX, maxX);
 		y = MoreMath.clamp(y, minY, maxY);
-	}
-
-	public void clampEq(Vec2 maxMag) {
-		if (magnitude() > maxMag.magnitude()) {
-			x = Math.copySign(maxMag.x, x);
-			y = Math.copySign(maxMag.y, y);
-		}
 	}
 
 	public Vec2 moveTowards(Vec2 other, float delta) {
