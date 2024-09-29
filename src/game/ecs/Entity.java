@@ -9,6 +9,7 @@ import game.Binded;
 import game.Signal;
 
 public class Entity {
+	public final Signal<Void> onReady = new Signal<>();
 	public final Signal<Void> onDestroy = new Signal<>();
 
 	private final ArrayList<ECSystem> systems = new ArrayList<>();
@@ -19,9 +20,23 @@ public class Entity {
 	private final ArrayList<Binded> binded = new ArrayList<>();
 	
 	public final String name;
-	
+
+	private boolean hidden = false;
+
 	public Entity(String name) {
 		this.name = name;
+	}
+
+	public void hide() {
+		hidden = true;
+	}
+
+	public void show() {
+		hidden = false;
+	}
+
+	public boolean isHidden() {
+		return hidden;
 	}
 
 	public Entity addTags(Object... tag) {
@@ -59,6 +74,7 @@ public class Entity {
 	
 	public void ready() {
 		systems.forEach(ECSystem::ready);
+		onReady.emit(null);
 	}
 	
 	public void frame() {
@@ -66,6 +82,7 @@ public class Entity {
 	}
 	
 	public void render() {
+		if (hidden) return;
 		systems.forEach(ECSystem::render);
 	}
 

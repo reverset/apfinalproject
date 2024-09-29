@@ -68,9 +68,24 @@ public class DamageNumber extends ECSystem {
     public void ready() {
         animation.start();
     }
+
+    @Override
+    public void frame() {
+        text.position.y -= 50 * delta();
+    }
     
     @Override
     public void render() {
+        final int SHIFT = 4;
+
+        text.color = Color.BLACK;
+        text.position.x -= SHIFT/2;
+        text.fontSize += SHIFT;
+        text.render();
+        text.fontSize -= SHIFT;
+        text.position.x += SHIFT/2;
+
+        text.color = color;
         text.render();
     }
 }

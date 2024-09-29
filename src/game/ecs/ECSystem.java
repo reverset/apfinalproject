@@ -67,7 +67,7 @@ public abstract class ECSystem {
 		
 		while (iter.hasNext()) {
 			ECSystem c = iter.next();
-			if (c.getClass() == system) {
+			if (system.isAssignableFrom(c.getClass())) {
 				return (T) c;
 			}
 		}

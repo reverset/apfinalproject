@@ -38,7 +38,7 @@ public class CircleEnemy extends Enemy {
             .addComponent(new Rect((int) RADIUS*2, (int) RADIUS*2, Color.WHITE))
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new CircleRenderer())
-            .register(new Physics(0, 1, new Vec2(-RADIUS, -RADIUS)))
+            .register(new Physics(0, 0, new Vec2(-RADIUS, -RADIUS)))
             .register(new HealthBar(
                 new Vec2(-RADIUS*2, -50), entity.name
             ))

@@ -12,7 +12,7 @@ public class Physics extends ECSystem {
         DYNAMIC,
         STATIC,
     }
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     private static final ArrayList<ArrayList<Physics>> physicsObjects = new ArrayList<>();
 
@@ -74,15 +74,15 @@ public class Physics extends ECSystem {
 
         trans.position.addEq(tangible.velocity.x * delta(), tangible.velocity.y * delta());
 
-        // checkCollisions();
+        checkCollisions();
     }
 
     @Override
     public void infrequentUpdate() {
-        checkCollisions();
+        // checkCollisions();
     }
 
-    private void checkCollisions() { // Consider using layers so that objects don't check unneccessary collisions. >> FIXME: huge performance issue
+    private void checkCollisions() {
         for (var obj : physicsObjects.get(layerMask)) {
             if (obj == this) continue;
 

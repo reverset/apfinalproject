@@ -3,14 +3,15 @@ package game.core.rendering;
 import java.util.Optional;
 
 import game.Shader;
-import game.ecs.ECSystem;
 import game.ecs.comps.Transform;
 
-public class CircleRenderer extends ECSystem {
+public class CircleRenderer extends Renderer {
 
     Circle circle;
     Transform trans;
     Optional<Shader> shader;
+
+    private boolean hidden = false;
 
     @Override
     public void setup() {
@@ -21,6 +22,8 @@ public class CircleRenderer extends ECSystem {
 
     @Override
     public void render() {
+        if (hidden) return;
+
         if (shader.isPresent()) {
             Shader shade = shader.get();
             shade.activate();
@@ -29,6 +32,21 @@ public class CircleRenderer extends ECSystem {
         } else {
             circle.render(trans.position);
         }
+    }
+
+    @Override
+    public void hide() {
+        hidden = true;
+    }
+
+    @Override
+    public void show() {
+        hidden = false;
+    }
+
+    @Override
+    public boolean isHidden() {
+        return hidden;
     }
     
 }

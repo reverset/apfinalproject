@@ -6,6 +6,7 @@ import game.ecs.Component;
 public class Health implements Component {
     private int health;
     private int maxHealth;
+    private boolean confirmedDeath = false;
 
     public Health(int maxHp) {
         maxHealth = maxHp;
@@ -18,7 +19,10 @@ public class Health implements Component {
     public void damage(int dmg) {
         health -= dmg;
         onDamage.emit(dmg);
-        if (health <= 0) onDeath.emit(null);
+        if (health <= 0 && !confirmedDeath) {
+            confirmedDeath = true; 
+            onDeath.emit(null);
+        }
     }
 
     public int getHealth() {

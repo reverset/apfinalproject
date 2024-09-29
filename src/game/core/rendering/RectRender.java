@@ -8,10 +8,11 @@ import java.util.Optional;
 
 import com.raylib.Raylib;
 
-public class RectRender extends ECSystem {
+public class RectRender extends Renderer {
     private Rect rect;
     private Transform trans;
     private Optional<Shader> shader;
+    private boolean hidden = false;
 
     @Override
     public void setup() {
@@ -22,6 +23,8 @@ public class RectRender extends ECSystem {
 
     @Override
     public void render() {
+        if (hidden) return;
+
         if (shader.isPresent()) {
             Shader shade = shader.get();
             shade.activate();
@@ -30,6 +33,21 @@ public class RectRender extends ECSystem {
         } else {
             Raylib.DrawRectangle(trans.position.xInt(), trans.position.yInt(), rect.width, rect.height, rect.color.getPointer());
         }
+    }
+
+    @Override
+    public void hide() {
+        hidden = true;
+    }
+
+    @Override
+    public void show() {
+        hidden = false;
+    }
+
+    @Override
+    public boolean isHidden() {
+        return hidden;
     }
     
 }

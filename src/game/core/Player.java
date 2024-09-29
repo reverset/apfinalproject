@@ -26,7 +26,7 @@ public class Player extends ECSystem implements Controllable {
     public static Entity makeEntity() {
         return new Entity("Player")
             .addComponent(new Transform())
-            .addComponent(new Health(200))
+            .addComponent(new Health(5000))
             .addComponent(new Rect(30, 30, Color.GREEN))
             .addComponent(new Tangible())
             .register(new RectRender())
@@ -154,8 +154,9 @@ public class Player extends ECSystem implements Controllable {
 
         healthText.render();
 
-        // Raylib.DrawText("Objs: " + GameLoop.entityCount(), 15, 50, 24, Color.WHITE.getPointer());
-        // Raylib.DrawText("Velocity: " + tangible.velocity, 15, 75, 24, Color.WHITE.getPointer());
-        // Raylib.DrawText("Speed: " + tangible.velocity.magnitude(), 15, 105, 24, Color.WHITE.getPointer());
+        Raylib.DrawText("Objs: " + GameLoop.entityCount(), 15, 50, 24, Color.WHITE.getPointer());
+        Raylib.DrawText("Velocity: " + tangible.velocity, 15, 75, 24, Color.WHITE.getPointer());
+        Raylib.DrawText("Speed: " + tangible.velocity.magnitude(), 15, 102, 24, Color.WHITE.getPointer());
+        Raylib.DrawText("Bullets: " + BulletFactory.bullets.size(), 15, 124, 24, Color.WHITE.getPointer());
     }
 }
