@@ -25,6 +25,12 @@ public class CircleEnemy extends Enemy {
     public static final float SPEED = 1_000;
     public static final float MOVE_DELAY = 3;
 
+    private Optional<Entity> player;
+    private Transform playerTransform;
+
+    private Stopwatch movementStopwatch = new Stopwatch();
+    private Vec2 desiredPosition;
+    
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
@@ -49,11 +55,6 @@ public class CircleEnemy extends Enemy {
     }
 
 
-    private Optional<Entity> player;
-    private Transform playerTransform;
-
-    private Stopwatch movementStopwatch = new Stopwatch();
-    private Vec2 desiredPosition;
 
     private RadiusWeapon weapon = WeaponFactory.radiusWeapon(Color.PINK, entity, new Object[]{GameTags.ENEMY_TEAM})
         .setDegreePerBullet(15)    

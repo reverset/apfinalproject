@@ -24,6 +24,24 @@ public class Enemy extends ECSystem {
     public static final float SPEED = 200;
     public static final int SIZE = 50;
     public static final float DESPAWN_DISTANCE = 5_000;
+    
+    public Health health;
+    public Rect rect;
+    public Transform trans;
+    public Tangible tangible;
+
+    private Stopwatch movementStopwatch = new Stopwatch();
+    private Stopwatch shootStopwatch = new Stopwatch();
+    
+    private Optional<Entity> player;
+    private Transform playerTransform;
+
+    private Vec2 desiredDirection = null;
+
+    private Weapon weapon = WeaponFactory.standardWeapon(Color.RED, entity, new Object[]{GameTags.ENEMY_TEAM})
+        .setCooldown(2);
+
+    double timeOffset = 0;
 
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
         Rect rect = new Rect(SIZE, SIZE, Color.RED);
@@ -49,23 +67,6 @@ public class Enemy extends ECSystem {
         return entity;
     }
 
-    public Health health;
-    public Rect rect;
-    public Transform trans;
-    public Tangible tangible;
-
-    private Stopwatch movementStopwatch = new Stopwatch();
-    private Stopwatch shootStopwatch = new Stopwatch();
-    
-    private Optional<Entity> player;
-    private Transform playerTransform;
-
-    private Vec2 desiredDirection = null;
-
-    private Weapon weapon = WeaponFactory.standardWeapon(Color.RED, entity, new Object[]{GameTags.ENEMY_TEAM})
-        .setCooldown(2);
-
-    double timeOffset = 0;
 
     @Override
     public void setup() {

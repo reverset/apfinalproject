@@ -8,6 +8,7 @@ import game.Vec2;
 
 public class RadiusWeapon extends Weapon {
     float radianPerBullet;
+    
     public RadiusWeapon(Supplier<EntityOf<Bullet>> bulletSupplier, float cooldown, float speed, float degreePerBullet) {
         super(bulletSupplier, cooldown, speed);
         this.radianPerBullet = (float) Math.toRadians(degreePerBullet);

@@ -13,7 +13,6 @@ import java.util.Arrays;
 
 import com.raylib.Raylib;
 
-
 public class Bullet extends ECSystem {
     public static final int BULLET_DAMAGE = 5;
 

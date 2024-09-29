@@ -8,13 +8,14 @@ public class Health implements Component {
     private int maxHealth;
     private boolean confirmedDeath = false;
 
+    public final Signal<Integer> onDamage = new Signal<>();
+    public final Signal<Void> onDeath = new Signal<>();
+    
     public Health(int maxHp) {
         maxHealth = maxHp;
         health = maxHealth;
     }
 
-    public final Signal<Integer> onDamage = new Signal<>();
-    public final Signal<Void> onDeath = new Signal<>();
 
     public void damage(int dmg) {
         health -= dmg;

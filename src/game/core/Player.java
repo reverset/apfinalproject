@@ -22,6 +22,13 @@ public class Player extends ECSystem implements Controllable {
     public static final float MAX_SPEED = 200;
 
     public final Text healthText = new Text("N/A", new Vec2(15, Vec2.screen().y-64), 54, new Color(255, 255, 255, 255));
+    private Tangible tangible;
+    private Physics physics;
+    private Transform trans;
+    private Rect rect;
+    private Health health;
+
+    private TweenAnimation healthPulseAnimation;
 
     public static Entity makeEntity() {
         return new Entity("Player")
@@ -36,13 +43,6 @@ public class Player extends ECSystem implements Controllable {
             .addTags(GameTags.PLAYER, GameTags.PLAYER_TEAM);
     }
 
-    private Tangible tangible;
-    private Physics physics;
-    private Transform trans;
-    private Rect rect;
-    private Health health;
-
-    private TweenAnimation healthPulseAnimation;
 
     private Weapon weapon = WeaponFactory.standardWeapon(Color.AQUA, entity, new Object[]{GameTags.PLAYER_TEAM})
         .setCooldown(0.2f)

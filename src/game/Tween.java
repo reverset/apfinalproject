@@ -11,6 +11,14 @@ public class Tween<T> extends ECSystem {
         T supply(double normalPercentage);
     }
 
+    public final Signal<Void> onFinish = new Signal<>();
+
+    private double startTime = -1;
+    private Consumer<T> updater;
+    private TweenFunction<T> supplier;
+    private double durationSeconds;
+    private boolean shouldDestroy;
+
     public static TweenFunction<Double> lerp(double from, double to) {
         return percent -> MoreMath.lerp(from, to, percent);
     }
@@ -27,13 +35,6 @@ public class Tween<T> extends ECSystem {
         return percent -> MoreMath.lerp(from, to, (float) percent);
     }
 
-    public final Signal<Void> onFinish = new Signal<>();
-
-    private double startTime = -1;
-    private Consumer<T> updater;
-    private TweenFunction<T> supplier;
-    private double durationSeconds;
-    private boolean shouldDestroy;
 
     public Tween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
         this(supplier, durationSeconds, true, updater);

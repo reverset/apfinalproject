@@ -1,10 +1,7 @@
 package game.core;
 
-import java.util.List;
-
 import game.Color;
 import game.ImmutableColor;
-import game.Stopwatch;
 import game.Text;
 import game.Tween;
 import game.Vec2;
@@ -40,7 +37,6 @@ public class HealthBar extends ECSystem {
     @SuppressWarnings("unchecked")
     @Override
     public void ready() {
-        
         colorTween = (Tween<float[]>) requireOrAddSystem(Tween.class, () ->  {
             return new Tween<>(Tween.lerp(new float[]{255, 255, 255}, new float[]{255, 0, 0}), 0.2, val -> {
                 healthBar.color = new ImmutableColor((int) val[0], (int) val[1], (int) val[2], 255);
