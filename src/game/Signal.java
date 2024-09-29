@@ -51,8 +51,10 @@ public class Signal<T> implements Binded {
 
         while (iter.hasNext()) {
             SignalCallback<T> call = iter.next();
+            if (call.entityAssociation != null && !call.entityAssociation.isManifested()) continue;
+            
             call.callback.accept(value);
-
+            
             if (call.once) iter.remove();
         }
     }

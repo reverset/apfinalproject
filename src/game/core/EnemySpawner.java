@@ -20,17 +20,17 @@ public class EnemySpawner extends ECSystem {
     }
 
     public static EntityOf<Enemy> randomEntity(Vec2 pos) {
-        // double rand = Math.random();
-        // if (rand < 0.9) {
-        //     return Enemy.makeEntity(pos);
-        // }
+        double rand = Math.random();
+        if (rand < 0.5) {
+            return Enemy.makeEntity(pos);
+        }
 
         return CircleEnemy.makeEntity(pos);
     }
 
     @Override
     public void frame() {
-        if (enemies.size() < 1 && stopwatch.hasElapsedSecondsAdvance(0.5)) {
+        if (enemies.size() < 10 && stopwatch.hasElapsedSecondsAdvance(0.5)) {
             Vec2 offset = Vec2.randomUnit().multiplyEq(Vec2.screen().x + Enemy.SIZE);
             Vec2 spawnPosition = Vec2.screenCenter().screenToWorldEq().addEq(offset);
             EntityOf<Enemy> entity = randomEntity(spawnPosition);

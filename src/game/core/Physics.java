@@ -12,14 +12,14 @@ public class Physics extends ECSystem {
         DYNAMIC,
         STATIC,
     }
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private static final ArrayList<ArrayList<Physics>> physicsObjects = new ArrayList<>();
 
     static {
-        physicsObjects.add(new ArrayList<>());
-        physicsObjects.add(new ArrayList<>());
-        physicsObjects.add(new ArrayList<>());
+        physicsObjects.add(new ArrayList<>(100));
+        physicsObjects.add(new ArrayList<>(100));
+        physicsObjects.add(new ArrayList<>(100));
     }
 
     private Rect collisionRect;
@@ -74,12 +74,12 @@ public class Physics extends ECSystem {
 
         trans.position.addEq(tangible.velocity.x * delta(), tangible.velocity.y * delta());
 
-        checkCollisions();
+        // checkCollisions();
     }
 
     @Override
     public void infrequentUpdate() {
-        // checkCollisions();
+        checkCollisions();
     }
 
     private void checkCollisions() {

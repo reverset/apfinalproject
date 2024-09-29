@@ -23,6 +23,8 @@ public class Entity {
 
 	private boolean hidden = false;
 
+	private boolean manifested = false;
+
 	public Entity(String name) {
 		this.name = name;
 	}
@@ -71,8 +73,13 @@ public class Entity {
 	public void bind(Binded bind) {
 		if (!binded.contains(bind)) binded.add(bind);
 	}
+
+	public boolean isManifested() {
+		return manifested;
+	}
 	
 	public void ready() {
+		manifested = true;
 		systems.forEach(ECSystem::ready);
 		onReady.emit(null);
 	}
@@ -95,6 +102,7 @@ public class Entity {
 	}
 
 	public void destroy() {
+		manifested = false;
 		systems.forEach(ECSystem::destroy);
 		onDestroy.emit(null);
 		binded.forEach((bind) -> bind.unbind(this));

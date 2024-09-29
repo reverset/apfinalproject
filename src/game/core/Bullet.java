@@ -46,7 +46,7 @@ public class Bullet extends ECSystem {
 
     @Override
     public void ready() {
-        tangible.onCollision.listenOnce((otherPhysics) -> {
+        tangible.onCollision.listen((otherPhysics) -> {
             if (otherPhysics.entity != owner && !otherPhysics.entity.hasTag(GameTags.BULLET) && !otherPhysics.entity.hasTags(ignoreTags)) {
                 otherPhysics.entity.getComponent(Health.class).ifPresent((health) -> health.damage(getDamage()));
                 otherPhysics.entity.getSystem(Physics.class).ifPresent((physics) -> physics.impulse(tangible.velocity.normalize().multiplyEq(100)));
@@ -54,7 +54,7 @@ public class Bullet extends ECSystem {
 
                 GameLoop.safeTrack(DamageNumber.makeEntity(trans.position, getDamage(), Color.WHITE));
             }
-        });
+        }, entity);
     }
 
     @Override
