@@ -23,8 +23,8 @@ public class Tween<T> extends ECSystem {
         return percent -> MoreMath.lerp(from, to, percent);
     }
 
-    public static TweenFunction<Double> lerp(float from, float to) {
-        return percent -> MoreMath.lerp(from, to, percent);
+    public static TweenFunction<Float> lerp(float from, float to) {
+        return percent -> MoreMath.lerp(from, to, (float) percent);
     }
 
     public static TweenFunction<Vec2> lerp(Vec2 from, Vec2 to) {
