@@ -1,6 +1,7 @@
 package game.core;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import game.Vec2;
 import game.core.rendering.Rect;
@@ -50,6 +51,16 @@ public class Physics extends ECSystem {
 
     public Physics(int layer, int layerMask, Vec2 hitBoxOffset) {
         this(Kind.DYNAMIC, layer, layerMask, hitBoxOffset);    
+    }
+
+    public static Optional<Vec2> testRay(Ray ray) {
+        for (var obj : physicsObjects.get(ray.layerMask)) {
+            Optional<Vec2> p = obj.collisionRect.checkRayHit(obj.trans.position.add(obj.hitBoxOffset), ray);
+            if (p.isPresent()) {
+                return p;
+            }
+        }
+        return Optional.empty();
     }
 
     public void unregister() {

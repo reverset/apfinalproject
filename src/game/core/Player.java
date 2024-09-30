@@ -116,9 +116,11 @@ public class Player extends ECSystem implements Controllable {
         });
     }
 
+
     @Override
     public void frame() {
         Vec2 moveVector = controlledMoveVector();
+        
         
         if (tangible.velocity.magnitude() > 300) {
             tangible.velocity.minusEq(tangible.velocity.normalize().multiplyEq(50));
@@ -146,8 +148,21 @@ public class Player extends ECSystem implements Controllable {
         tryFireWeapon();
     }
 
+    Ray ray = new Ray(Vec2.zero(), Vec2.right(), 300, 0); // TODO
+
+    @Override
+    public void render() {
+        if (ray.test().isPresent()) {
+
+            Vec2 pos = ray.test().get();
+            Raylib.DrawCircle(pos.xInt(), pos.yInt(), 5, Color.WHITE.getPointer());
+        }
+        Raylib.DrawLine(ray.position.xInt(), ray.position.yInt(), ray.endPoint.xInt(), ray.endPoint.yInt(), Color.WHITE.getPointer());
+    }
+
     @Override
     public void hudRender() {
+
         healthText.text = "" + health.getHealth();
         if (health.isCritical()) {
 

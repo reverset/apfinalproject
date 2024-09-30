@@ -3,7 +3,10 @@ package game.core.rendering;
 import game.Color;
 import game.Janitor;
 import game.Vec2;
+import game.core.Ray;
 import game.ecs.Component;
+
+import java.util.Optional;
 
 import com.raylib.Raylib;
 
@@ -25,18 +28,38 @@ public class Rect implements Component {
     }
     
     public boolean overlaps(Vec2 position, Vec2 otherPosition, Rect other) {
-        // var rect = raylibFromPosition(position);
         internal.x(position.x).y(position.y);
 
-        // var otherR = other.raylibFromPosition(otherPosition);
         var otherPointer = other.getPointer().x(otherPosition.x).y(otherPosition.y);
+        return Raylib.CheckCollisionRecs(internal, otherPointer);
+    }
 
-        boolean result = Raylib.CheckCollisionRecs(internal, otherPointer);
+    public Optional<Vec2> checkRayHit(Vec2 position, Ray ray) { // TODO FIXME
+        internal.x(position.x).y(position.y);
 
-        // rect.close();
-        // otherR.close();
+        Vec2 bottomLeft = new Vec2(position.x, position.y+height);
+        Vec2 topRight = new Vec2(position.x+width, position.y);
+        Vec2 bottomRight = new Vec2(position.x+width, position.y+height);
 
-        return result;
+        Raylib.Vector2 point = new Raylib.Vector2();
+
+        if (Raylib.CheckCollisionLines(ray.position.getPointer(), ray.endPoint.getPointer(), position.getPointer(), bottomLeft.getPointer(), point)) {
+            return Optional.of(new Vec2(point));
+        }
+
+        if (Raylib.CheckCollisionLines(ray.position.getPointer(), ray.endPoint.getPointer(), position.getPointer(), topRight.getPointer(), point)) {
+            return Optional.of(new Vec2(point));
+        }
+
+        if (Raylib.CheckCollisionLines(ray.position.getPointer(), ray.endPoint.getPointer(), topRight.getPointer(), bottomRight.getPointer(), point)) {
+            return Optional.of(new Vec2(point));
+        }
+
+        if (Raylib.CheckCollisionLines(ray.position.getPointer(), ray.endPoint.getPointer(), bottomLeft.getPointer(), bottomRight.getPointer(), point)) {
+            return Optional.of(new Vec2(point));
+        }
+
+        return Optional.empty();
     }
 
     public Vec2 dimensions() {
