@@ -108,6 +108,12 @@ public class Vec2 {
 		y = -y;
 		return this;
 	}
+
+	public Vec2 setEq(float ox, float oy) {
+		x = ox;
+		y = oy;
+		return this;
+	}
 	
 	public Vec2 normalize() {
 		float mag = magnitude();

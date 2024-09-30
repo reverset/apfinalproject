@@ -12,7 +12,8 @@ public class Physics extends ECSystem {
         DYNAMIC,
         STATIC,
     }
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
+    public Vec2 hitBoxOffset;
 
     private static final ArrayList<ArrayList<Physics>> physicsObjects = new ArrayList<>();
 
@@ -27,7 +28,6 @@ public class Physics extends ECSystem {
     private Tangible tangible;
     private Kind kind;
 
-    private Vec2 hitBoxOffset;
 
     private int layer;
     private int layerMask;
@@ -86,7 +86,7 @@ public class Physics extends ECSystem {
         for (var obj : physicsObjects.get(layerMask)) {
             if (obj == this) continue;
 
-            if (obj.collisionRect.overlaps(obj.trans.position, trans.position.add(hitBoxOffset), collisionRect)) {
+            if (obj.collisionRect.overlaps(obj.trans.position.add(obj.hitBoxOffset), trans.position.add(hitBoxOffset), collisionRect)) {
                 tangible.onCollision.emit(obj);
             }
         }

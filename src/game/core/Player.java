@@ -20,6 +20,7 @@ import game.ecs.comps.Transform;
 
 public class Player extends ECSystem implements Controllable {
     public static final float MAX_SPEED = 200;
+    public static final int SIZE = 30;
 
     public final Text healthText = new Text("N/A", new Vec2(15, Vec2.screen().y-64), 54, new Color(255, 255, 255, 255));
     private Tangible tangible;
@@ -34,7 +35,7 @@ public class Player extends ECSystem implements Controllable {
         return new Entity("Player")
             .addComponent(new Transform())
             .addComponent(new Health(5000))
-            .addComponent(new Rect(30, 30, Color.GREEN))
+            .addComponent(new Rect(SIZE, SIZE, Color.GREEN))
             .addComponent(new Tangible())
             .register(new RectRender())
             .register(new Physics(0, 0))
@@ -71,6 +72,10 @@ public class Player extends ECSystem implements Controllable {
         })));
 
         entity.register(healthPulseAnimation);
+    }
+
+    public Vec2 getCenter() {
+        return rect.getCenter(trans.position);
     }
 
     @Override

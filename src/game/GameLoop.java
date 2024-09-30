@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.function.Consumer;
 
 import com.raylib.Jaylib;
 import com.raylib.Raylib;
 
+import game.Tween.TweenFunction;
 import game.ecs.Entity;
 
 public class GameLoop {
@@ -69,6 +71,16 @@ public class GameLoop {
 		entities.add(entity);
 		entity.ready();
 		return entity;
+	}
+
+	public static <T> Tween<T> makeTween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
+		var tween = new Tween<>(supplier, durationSeconds, updater);
+		Entity entity = new Entity("tween")
+			.register(tween);
+		
+		GameLoop.safeTrack(entity);
+
+		return tween;
 	}
 
 	public static <T extends Entity> T safeTrack(T entity) {
