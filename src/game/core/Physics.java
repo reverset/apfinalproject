@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.print.attribute.standard.OrientationRequested;
-
 import game.Vec2;
 import game.core.rendering.Rect;
 import game.ecs.ECSystem;
@@ -16,7 +14,7 @@ public class Physics extends ECSystem {
         DYNAMIC,
         STATIC,
     }
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     public Vec2 hitBoxOffset;
 
     private static final ArrayList<ArrayList<Physics>> physicsObjects = new ArrayList<>();

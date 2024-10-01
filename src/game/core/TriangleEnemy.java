@@ -23,6 +23,9 @@ public class TriangleEnemy extends Enemy {
     RayWeapon weapon = new RayWeapon(Vec2.zero(), Vec2.up(), 50, 500, 0.1f, 0, new Object[]{GameTags.ENEMY_TEAM})
         .setForce(1_000);
 
+    Color rayColor = new Color(255, 0, 0, 0);
+    boolean freezeRotation = false;
+
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
         // Supplier<Float> timeSupplier = ECSystem::time; // ????
         EntityOf<Enemy> entity = new EntityOf<>("Triangle", Enemy.class);
@@ -81,16 +84,37 @@ public class TriangleEnemy extends Enemy {
             desiredPosition = null;
 
 
-            movementTween.onFinish.listen((v) -> {
-                GameLoop.runAfter(entity, Duration.ofSeconds(1), () -> {
+            movementTween.onFinish.listen((n) -> { // Laser animation
+                GameLoop.makeTween(Tween.lerp(0, 50), 3, val -> {
+                    weapon.ray.position = trans.position;
+                    weapon.ray.direction = getFacing();
+                    weapon.ray.updateRay();
+
+                    rayColor.a = val.byteValue();
+
+                    if (rayColor.a > 40) freezeRotation = true;
+                }).start().onFinish.listen(nn -> {
                     weapon.fire(trans.position, getFacing());
-                });
+
+                    GameLoop.makeTween(Tween.lerp(255, 0), 0.5, val -> {
+                        weapon.ray.position = trans.position;
+                        weapon.ray.direction = getFacing();
+                        weapon.ray.updateRay();
+    
+                        rayColor.a = val.byteValue();
+
+                        if (rayColor.a == 0) freezeRotation = false;
+                    }).start();
+
+                }, entity);
             }, entity);
         }
     }
 
     @Override
     public void infrequentUpdate() {
+        if (freezeRotation) return;
+
         Vec2 pos = playerTransform.position.add(SIZE*0.5f, SIZE*0.5f);
         Vec2 dir = trans.position.directionTo(pos);
         trans.rotation = (float) -Math.toDegrees(dir.getAngle()) - 90;
@@ -98,6 +122,6 @@ public class TriangleEnemy extends Enemy {
 
     @Override
     public void render() {
-        weapon.ray.render(Color.WHITE);
+        weapon.ray.renderEx(15, rayColor);
     }
 }

@@ -52,8 +52,9 @@ public class Tween<T> extends ECSystem {
         return this;
     }
 
-    public void start() {
+    public Tween<T> start() {
         startTime = timeDouble();
+        return this;
     }
 
     public void stop() {

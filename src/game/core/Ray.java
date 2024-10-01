@@ -42,4 +42,8 @@ public class Ray {
     public void render(Color color) {
         Raylib.DrawLine(position.xInt(), position.yInt(), endPoint.xInt(), endPoint.yInt(), color.getPointer());
     }
+
+    public void renderEx(float thickness, Color color) {
+        Raylib.DrawLineEx(position.getPointer(), endPoint.getPointer(), thickness, color.getPointer());
+    }
 }
