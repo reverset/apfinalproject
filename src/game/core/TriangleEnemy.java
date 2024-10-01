@@ -1,5 +1,7 @@
 package game.core;
 
+import java.time.Duration;
+
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
@@ -17,6 +19,9 @@ public class TriangleEnemy extends Enemy {
 
     Vec2 desiredPosition;
     Tween<?> movementTween;
+
+    RayWeapon weapon = new RayWeapon(Vec2.zero(), Vec2.up(), 50, 500, 0.1f, 0, new Object[]{GameTags.ENEMY_TEAM})
+        .setForce(1_000);
 
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
         // Supplier<Float> timeSupplier = ECSystem::time; // ????
@@ -38,6 +43,10 @@ public class TriangleEnemy extends Enemy {
 
         return entity;
     }
+    
+    public Vec2 getFacing() {
+        return Vec2.fromAngle((float) Math.toRadians(-trans.rotation+270));
+    }
 
     @Override
     public void setup() {
@@ -47,6 +56,7 @@ public class TriangleEnemy extends Enemy {
         trans = require(Transform.class);
         tangible = require(Tangible.class);
         health = require(Health.class);
+        
     }
 
     @Override
@@ -63,14 +73,22 @@ public class TriangleEnemy extends Enemy {
             desiredPosition = Vec2.screenCenter().screenToWorldEq().addEq(Vec2.randomUnit().multiplyEq(200));
         }
 
-        if (desiredPosition != null && (movementTween == null || movementTween.isFinished())) {
+        if (desiredPosition != null && (movementTween == null || !movementTween.isRunning())) {
             movementTween = GameLoop.makeTween(Tween.lerp(trans.position.clone(), desiredPosition), 0.2, v -> {
                 trans.position = v;
             });
             movementTween.start();
+            desiredPosition = null;
+
+
+            movementTween.onFinish.listen((v) -> {
+                GameLoop.runAfter(entity, Duration.ofSeconds(1), () -> {
+                    weapon.fire(trans.position, getFacing());
+                });
+            }, entity);
         }
     }
-    
+
     @Override
     public void infrequentUpdate() {
         Vec2 pos = playerTransform.position.add(SIZE*0.5f, SIZE*0.5f);
@@ -80,6 +98,6 @@ public class TriangleEnemy extends Enemy {
 
     @Override
     public void render() {
-        
+        weapon.ray.render(Color.WHITE);
     }
 }

@@ -1,7 +1,10 @@
 package game.core;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import javax.print.attribute.standard.OrientationRequested;
 
 import game.Vec2;
 import game.core.rendering.Rect;
@@ -53,14 +56,25 @@ public class Physics extends ECSystem {
         this(Kind.DYNAMIC, layer, layerMask, hitBoxOffset);    
     }
 
-    public static Optional<Vec2> testRay(Ray ray) {
+    public static Optional<Ray.RayResult> testRay(Ray ray) {
         for (var obj : physicsObjects.get(ray.layerMask)) {
             Optional<Vec2> p = obj.collisionRect.checkRayHit(obj.trans.position.add(obj.hitBoxOffset), ray);
             if (p.isPresent()) {
-                return p;
+                return Optional.of(new Ray.RayResult(p.get(), obj));
             }
         }
         return Optional.empty();
+    }
+
+    public static List<Ray.RayResult> testRayForAll(Ray ray) {
+        List<Ray.RayResult> results = new ArrayList<>();
+        for (var obj : physicsObjects.get(ray.layerMask)) {
+            Optional<Vec2> p = obj.collisionRect.checkRayHit(obj.trans.position.add(obj.hitBoxOffset), ray);
+            if (p.isPresent()) {
+                results.add(new Ray.RayResult(p.get(), obj));
+            }
+        }
+        return results;
     }
 
     public void unregister() {

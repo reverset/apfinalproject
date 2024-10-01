@@ -27,7 +27,7 @@ public class CircleEnemy extends Enemy {
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
-        EntityOf<Enemy> entity = new EntityOf<>("Circle Enemy", Enemy.class);
+        EntityOf<Enemy> entity = new EntityOf<>("Circle", Enemy.class);
         entity
             .addComponent(new Shader("resources/circle.frag"))
             .addComponent(new Circle(RADIUS, Color.RED))

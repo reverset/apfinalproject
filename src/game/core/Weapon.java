@@ -42,6 +42,10 @@ public class Weapon {
         return coolDownStopwatch.hasElapsedSeconds(cooldown);
     }
 
+    public int getDamage() {
+        return damage;
+    }
+
     public void forceFire(Vec2 position, Vec2 direction) {
         EntityOf<Bullet> bullet = bulletSupplier.get();
         Bullet sys = bullet.getMainSystem();

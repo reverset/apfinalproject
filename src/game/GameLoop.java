@@ -131,6 +131,20 @@ public class GameLoop {
 		scheduledActions.add(action);
 	}
 
+	public static void runAfter(Entity entity, Duration duration, Runnable action) {
+		Stopwatch stopwatch = new Stopwatch();
+		var toSchedule = new ScheduledAction(entity, List.of(
+			() -> stopwatch.hasElapsed(duration),
+			() -> {
+				action.run();
+				return true;
+			}
+			));
+
+		stopwatch.start();
+		GameLoop.schedule(toSchedule);
+	}
+
 	public static void clearAllEntities() {
 		GameLoop.defer(() -> {
 			ListIterator<Entity> iter = entities.listIterator();

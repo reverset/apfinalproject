@@ -46,7 +46,7 @@ public class Bullet extends ECSystem {
     @Override
     public void ready() {
         tangible.onCollision.listen((otherPhysics) -> {
-            if (otherPhysics.entity != owner && !otherPhysics.entity.hasTag(GameTags.BULLET) && !otherPhysics.entity.hasTags(ignoreTags)) {
+            if (otherPhysics.entity != owner && !otherPhysics.entity.hasTag(GameTags.BULLET) && !otherPhysics.entity.hasAnyTag(ignoreTags)) {
                 otherPhysics.entity.getComponent(Health.class).ifPresent((health) -> health.damage(getDamage()));
                 otherPhysics.entity.getSystem(Physics.class).ifPresent((physics) -> physics.impulse(tangible.velocity.normalize().multiplyEq(100)));
                 GameLoop.safeDestroy(entity);

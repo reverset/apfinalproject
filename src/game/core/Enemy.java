@@ -46,7 +46,7 @@ public class Enemy extends ECSystem {
         Rect rect = new Rect(SIZE, SIZE, Color.RED);
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
-        EntityOf<Enemy> entity = new EntityOf<>("Enemy", Enemy.class);
+        EntityOf<Enemy> entity = new EntityOf<>("Square", Enemy.class);
         entity
             .addComponent(new Shader("resources/enemy.frag"))
             .addComponent(new Transform(position))

@@ -61,12 +61,16 @@ public class Tween<T> extends ECSystem {
     }
 
     public void stopAndDestroy() {
-        startTime = -2;
+        startTime = -1;
         if (shouldDestroy) GameLoop.safeDestroy(entity);
     }
 
     public boolean isFinished() {
         return startTime == -2;
+    }
+
+    public boolean isRunning() {
+        return startTime >= 0;
     }
 
     public void reset() {
@@ -100,8 +104,10 @@ public class Tween<T> extends ECSystem {
         updater.accept( supplier.supply(percent) );
 
         if (percent >= 1.0) {
+            startTime = -2;
             onFinish.emit(null);
             stopAndDestroy();
+            startTime = -2;
         }
     }
     

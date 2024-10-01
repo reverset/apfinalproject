@@ -309,14 +309,18 @@ public class Vec2 {
 		return new Vec2(x, y);
 	}
 
-	public boolean is_approx(float x, float y, float epsilon) {
+	public boolean isApprox(float x, float y, float epsilon) {
 		return Math.abs(this.x - x) < epsilon 
 				&& Math.abs(this.y - y) < epsilon;
 	}
 
 	public boolean isApprox(float x, float y) {
 		final float EPSILON = 1e-7f;
-		return is_approx(x, y, EPSILON);
+		return isApprox(x, y, EPSILON);
+	}
+
+	public boolean isApprox(Vec2 other) {
+		return isApprox(other.x, other.y);
 	}
 
 	@Override

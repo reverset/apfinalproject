@@ -1,5 +1,7 @@
 package game;
 
+import java.time.Duration;
+
 import com.raylib.Raylib;
 
 
@@ -12,6 +14,10 @@ public class Stopwatch {
 
     public void stop() {
         startTime = -1;
+    }
+
+    public boolean hasElapsed(Duration duration) {
+        return hasElapsedSeconds(duration.toMillis() / 1_000.0);
     }
 
     public boolean hasElapsedSeconds(double seconds) {

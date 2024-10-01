@@ -70,6 +70,15 @@ public class Entity {
 		return tags == desiredTags.length;
 	}
 
+	public boolean hasAnyTag(Object[] desiredTags) {
+		for (Object tag : desiredTags) {
+			if (hasTag(tag)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void bind(Binded bind) {
 		if (!binded.contains(bind)) binded.add(bind);
 	}
