@@ -72,6 +72,13 @@ public class Rect implements Component {
         return center;
     }
 
+    public Vec2 centerize(Vec2 desiredCenter) {
+        return new Vec2(
+            desiredCenter.x - (width*0.5f),
+            desiredCenter.y - (height*0.5f)
+        );
+    }
+
     public void render(Vec2 position) {
         Raylib.DrawRectangle(position.xInt(), position.yInt(), width, height, color.getPointer());
     }

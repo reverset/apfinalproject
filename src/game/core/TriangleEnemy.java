@@ -12,7 +12,7 @@ import game.ecs.comps.Transform;
 
 public class TriangleEnemy extends Enemy {
     public static final float SIZE = 40;
-    public static final float SHOOT_DISTANCE = 1400;
+    public static final float SHOOT_DISTANCE = 2_000;
 
     Triangle triangle;
 

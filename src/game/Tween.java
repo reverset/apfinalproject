@@ -35,6 +35,14 @@ public class Tween<T> extends ECSystem {
         return percent -> MoreMath.lerp(from, to, (float) percent);
     }
 
+    public static TweenFunction<String> reveal(String desiredMessage) {
+        int len = desiredMessage.length();
+        return percent -> {
+            int revealed = (int) (percent * len);
+            return desiredMessage.substring(0, revealed);
+        };
+    }
+
 
     public Tween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
         this(supplier, durationSeconds, true, updater);

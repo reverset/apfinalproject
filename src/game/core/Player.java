@@ -8,6 +8,7 @@ import game.Color;
 import game.Game;
 import game.GameLoop;
 import game.MoreMath;
+import game.Stopwatch;
 import game.Text;
 import game.Tween;
 import game.TweenAnimation;
@@ -31,10 +32,16 @@ public class Player extends ECSystem implements Controllable {
 
     private TweenAnimation healthPulseAnimation;
 
+    private boolean warningNotifVisible = false;
+    private Color warningColor = new Color(255, 0, 0, 0);
+    private Rect warningRect = new Rect(800, 50, warningColor);
+    private Text warningText = new Text("null", Vec2.screenCenter().addEq(0, -227), 54, Color.WHITE);
+    private Stopwatch warningStopwatch = new Stopwatch();
+
     public static Entity makeEntity() {
         return new Entity("Player")
             .addComponent(new Transform())
-            .addComponent(new Health(5000))
+            .addComponent(new Health(200))
             .addComponent(new Rect(SIZE, SIZE, Color.GREEN))
             .addComponent(new Tangible())
             .register(new RectRender())
@@ -161,9 +168,38 @@ public class Player extends ECSystem implements Controllable {
 
         healthText.render();
 
+        if (warningNotifVisible) { // probably want to abstract this away somewhere
+            var desired = Vec2.screenCenter().addEq(0, -200);
+            warningRect.color.a = (byte) ((Math.sin(timeDouble()*10)+1)*255*0.5);
+            warningRect.render(warningRect.centerize(desired));
+            warningText.position.x = desired.x - warningText.measure()*0.5f;
+            warningText.render();
+
+            if (warningStopwatch.hasElapsedSeconds(3)) {
+                warningNotifVisible = false;
+                warningStopwatch.stop();
+            };
+        }
+
         Raylib.DrawText("Objs: " + GameLoop.entityCount(), 15, 50, 24, Color.WHITE.getPointer());
         Raylib.DrawText("Velocity: " + tangible.velocity, 15, 75, 24, Color.WHITE.getPointer());
         Raylib.DrawText("Speed: " + tangible.velocity.magnitude(), 15, 102, 24, Color.WHITE.getPointer());
         Raylib.DrawText("Bullets: " + BulletFactory.bullets.size(), 15, 124, 24, Color.WHITE.getPointer());
+    }
+
+    public void warningNotif(String message) {
+        warningText.text = message;
+        warningNotifVisible = true;
+        warningStopwatch.restart();
+    }
+
+    public void animatedWarningNotif(String message, double durationSeconds) {
+        warningText.text = "";
+        GameLoop.makeTween(Tween.reveal(message), durationSeconds, val -> {
+            warningText.text = val;
+        }).start();
+        
+        warningNotifVisible = true;
+        warningStopwatch.restart();
     }
 }
