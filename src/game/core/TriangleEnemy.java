@@ -1,7 +1,5 @@
 package game.core;
 
-import java.time.Duration;
-
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;

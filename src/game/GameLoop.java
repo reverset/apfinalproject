@@ -17,8 +17,9 @@ import game.Tween.TweenFunction;
 import game.ecs.Entity;
 
 public class GameLoop {
-	public static final int SCREEN_WIDTH = 850;
+	public static final int SCREEN_WIDTH = 850; // This width and height are actually the render size.
 	public static final int SCREEN_HEIGHT = 450;
+
 	public static final float INFREQUENT_UPDATE_RATE = 1f / 32;
 	public static float timeScale = 1f;
 
@@ -33,6 +34,7 @@ public class GameLoop {
 
 	private static Raylib.RenderTexture renderTexture;
 	private static Raylib.Rectangle screenRect;
+	private static Raylib.Rectangle scaledScreenRect;
 
 	private static Shader postProcesShader = null;
 
@@ -182,13 +184,21 @@ public class GameLoop {
 	
 	public static void init() {
 		Raylib.SetConfigFlags(Raylib.FLAG_VSYNC_HINT);
+		Raylib.SetConfigFlags(Raylib.FLAG_WINDOW_RESIZABLE);
 		Raylib.SetTraceLogLevel(Raylib.LOG_WARNING);
 		Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
 
-		
-
 		renderTexture = Raylib.LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
-		screenRect = new Raylib.Rectangle().x(0).y(0).width(SCREEN_WIDTH).height(-SCREEN_HEIGHT);
+		Raylib.SetTextureFilter(renderTexture.texture(), Raylib.TEXTURE_FILTER_BILINEAR);
+
+		screenRect = new Raylib.Rectangle().x(0).y(0).width(renderTexture.texture().width()).height(-renderTexture.texture().height());
+
+		float scale = getScreenTextureScale();
+		scaledScreenRect = new Raylib.Rectangle()
+			.x((Raylib.GetScreenWidth() - (SCREEN_WIDTH * scale))*0.5f)
+			.y((Raylib.GetScreenHeight() - (SCREEN_HEIGHT * scale))*0.5f)
+			.width(SCREEN_WIDTH * scale)
+			.height(SCREEN_HEIGHT * scale);
 	}
 	
 	public static void quit() {
@@ -274,8 +284,25 @@ public class GameLoop {
 
 		if (postProcesShader != null) postProcesShader.activate();
 		
-		Raylib.DrawTextureRec(renderTexture.texture(), screenRect, Vec2.zero().getPointer(), Jaylib.WHITE);
-		
+		// Raylib.DrawTextureRec(renderTexture.texture(), screenRect, Vec2.zero().getPointer(), Jaylib.WHITE);
+		float scale = getScreenTextureScale();
+
+		scaledScreenRect
+			.x((Raylib.GetScreenWidth() - (SCREEN_WIDTH * scale))*0.5f)
+			.y((Raylib.GetScreenHeight() - (SCREEN_HEIGHT * scale))*0.5f)
+			.width(SCREEN_WIDTH*scale)
+			.height(SCREEN_HEIGHT*scale);
+
+		Raylib.DrawTexturePro(
+			renderTexture.texture(),
+			screenRect,
+			scaledScreenRect,
+			Vec2.ZERO.getPointer(),
+			0,
+			Color.WHITE.getPointer()
+		);
+
+
 		if (postProcesShader != null) postProcesShader.deactivate();
 		Raylib.EndDrawing();
 	}
@@ -308,5 +335,12 @@ public class GameLoop {
 
 	private static void runAllDeferred() {
 		deferIterator.forEachRemaining(Runnable::run);
+	}
+
+	public static float getScreenTextureScale() {
+		return Math.min(
+			Raylib.GetScreenWidth() / (float) SCREEN_WIDTH,
+			Raylib.GetScreenHeight() / (float) SCREEN_HEIGHT 
+		);
 	}
 }

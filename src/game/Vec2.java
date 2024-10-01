@@ -9,6 +9,8 @@ public class Vec2 {
 	public float x;
 	public float y;
 	
+	public static final Vec2 ZERO = Vec2.zero();
+	
 	public static Vec2 up() {
 		return new Vec2(0, -1);
 	}
@@ -277,13 +279,29 @@ public class Vec2 {
 	}
 
 	public Vec2 screenToWorld() {
-		return new Vec2(Raylib.GetScreenToWorld2D(getPointer(), GameLoop.getMainCamera().getPointer()));
+		float scale = GameLoop.getScreenTextureScale();
+
+		Vec2 virtualPos = new Vec2(
+			(x - (Raylib.GetScreenWidth() - (GameLoop.SCREEN_WIDTH * scale)) * 0.5f) / scale,
+			(y - (Raylib.GetScreenHeight() - (GameLoop.SCREEN_HEIGHT * scale)) * 0.5f) / scale
+		);
+
+		virtualPos.clampEq(0, 0, GameLoop.SCREEN_WIDTH, GameLoop.SCREEN_HEIGHT);
+
+		return new Vec2(Raylib.GetScreenToWorld2D(virtualPos.getPointer(), GameLoop.getMainCamera().getPointer()));
 	}
 
 	public Vec2 screenToWorldEq() {
-		try (var v = Raylib.GetScreenToWorld2D(getPointer(), GameLoop.getMainCamera().getPointer())) {
-			x = v.x();
-			y = v.y();
+		float scale = GameLoop.getScreenTextureScale();
+
+		x = (x - (Raylib.GetScreenWidth() - (GameLoop.SCREEN_WIDTH * scale)) * 0.5f) / scale;
+		y = (y - (Raylib.GetScreenHeight() - (GameLoop.SCREEN_HEIGHT * scale)) * 0.5f) / scale;
+
+		clampEq(0, 0, GameLoop.SCREEN_WIDTH, GameLoop.SCREEN_HEIGHT);
+
+		try (var res = Raylib.GetScreenToWorld2D(getPointer(), GameLoop.getMainCamera().getPointer())) {
+			x = res.x();
+			y = res.y();
 		}
 		return this;
 	}
