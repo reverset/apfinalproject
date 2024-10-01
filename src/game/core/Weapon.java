@@ -4,11 +4,16 @@ import java.util.function.Supplier;
 
 import game.EntityOf;
 import game.GameLoop;
+import game.Signal;
 import game.Stopwatch;
+import game.Tuple;
 import game.Vec2;
 
 public class Weapon {
     
+    // First is bullet that hit the entity, second is the Physics system of the entity that was hit.
+    public Signal<Tuple<Bullet, Physics>> onHit = new Signal<>();
+
     Stopwatch coolDownStopwatch = new Stopwatch();
     Supplier<EntityOf<Bullet>> bulletSupplier;
     
@@ -53,7 +58,11 @@ public class Weapon {
         sys.damage = damage;
         sys.trans.position = position.clone();
         sys.tangible.velocity = direction.multiply(speed);
-    
+        
+        sys.onHit.listen(phy -> {
+            onHit.emit(new Tuple<>(sys, phy));
+        }, sys.entity);
+
         GameLoop.safeTrack(bullet);
     }
 

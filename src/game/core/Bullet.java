@@ -2,6 +2,7 @@ package game.core;
 
 import game.Color;
 import game.GameLoop;
+import game.Signal;
 import game.Vec2;
 import game.core.rendering.Rect;
 import game.core.rendering.RectRender;
@@ -21,6 +22,9 @@ public class Bullet extends ECSystem {
     public int damage;
     public Transform trans;
     public Tangible tangible;
+
+    public Signal<Physics> onHit = new Signal<>();
+
     private Rect rect;
     private Object[] ignoreTags;
 
@@ -52,6 +56,8 @@ public class Bullet extends ECSystem {
                 GameLoop.safeDestroy(entity);
 
                 GameLoop.safeTrack(DamageNumber.makeEntity(trans.position, getDamage(), Color.WHITE));
+
+                onHit.emit(otherPhysics);
             }
         }, entity);
     }
