@@ -30,7 +30,7 @@ public class Game {
 	
 	public static void loadLevel() {
 		GameLoop.setMainCamera(Camera.makeEntity(
-			new Transform(), new CameraSettings(Vec2.screen().divide(2), 1)
+			new Transform(), new CameraSettings(Vec2.screenCenter(), 1)
 		));
 
 		GameLoop.track(GameLoop.getMainCameraEntity());

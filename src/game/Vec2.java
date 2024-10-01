@@ -37,8 +37,8 @@ public class Vec2 {
 
 	public static Vec2 screen() {
 		return new Vec2(
-			Raylib.GetScreenWidth(),
-			Raylib.GetScreenHeight()
+			GameLoop.SCREEN_WIDTH,
+			GameLoop.SCREEN_HEIGHT
 		);
 	}
 
