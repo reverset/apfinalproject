@@ -21,11 +21,11 @@ public class EnemySpawner extends ECSystem {
 
     public static EntityOf<Enemy> randomEntity(Vec2 pos) {
         double rand = Math.random();
-        if (rand > 0.9) {
-            if (rand > 0.95) {
-                return TriangleEnemy.makeEntity(pos);
+        if (rand > 0.8) {
+            if (rand > 0.9) {
+                return CircleEnemy.makeEntity(pos);
             }
-            return CircleEnemy.makeEntity(pos);
+            return TriangleEnemy.makeEntity(pos);
         }
         
         return Enemy.makeEntity(pos);
