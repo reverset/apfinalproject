@@ -12,16 +12,17 @@ import game.ecs.comps.Transform;
 
 public class TriangleEnemy extends Enemy {
     public static final float SIZE = 40;
+    public static final float SHOOT_DISTANCE = 1400;
 
     Triangle triangle;
 
     Vec2 desiredPosition;
     Tween<?> movementTween;
 
-    RayWeapon weapon = new RayWeapon(Vec2.zero(), Vec2.up(), 50, 500, 0.1f, 0, new Object[]{GameTags.ENEMY_TEAM})
+    RayWeapon weapon = new RayWeapon(Vec2.zero(), Vec2.up(), 50, SHOOT_DISTANCE, 0.1f, 0, new Object[]{GameTags.ENEMY_TEAM})
         .setForce(1_000);
 
-    Color rayColor = new Color(255, 0, 0, 0);
+    Color rayColor = new Color(255, 140, 0, 0);
     boolean freezeRotation = false;
 
     public static EntityOf<Enemy> makeEntity(Vec2 position) {
@@ -31,7 +32,7 @@ public class TriangleEnemy extends Enemy {
             .addComponent(new Transform(position))
             .addComponent(new Tangible())
             .addComponent(new Health(60))
-            .addComponent(new Triangle(position, SIZE, SIZE, Color.RED))
+            .addComponent(new Triangle(position, SIZE, SIZE, Color.ORANGE))
             .addComponent(new Rect((int) SIZE, (int) SIZE, Color.WHITE))
             // .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new TriangleRenderer())

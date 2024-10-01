@@ -105,7 +105,7 @@ public class Physics extends ECSystem {
         checkCollisions();
     }
 
-    private void checkCollisions() {
+    private void checkCollisions() { // still a performance bug
         for (var obj : physicsObjects.get(layerMask)) {
             if (obj == this) continue;
 

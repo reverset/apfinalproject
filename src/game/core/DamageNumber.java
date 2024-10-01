@@ -83,7 +83,7 @@ public class DamageNumber extends ECSystem {
     
     @Override
     public void render() {
-        final int SHIFT = 4;
+        final int SHIFT = 8;
 
         text.color = Color.BLACK; // kinda ugly but whatever
         text.position.x -= SHIFT/2;
