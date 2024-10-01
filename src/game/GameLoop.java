@@ -17,8 +17,8 @@ import game.Tween.TweenFunction;
 import game.ecs.Entity;
 
 public class GameLoop {
-	public static final int SCREEN_WIDTH = 850; // This width and height are actually the render size.
-	public static final int SCREEN_HEIGHT = 450;
+	public static final int SCREEN_WIDTH = 1280; // This width and height are actually the render size.
+	public static final int SCREEN_HEIGHT = 720;
 
 	public static final float INFREQUENT_UPDATE_RATE = 1f / 32;
 	public static float timeScale = 1f;
