@@ -17,11 +17,12 @@ public class ScheduledAction implements Binded {
         this.actions = new LinkedList<>(actions);
     }
 
+    @SuppressWarnings("unchecked") // Java, why? Why can't a list clone itself and return the right type instead of Object?
     public ScheduledAction clone() {
-        return new ScheduledAction(entity, actions);
+        return new ScheduledAction(entity, (LinkedList<Supplier<Boolean>>) actions.clone());
     }
 
-    public boolean update() {
+    public boolean update() { // returning true means that the action has finished.
         if (unbinded) return true;
         ListIterator<Supplier<Boolean>> iter = actions.listIterator();
 

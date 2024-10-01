@@ -83,7 +83,7 @@ public class TriangleEnemy extends Enemy {
             desiredPosition = null;
 
 
-            movementTween.onFinish.listen((n) -> { // Laser animation
+            movementTween.onFinish.listen((n) -> { // Laser animation, should just use TweenAnimation lol
                 GameLoop.makeTween(Tween.lerp(0, 50), 3, val -> {
                     weapon.ray.position = trans.position;
                     weapon.ray.direction = getFacing();
@@ -116,7 +116,7 @@ public class TriangleEnemy extends Enemy {
 
         Vec2 pos = playerTransform.position.add(SIZE*0.5f, SIZE*0.5f);
         Vec2 dir = trans.position.directionTo(pos);
-        trans.rotation = (float) -Math.toDegrees(dir.getAngle()) - 90;
+        trans.rotation = (float) -Math.toDegrees(dir.getAngle()) - 90; // why does raylib use degrees :(
     }
 
     @Override

@@ -22,7 +22,7 @@ public class MoreMath {
 
     public static float[] lerp(float[] val, float[] dest, float delta) {
         if (val.length != dest.length) {
-            throw new RuntimeException("Both arrays must be of the same size.");
+            throw new IllegalArgumentException("Both arrays must be of the same size.");
         }
 
         float[] res = new float[val.length];
