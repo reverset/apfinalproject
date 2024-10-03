@@ -11,17 +11,19 @@ import game.ecs.Entity;
 
 public class EnemySpawner extends ECSystem {
     private final Stopwatch stopwatch = new Stopwatch();
-
     private final ArrayList<Entity> enemies = new ArrayList<>();
+    private final Stopwatch levelIncrease = new Stopwatch();
+
+    private int maxLevel = 1;
 
     public static Entity makeEntity() {
         return new Entity("EnemySpawner")
             .register(new EnemySpawner());
     }
 
-    public static EntityOf<Enemy> randomEntity(Vec2 pos) {
+    public EntityOf<Enemy> randomEntity(Vec2 pos) {
         double rand = Math.random();
-        int level = 1;
+        int level = (int) Math.max(1, maxLevel - (Math.random() * 4));
         if (rand > 0.8) {
             if (rand > 0.9) {
                 return CircleEnemy.makeEntity(pos, level);
@@ -35,7 +37,7 @@ public class EnemySpawner extends ECSystem {
 
     @Override
     public void frame() {
-        if (enemies.size() < 1 && stopwatch.hasElapsedSecondsAdvance(0.5)) {
+        if (enemies.size() < 10 && stopwatch.hasElapsedSecondsAdvance(0.5)) {
             Vec2 offset = Vec2.randomUnit().multiplyEq(Vec2.screen().x + Enemy.SIZE);
             Vec2 spawnPosition = Vec2.screenCenter().screenToWorldEq().addEq(offset);
             // Vec2 spawnPosition = Vec2.screenCenter().screenToWorldEq();
@@ -48,6 +50,10 @@ public class EnemySpawner extends ECSystem {
                     enemies.remove(entity);
                 });
             });
+        }
+
+        if (levelIncrease.hasElapsedSecondsAdvance(5)) {
+            maxLevel += 1;
         }
     }
 

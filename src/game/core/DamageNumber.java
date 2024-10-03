@@ -50,9 +50,9 @@ public class DamageNumber extends ECSystem {
         text.position = trans.position;
         
         text.color = color;
-        text.text = String.valueOf(value);
+        text.text = String.format("%,d", value);
         
-        int desiredPoppedSize = BASE_POPPED_FONT_SIZE + value*2;
+        int desiredPoppedSize = Math.min(BASE_POPPED_FONT_SIZE + value*2, 248);
         
         int orig = text.fontSize;
         text.fontSize = desiredPoppedSize;
