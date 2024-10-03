@@ -306,6 +306,10 @@ public class Vec2 {
 		return this;
 	}
 
+	public Vec2 distanceVector(Vec2 other) {
+		return (other.minus(this));
+	}
+
 	public Vec2 directionTo(Vec2 other) {
 		return (other.minus(this)).normalizeEq();
 	}

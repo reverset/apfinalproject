@@ -9,11 +9,18 @@ public class Health implements Component {
     private boolean confirmedDeath = false;
 
     public final Signal<Integer> onDamage = new Signal<>();
+    public final Signal<Integer> onHeal = new Signal<>();
     public final Signal<Void> onDeath = new Signal<>();
     
     public Health(int maxHp) {
         maxHealth = maxHp;
         health = maxHealth;
+    }
+
+    public void heal(int life) {
+        health += life;
+        health = Math.min(maxHealth, health);
+        onHeal.emit(life);
     }
 
     public void damage(int dmg) {

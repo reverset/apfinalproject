@@ -42,6 +42,15 @@ public class Shader implements Component {
         Raylib.EndShaderMode();
     }
 
+    public void with(Runnable action) {
+        try {
+            activate();
+            action.run();
+        } finally {
+            deactivate();
+        }
+    }
+
     public Raylib.Shader getPointer() {
         return internal;
     }
