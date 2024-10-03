@@ -28,6 +28,8 @@ public class TriangleEnemy extends Enemy {
     Color rayColor = new Color(255, 140, 0, 0);
     boolean freezeRotation = false;
 
+    Tangible playerTangible;
+
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         // Supplier<Float> timeSupplier = ECSystem::time; // ????
         EntityOf<Enemy> entity = new EntityOf<>("Triangle", Enemy.class);
@@ -57,7 +59,10 @@ public class TriangleEnemy extends Enemy {
     @Override
     public void setup() {
         player = GameLoop.findEntityByTag(GameTags.PLAYER);
-        player.ifPresent(p -> playerTransform = p.getComponent(Transform.class).orElseThrow());
+        player.ifPresent(p -> {
+            playerTransform = p.getComponent(Transform.class).orElseThrow();
+            playerTangible = p.getComponent(Tangible.class).orElseThrow();
+        });
 
         trans = require(Transform.class);
         tangible = require(Tangible.class);
@@ -123,9 +128,9 @@ public class TriangleEnemy extends Enemy {
     @Override
     public void infrequentUpdate() {
         if (freezeRotation) return;
-        if (playerTransform == null) return;
+        if (playerTransform == null || playerTangible == null) return;
 
-        Vec2 pos = playerTransform.position.add(SIZE*0.5f, SIZE*0.5f);
+        Vec2 pos = playerTransform.position.add(SIZE*0.5f, SIZE*0.5f).addEq(playerTangible.velocity.divide(2));
         Vec2 dir = trans.position.directionTo(pos);
         trans.rotation = (float) -Math.toDegrees(dir.getAngle()) - 90; // why does raylib use degrees :(
     }
