@@ -123,7 +123,8 @@ public class TriangleEnemy extends Enemy {
     @Override
     public void infrequentUpdate() {
         if (freezeRotation) return;
-        // possible crash here because playerTransform is null. FIXME
+        if (playerTransform == null) return;
+
         Vec2 pos = playerTransform.position.add(SIZE*0.5f, SIZE*0.5f);
         Vec2 dir = trans.position.directionTo(pos);
         trans.rotation = (float) -Math.toDegrees(dir.getAngle()) - 90; // why does raylib use degrees :(
