@@ -24,7 +24,10 @@ public class Enemy extends ECSystem {
     public static final float SPEED = 200;
     public static final int SIZE = 50;
     public static final float DESPAWN_DISTANCE = 5_000;
-    
+
+    public static final int BASE_DAMAGE = 5;
+    public static final int BASE_HEALTH = 20;
+
     public Health health;
     public Rect rect;
     public Transform trans;
@@ -34,6 +37,7 @@ public class Enemy extends ECSystem {
     
     Optional<Entity> player;
     Transform playerTransform;
+    Effect effect;
 
     private Vec2 desiredDirection = null;
 
@@ -42,7 +46,7 @@ public class Enemy extends ECSystem {
 
     double timeOffset = 0;
 
-    public static EntityOf<Enemy> makeEntity(Vec2 position) {
+    public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         Rect rect = new Rect(SIZE, SIZE, Color.RED);
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
@@ -52,7 +56,8 @@ public class Enemy extends ECSystem {
             .addComponent(new Transform(position))
             .addComponent(rect)
             .addComponent(new Tangible())
-            .addComponent(new Health(20))
+            .addComponent(new Health(BASE_HEALTH))
+            .addComponent(new Effect().setLevel(level))
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new RectRender())
             .register(new Physics(0, 0))
@@ -73,6 +78,11 @@ public class Enemy extends ECSystem {
         tangible = require(Tangible.class);
         rect = require(Rect.class);
         health = require(Health.class);
+        effect = require(Effect.class);
+
+        int level = effect.getLevel();
+        weapon.setDamage(level*BASE_DAMAGE);
+        health.setMaxHealthAndHealth(BASE_HEALTH+((level-1)*5));
         
         player = GameLoop.findEntityByTag(GameTags.PLAYER);
         player.ifPresent((p) -> {

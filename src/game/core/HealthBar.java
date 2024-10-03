@@ -1,5 +1,7 @@
 package game.core;
 
+import java.util.Optional;
+
 import game.Color;
 import game.ImmutableColor;
 import game.Text;
@@ -17,6 +19,7 @@ public class HealthBar extends ECSystem {
 
     private Health health;
     private Transform trans;
+    private Optional<Effect> effect;
     
     private Rect healthBar = new Rect(100, 10, Color.RED);
     private Rect background = new Rect(100, 10, Color.GRAY);
@@ -32,6 +35,11 @@ public class HealthBar extends ECSystem {
     public void setup() {
         health = require(Health.class);
         trans = require(Transform.class);
+        effect = optionallyRequire(Effect.class);
+
+        effect.ifPresent(ef -> {
+            message.text = "Lv" + ef.getLevel() + " " + message.text;
+        });
     }
 
     @SuppressWarnings("unchecked")

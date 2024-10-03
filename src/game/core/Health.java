@@ -16,7 +16,6 @@ public class Health implements Component {
         health = maxHealth;
     }
 
-
     public void damage(int dmg) {
         health -= dmg;
         onDamage.emit(dmg);
@@ -32,6 +31,26 @@ public class Health implements Component {
 
     public int getMaxHealth() {
         return maxHealth;
+    }
+
+    public Health setMaxHealth(int max) {
+        maxHealth = max;
+        return this;
+    }
+
+    public Health setMaxHealthAndHealth(int max) {
+        maxHealth = max;
+        health = maxHealth;
+        return this;
+    }
+
+    public Health setHealth(int h) {
+        health = h;
+        return this;
+    }
+
+    public Health maximizeHealth() {
+        return setHealth(maxHealth);
     }
 
     public float getHealthPercentage() {

@@ -14,26 +14,30 @@ public class TriangleEnemy extends Enemy {
     public static final float SIZE = 40;
     public static final float SHOOT_DISTANCE = 2_000;
 
+    public static final int BASE_HEALTH = 60;
+    public static final int BASE_DAMAGE = 50;
+
     Triangle triangle;
 
     Vec2 desiredPosition;
     Tween<?> movementTween;
 
-    RayWeapon weapon = new RayWeapon(Vec2.zero(), Vec2.up(), 50, SHOOT_DISTANCE, 0.1f, 0, new Object[]{GameTags.ENEMY_TEAM})
+    RayWeapon weapon = new RayWeapon(Vec2.zero(), Vec2.up(), BASE_DAMAGE, SHOOT_DISTANCE, 0.1f, 0, new Object[]{GameTags.ENEMY_TEAM})
         .setForce(1_000);
 
     Color rayColor = new Color(255, 140, 0, 0);
     boolean freezeRotation = false;
 
-    public static EntityOf<Enemy> makeEntity(Vec2 position) {
+    public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         // Supplier<Float> timeSupplier = ECSystem::time; // ????
         EntityOf<Enemy> entity = new EntityOf<>("Triangle", Enemy.class);
         entity
             .addComponent(new Transform(position))
             .addComponent(new Tangible())
-            .addComponent(new Health(60))
+            .addComponent(new Health(BASE_HEALTH))
             .addComponent(new Triangle(position, SIZE, SIZE, Color.ORANGE))
             .addComponent(new Rect((int) SIZE, (int) SIZE, Color.WHITE))
+            .addComponent(new Effect().setLevel(level))
             // .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new TriangleRenderer())
             .register(new Physics(0, 0, new Vec2(-SIZE*0.5f, -SIZE*0.5f)))
@@ -58,6 +62,12 @@ public class TriangleEnemy extends Enemy {
         trans = require(Transform.class);
         tangible = require(Tangible.class);
         health = require(Health.class);
+        effect = require(Effect.class);
+
+        int level = effect.getLevel();
+
+        weapon.setDamage(BASE_DAMAGE + (level-1)*10);
+        health.setMaxHealthAndHealth(BASE_HEALTH + (level-1)*10);
         
     }
 
@@ -113,7 +123,7 @@ public class TriangleEnemy extends Enemy {
     @Override
     public void infrequentUpdate() {
         if (freezeRotation) return;
-
+        // possible crash here because playerTransform is null. FIXME
         Vec2 pos = playerTransform.position.add(SIZE*0.5f, SIZE*0.5f);
         Vec2 dir = trans.position.directionTo(pos);
         trans.rotation = (float) -Math.toDegrees(dir.getAngle()) - 90; // why does raylib use degrees :(

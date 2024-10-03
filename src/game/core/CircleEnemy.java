@@ -22,9 +22,13 @@ public class CircleEnemy extends Enemy {
     public static final float SPEED = 1_000;
     public static final float MOVE_DELAY = 3;
 
+    public static final int BASE_DAMAGE = 15;
+    public static final int BASE_DEATH_DAMAGE = 50;
+    public static final int BASE_HEALTH = 10;
+
     private Vec2 desiredPosition;
     
-    public static EntityOf<Enemy> makeEntity(Vec2 position) {
+    public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
         EntityOf<Enemy> entity = new EntityOf<>("Circle", Enemy.class);
@@ -33,8 +37,9 @@ public class CircleEnemy extends Enemy {
             .addComponent(new Circle(RADIUS, Color.RED))
             .addComponent(new Transform(position))
             .addComponent(new Tangible())
-            .addComponent(new Health(10))
+            .addComponent(new Health(BASE_HEALTH))
             .addComponent(new Rect((int) RADIUS*2, (int) RADIUS*2, Color.WHITE))
+            .addComponent(new Effect().setLevel(level))
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new CircleRenderer())
             .register(new Physics(0, 0, new Vec2(-RADIUS, -RADIUS)))
@@ -51,11 +56,11 @@ public class CircleEnemy extends Enemy {
 
     private RadiusWeapon weapon = WeaponFactory.radiusWeapon(Color.PINK, entity, new Object[]{GameTags.ENEMY_TEAM})
         .setDegreePerBullet(15)    
-        .setDamage(15);
+        .setDamage(BASE_DAMAGE);
 
     private RadiusWeapon deathWeapon = WeaponFactory.radiusWeapon(Color.PINK, entity, new Object[]{})
         .setDegreePerBullet(10)
-        .setDamage(50)
+        .setDamage(BASE_DEATH_DAMAGE)
         .setSpeed(100);
 
     @Override
@@ -64,6 +69,14 @@ public class CircleEnemy extends Enemy {
         rect = require(Rect.class);
         trans = require(Transform.class);
         tangible = require(Tangible.class);
+        effect = require(Effect.class);
+
+        int level = effect.getLevel();
+
+        weapon.setDamage(BASE_DAMAGE + ((int) Math.ceil((level-1)*1.5)));
+        deathWeapon.setDamage(BASE_DEATH_DAMAGE + ((int) Math.ceil((level-1)/9) * 50));
+
+        health.setMaxHealthAndHealth(BASE_HEALTH + ((int) Math.ceil((level-1)/9) * 50));
 
         player = GameLoop.findEntityByTag(GameTags.PLAYER);
         player.ifPresent(p -> {
