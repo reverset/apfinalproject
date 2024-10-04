@@ -189,7 +189,7 @@ public class GameLoop {
 		Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
 
 		renderTexture = Raylib.LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
-		Raylib.SetTextureFilter(renderTexture.texture(), Raylib.TEXTURE_FILTER_BILINEAR);
+		Raylib.SetTextureFilter(renderTexture.texture(), Raylib.TEXTURE_FILTER_POINT);
 
 		screenRect = new Raylib.Rectangle().x(0).y(0).width(renderTexture.texture().width()).height(-renderTexture.texture().height());
 

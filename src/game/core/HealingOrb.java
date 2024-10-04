@@ -1,5 +1,7 @@
 package game.core;
 
+import java.util.Optional;
+
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
@@ -11,9 +13,9 @@ import game.ecs.ECSystem;
 import game.ecs.comps.Transform;
 
 public class HealingOrb extends ECSystem {
-    public static final float RADIUS = 15;
+    public static final float RADIUS = 10;
 
-    Transform playerTransform;
+    Optional<Player> player;
     
     Transform trans;
     Tangible tangible;
@@ -23,12 +25,11 @@ public class HealingOrb extends ECSystem {
     public static EntityOf<HealingOrb> makeEntity(Vec2 position, int life) {
         EntityOf<HealingOrb> entity = new EntityOf<>("Healing Orb", HealingOrb.class);
         
-        // TODO: should make a function of Rect that can make a rectangle around a circle.
         entity
             .addComponent(new Transform(position))
             .addComponent(new Tangible())
             .addComponent(new Circle(RADIUS, Color.GREEN))
-            .addComponent(new Rect((int) RADIUS*2, (int)RADIUS*2, Color.WHITE))
+            .addComponent(Rect.around(RADIUS*2, Color.GREEN))
             .register(new CircleRenderer())
             .register(new Physics(2, 0, new Vec2(-RADIUS, -RADIUS)))
             .register(new HealingOrb(life))
@@ -46,9 +47,9 @@ public class HealingOrb extends ECSystem {
         tangible = require(Tangible.class);
         trans = require(Transform.class);
         
-        GameLoop.findEntityByTag(GameTags.PLAYER).ifPresent(p -> {
-            playerTransform = p.getComponent(Transform.class).orElseThrow();
-        });
+        GameLoop.findEntityByTag(GameTags.PLAYER).ifPresent(e -> {
+            player = e.getSystem(Player.class);
+        });;
     }
 
     @Override
@@ -66,8 +67,8 @@ public class HealingOrb extends ECSystem {
 
     @Override
     public void infrequentUpdate() {
-        if (playerTransform == null) return;
+        if (player.isEmpty()) return;
 
-        tangible.velocity.moveTowardsEq(trans.position.directionTo(playerTransform.position).multiplyEq(1000), 1000*infreqDelta());
+        tangible.velocity.moveTowardsEq(trans.position.directionTo(player.get().getCenter()).multiplyEq(1000), 1000*infreqDelta());
     }
 }

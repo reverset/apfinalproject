@@ -101,7 +101,7 @@ public class Enemy extends ECSystem {
         health.onDeath.listen(n -> {
             GameLoop.safeDestroy(entity);
             GameLoop.safeTrack(DestroyEffect.makeEntity(rect.dimensions(), trans.position.clone()));
-            GameLoop.safeTrack(HealingOrb.makeEntity(trans.position, 10));
+            GameLoop.safeTrack(HealingOrb.makeEntity(trans.position, 10*effect.getLevel()));
         }, entity);
     }
 

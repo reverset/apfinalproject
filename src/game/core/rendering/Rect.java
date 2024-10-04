@@ -26,6 +26,14 @@ public class Rect implements Component {
 
         Janitor.registerAsyncSafe(this, internal::close);
     }
+
+    public static Rect around(Circle circle) {
+        return new Rect((int) (circle.radius*2), (int) (circle.radius*2), circle.color);
+    }
+
+    public static Rect around(float diameter, Color color) {
+        return new Rect((int) diameter, (int) diameter, color);
+    }
     
     public boolean overlaps(Vec2 position, Vec2 otherPosition, Rect other) {
         internal.x(position.x).y(position.y);

@@ -52,7 +52,7 @@ public class DamageNumber extends ECSystem {
         text.color = color;
         text.text = String.format("%,d", value);
         
-        int desiredPoppedSize = Math.min(BASE_POPPED_FONT_SIZE + value*2, 248);
+        int desiredPoppedSize = Math.min(BASE_POPPED_FONT_SIZE + value, 248);
         
         int orig = text.fontSize;
         text.fontSize = desiredPoppedSize;

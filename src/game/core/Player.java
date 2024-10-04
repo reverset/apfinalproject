@@ -164,6 +164,9 @@ public class Player extends ECSystem implements Controllable {
             
             healthText.color.g = calc;
             healthText.color.b = calc;
+        } else {
+            healthText.color.g = (byte) 255;
+            healthText.color.b = (byte) 255;
         }
 
         healthText.render();
