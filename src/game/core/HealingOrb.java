@@ -15,7 +15,7 @@ import game.ecs.comps.Transform;
 public class HealingOrb extends ECSystem {
     public static final float RADIUS = 10;
 
-    Optional<Player> player;
+    Optional<Player> player = Optional.empty();
     
     Transform trans;
     Tangible tangible;

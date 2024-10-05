@@ -26,7 +26,7 @@ public class Controller<T extends ECSystem & Controllable> extends ECSystem {
     }
 
     @Override
-    public void frame() { // if else hell.
+    public void frame() {
         if (Raylib.IsKeyPressed(Jaylib.KEY_A)) controlled.controlledLeftOnce();
         else if (Raylib.IsKeyDown(Jaylib.KEY_A)) controlled.controlledLeft();
         
@@ -39,8 +39,8 @@ public class Controller<T extends ECSystem & Controllable> extends ECSystem {
         if (Raylib.IsKeyPressed(Jaylib.KEY_W)) controlled.controlledUpOnce();
         else if (Raylib.IsKeyDown(Jaylib.KEY_W)) controlled.controlledUp();
 
-        if (Raylib.IsMouseButtonPressed(0)) controlled.controlledClickOnce();
-        else if (Raylib.IsMouseButtonDown(0)) controlled.controlledClick();
+        if (Raylib.IsMouseButtonPressed(0) || Raylib.IsKeyPressed(Jaylib.KEY_SPACE)) controlled.controlledClickOnce();
+        else if (Raylib.IsMouseButtonDown(0) || Raylib.IsKeyDown(Jaylib.KEY_SPACE)) controlled.controlledClick();
 
     }
     

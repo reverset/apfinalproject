@@ -23,6 +23,7 @@ public class BulletFactory {
 
     public static EntityOf<Bullet> standardBullet(int damage, Transform trans, Vec2 direction, Color color, Entity owner, Object[] ignoreTags, Duration lifetime) {
         EntityOf<Bullet> entity = new EntityOf<>("Bullet", Bullet.class);
+        
         entity
             .addComponent(trans.withPosition(trans.position.minus(STANDARD_BULLET_SIZE*0.5f)))
             .addComponent(() -> {

@@ -6,6 +6,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/Student/eclipse-workspace/final/jaylib.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Student/eclipse-workspace/apcs/jaylib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

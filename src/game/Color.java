@@ -77,6 +77,13 @@ public class Color {
 		return new Color(r, g, b, a);
 	}
 
+	public Color cloneIfImmutable() {
+		if (this instanceof ImmutableColor) {
+			return new Color(r, g, b, a);
+		}
+		return this;
+	}
+
 	@Override
 	public String toString() {
 		return "Color(" + r + ", " + g + ", " + b + ", " + a + ")";
