@@ -51,4 +51,9 @@ public class MoreMath {
     public static boolean isApprox(float a, float b) {
         return isApprox(a, b, 1e-7f);
     }
+
+    public static <T extends Enum<?>> T pickRandomEnumeration(Class<T> clazz) {
+        T[] constants = clazz.getEnumConstants();
+        return constants[(int) (Math.random()*constants.length)];
+    }
 }

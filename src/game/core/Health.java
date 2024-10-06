@@ -1,6 +1,7 @@
 package game.core;
 
 import game.Signal;
+import game.Stopwatch;
 import game.ecs.Component;
 
 public class Health implements Component {
@@ -11,6 +12,10 @@ public class Health implements Component {
     public final Signal<Integer> onDamage = new Signal<>();
     public final Signal<Integer> onHeal = new Signal<>();
     public final Signal<Void> onDeath = new Signal<>();
+
+    private float invincibilityDuration = 0;
+
+    private final Stopwatch invincibilityStopwatch = new Stopwatch();
     
     public Health(int maxHp) {
         maxHealth = maxHp;
@@ -23,7 +28,14 @@ public class Health implements Component {
         onHeal.emit(life);
     }
 
-    public void damage(int dmg) {
+    public Health withInvincibilityDuration(float dur) {
+        invincibilityDuration = dur;
+        return this;
+    }
+
+    public void damage(int dmg) { // TODO: make this function return the amount of damage actually done.
+        if (!invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return;
+
         health -= dmg;
         onDamage.emit(dmg);
         if (health <= 0 && !confirmedDeath) {

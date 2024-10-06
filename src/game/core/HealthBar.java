@@ -103,7 +103,8 @@ public class HealthBar extends ECSystem {
         Vec2 pos = Vec2.screenCenter();
         pos.y = BOSS_BAR_Y_OFFSET;
         pos.x -= background.width*0.5f;
-        message.position = pos;
+        message.position = pos.clone();
+        message.position.x += 15;
 
         background.renderRound(pos, 5, 5);
         healthBar.renderRound(pos, 5, 5);
