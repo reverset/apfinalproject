@@ -111,16 +111,24 @@ public class Player extends ECSystem implements Controllable {
             GameLoop.safeDestroy(entity);
             GameLoop.safeTrack(new Entity("Death Screen")
                 .register(new ECSystem() {
-                    private Text text = new Text("You died!", Vec2.screen().divideEq(2), 54, Color.WHITE).center();
+                    private Text text = new Text("DEFEAT", Vec2.screenCenter().addEq(0, -50), 54, Color.WHITE).center();
                     private float originalX = text.position.x;
+                    private Tween<Float> textTween;
 
                     @Override
                     public void setup() {
+                        textTween = GameLoop.makeTween(Tween.lerp(12, 200), 0.1f, val -> {
+                            text.fontSize = val.intValue();
+                            text.position.x = originalX - text.measure()*0.35f;
+                        }).start();
                     }
 
                     @Override
                     public void frame() {
-                        text.position.x = (float) (Math.sin(timeDouble()*5)*100 + originalX);
+                        if (!textTween.isRunning()) {
+                            text.fontSize = (int) (Math.sin(timeDouble()*5)*50+200);
+                            text.position.x = originalX - text.measure()*0.35f;
+                        }
 
                         if (Raylib.IsKeyPressed(Raylib.KEY_ENTER)) {
                             GameLoop.clearAllEntities();
