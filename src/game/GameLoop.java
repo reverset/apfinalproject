@@ -187,8 +187,7 @@ public class GameLoop {
 	}
 	
 	public static void init() {
-		Raylib.SetConfigFlags(Raylib.FLAG_VSYNC_HINT);
-		Raylib.SetConfigFlags(Raylib.FLAG_WINDOW_RESIZABLE);
+		Raylib.SetConfigFlags(Raylib.FLAG_VSYNC_HINT | Raylib.FLAG_WINDOW_ALWAYS_RUN | Raylib.FLAG_WINDOW_RESIZABLE);
 		Raylib.SetTraceLogLevel(Raylib.LOG_WARNING);
 		Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
 

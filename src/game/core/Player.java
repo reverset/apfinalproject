@@ -125,7 +125,7 @@ public class Player extends ECSystem implements Controllable {
 
                     @Override
                     public void frame() {
-                        if (!textTween.isRunning()) {
+                        if (textTween.isFinished()) {
                             text.fontSize = (int) (Math.sin(timeDouble()*5)*50+200);
                             text.position.x = originalX - text.measure()*0.35f;
                         }
