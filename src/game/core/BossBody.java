@@ -39,7 +39,8 @@ public class BossBody extends ECSystem {
             .addComponent(new Health(Integer.MAX_VALUE))
             .register(new Physics(0, 0, new Vec2(-BossEnemy.RADIUS, -BossEnemy.RADIUS)))
             .register(new PolyRenderer())
-            .register(new BossBody(boss, posSupplier, velSupplier));
+            .register(new BossBody(boss, posSupplier, velSupplier))
+            .addTags(new Object[]{GameTags.ENEMY_TEAM});
         
         return entity;
     }

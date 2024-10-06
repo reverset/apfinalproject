@@ -40,8 +40,8 @@ public class EnemySpawner extends ECSystem {
     public void frame() {
         if (enemies.size() < 1 && stopwatch.hasElapsedSecondsAdvance(0.5)) {
             Vec2 offset = Vec2.randomUnit().multiplyEq(Vec2.screen().x + Enemy.SIZE);
-            // Vec2 spawnPosition = Vec2.screenCenter().screenToWorldEq().addEq(offset);
-            Vec2 spawnPosition = Vec2.screenCenter().screenToWorldEq();
+            Vec2 spawnPosition = Vec2.screenCenter().screenToWorldEq().addEq(offset);
+            // Vec2 spawnPosition = Vec2.screenCenter().screenToWorldEq();
             EntityOf<Enemy> entity = randomEntity(spawnPosition);
             
             enemies.add(entity);

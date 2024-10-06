@@ -1,5 +1,9 @@
 package game;
 
+
+import java.util.Iterator;
+
+import game.ecs.Component;
 import game.ecs.ECSystem;
 import game.ecs.Entity;
 
@@ -29,4 +33,26 @@ public class EntityOf<T extends ECSystem> extends Entity {
         return this;
     }
     
+
+    public <K extends ECSystem> EntityOf<K> into(Class<K> clazz) {
+        if (!clazz.isAssignableFrom(systemClass)) {
+            throw new RuntimeException("Failed to convert EntityOf<" + systemClass + "> to EntityOf<" + clazz + ">");
+        }
+        EntityOf<K> entity = new EntityOf<>(name, clazz);
+
+        Iterator<ECSystem> sys = systemIterator();
+        Iterator<Component> comps = componentIterator();
+
+        while (comps.hasNext()) {
+            var c = comps.next();
+            entity.addComponent(c);
+        }
+
+        while (sys.hasNext()) {
+            var s = sys.next();
+            entity.register(s);
+        }
+
+        return entity;
+    }
 }

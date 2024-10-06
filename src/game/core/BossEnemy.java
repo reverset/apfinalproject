@@ -27,7 +27,11 @@ public class BossEnemy extends Enemy {
 
     public static final float RADIUS = 50;
     public static final int SIDES = 6;
+
     public static final int BASE_HEALTH = 500;
+    public static final int BASE_HEXABOMB_DAMAGE = 35;
+    public static final int BASE_DEATH_HEALING = 35;
+
     public static final float SPEED = 500;
     public static final float STATE_CHANGE_TIME = 5;
 
@@ -41,6 +45,10 @@ public class BossEnemy extends Enemy {
     private State state = State.FAR_CIRCLING;
 
     private Stopwatch stateChange = new Stopwatch();
+
+    private Weapon weapon = WeaponFactory.hexaBombWeapon(Color.YELLOW, entity, new Object[]{GameTags.ENEMY_TEAM})
+        .setDamage(BASE_DAMAGE)
+        .setCooldown(1);
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("Boss", Enemy.class);
@@ -93,6 +101,7 @@ public class BossEnemy extends Enemy {
 
             for (int i = 0; i < parts.length; i++) {
                 GameLoop.safeDestroy(parts[i]);
+                GameLoop.safeTrack(HealingOrb.makeEntity(trans.position, BASE_DEATH_HEALING));
             }
         }, entity);
     }
@@ -112,10 +121,15 @@ public class BossEnemy extends Enemy {
 
     @Override
     public void infrequentUpdate() {
+        if (playerTransform == null) return;
+
         if (stateChange.hasElapsedSecondsAdvance(STATE_CHANGE_TIME)) {
             state = MoreMath.pickRandomEnumeration(State.class);
             System.out.println("BOSS SWITCHED TO " + state);
         }
+
+        
+        if (weapon.canFire()) weapon.fire(trans.position, trans.position.directionTo(playerTransform.position));
     }
     
 }

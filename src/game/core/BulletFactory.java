@@ -2,21 +2,30 @@ package game.core;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 import game.Color;
 import game.EntityOf;
+import game.GameLoop;
 import game.RemoveAfter;
+import game.Shader;
+import game.ShaderUpdater;
+import game.Tuple;
 import game.Vec2;
+import game.core.rendering.Poly;
+import game.core.rendering.PolyRenderer;
 import game.core.rendering.Rect;
 import game.core.rendering.RectRender;
 import game.core.rendering.ViewCuller;
+import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
 public class BulletFactory {
     public static final int STANDARD_BULLET_SIZE = 10;
     public static final float STANDARD_BULLET_SPEED = 600;
-    
+
     public static final Duration STANDARD_BULLET_LIFE = Duration.ofSeconds(3);
 
     public static final ArrayList<EntityOf<Bullet>> bullets = new ArrayList<>(400);
@@ -41,6 +50,28 @@ public class BulletFactory {
         entity.onReady.listenOnce(v -> bullets.add(entity));
         entity.onDestroy.listenOnce(v -> bullets.remove(entity));
         
+        return entity;
+    }
+
+    public static EntityOf<HexaBomb> hexaBomb(int damagePerPellet, Transform trans, Vec2 direction, Color color, Entity owner, Object[] ignoreTags, Duration lifetime) {
+        EntityOf<HexaBomb> entity = new EntityOf<>("hexabomb", HexaBomb.class);
+
+        Supplier<Float> timeSupplier = GameLoop::getTime;
+        entity
+            .addComponent(trans)
+            .addComponent(new Shader("resources/hexabomb.frag"))
+            .addComponent(() -> {
+                var tangible = new Tangible();
+                tangible.velocity = direction.multiply(HexaBomb.SPEED);
+                return tangible;
+            })
+            .addComponent(Rect.around(HexaBomb.RADIUS*2, color))
+            .addComponent(new Poly(6, HexaBomb.RADIUS, Color.YELLOW))
+            .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
+            .register(new PolyRenderer())
+            .register(new Physics(1, 0))
+            .register(new HexaBomb(lifetime, owner, damagePerPellet, ignoreTags));
+
         return entity;
     }
 }

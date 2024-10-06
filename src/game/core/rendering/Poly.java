@@ -10,9 +10,9 @@ import java.util.Optional;
 import com.raylib.Raylib;
 
 public class Poly implements Component {
+    public Color color;
     int sides;
     float radius;
-    Color color;
 
     public Poly(int sides, float radius, Color color) {
         this.sides = sides;

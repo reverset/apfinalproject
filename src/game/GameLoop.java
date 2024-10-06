@@ -48,6 +48,10 @@ public class GameLoop {
 		return mainCameraSystem;
 	}
 
+	public static float getTime() {
+		return (float) Raylib.GetTime();
+	}
+
 	public static int entityCount() {
 		return entities.size();
 	}

@@ -25,8 +25,8 @@ public class Bullet extends ECSystem {
 
     public Signal<Physics> onHit = new Signal<>();
 
-    private Rect rect;
-    private Object[] ignoreTags;
+    Rect rect;
+    Object[] ignoreTags;
 
     public Bullet(Entity owner, int damage, Object[] ignoreTags) {
         this.owner = owner;

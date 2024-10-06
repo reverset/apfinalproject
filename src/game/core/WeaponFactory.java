@@ -21,4 +21,16 @@ public class WeaponFactory {
             return BulletFactory.standardBullet(5, new Transform(), new Vec2(), color, owner, ignoreTags, RADIUS_BULLET_LIFETIME);
         }, 3, 600f, 45);
     }
+
+    public static RadiusWeapon radiusWeapon(Color color, Entity owner, Duration lifetime, Object[] ignoreTags) {
+        return new RadiusWeapon(() -> {
+            return BulletFactory.standardBullet(5, new Transform(), new Vec2(), color, owner, ignoreTags, lifetime);
+        }, 3, 600f, 45);
+    }
+
+    public static Weapon hexaBombWeapon(Color color, Entity owner, Object[] ignoreTags) {
+        return new Weapon(() -> {
+            return BulletFactory.hexaBomb(35, new Transform(), new Vec2(), color, owner, ignoreTags, HexaBomb.LIFETIME).into(Bullet.class);
+        }, 3, 500);
+    }
 }
