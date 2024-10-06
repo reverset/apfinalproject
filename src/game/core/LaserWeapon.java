@@ -50,6 +50,11 @@ public class LaserWeapon extends Weapon2 {
     }
 
     @Override
+    public boolean canFire() {
+        return super.canFire() && !isCharging();
+    }
+
+    @Override
     void forceFire(Vec2 position, Vec2 direction, Entity owner) {
         ray.updateRay(position, direction.clone());
         int dmg = getDesiredDamage(damage);

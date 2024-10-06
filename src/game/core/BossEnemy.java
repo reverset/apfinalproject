@@ -1,6 +1,6 @@
 package game.core;
 
-import java.lang.annotation.ElementType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -32,22 +32,31 @@ public class BossEnemy extends Enemy {
     public static final int BASE_HEALTH = 500;
     public static final int BASE_HEXABOMB_DAMAGE = 35;
     public static final int BASE_DEATH_HEALING = 35;
-
+    
+    public static final float HEXABOMB_COOLDOWN = 1.5f;
     public static final float SPEED = 500;
     public static final float STATE_CHANGE_TIME = 5;
 
     public static final float CIRCLING_DISTANCE = 200;
     public static final float FAR_CIRCLING_DISTANCE = 2_000;
 
+    public static final int HEAL_AMOUNT = 15;
+    public static final float HEALING_THRESHOLD = 0.5f;
+    public static final float HEALING_COOLDOWN = 2f;
+    
+    public static final int BASE_DAMAGE = 100;
+    
     public static final int PARTS = 15;
-
+    
     private Entity[] parts = new Entity[PARTS];
-
+    
     private State state = State.FAR_CIRCLING;
-
+    
     private Stopwatch stateChange = new Stopwatch();
+    public Stopwatch healingStopwatch = new Stopwatch();
 
     private HexaBombLauncher weapon;
+    private List<LaserWeapon> skyLasers = new ArrayList<>();
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("The Hexagon Worm", Enemy.class);
@@ -76,9 +85,10 @@ public class BossEnemy extends Enemy {
         trans = require(Transform.class);
         tangible = require(Tangible.class);
         health = require(Health.class);
+        effect = require(Effect.class);
 
         Entity last = entity;
-        for (int i = 1; i < 15; i++) {
+        for (int i = 1; i <= 14; i++) {
             final int j = i;
             Transform t = last.getComponent(Transform.class).orElseThrow();
             EntityOf<BossBody> body = BossBody.makeEntity(this, () -> t.position, () -> tangible.velocity.normalize().multiplyEq(j*4));
@@ -87,7 +97,12 @@ public class BossEnemy extends Enemy {
             parts[i-1] = body;
         }
 
-        weapon = new HexaBombLauncher(BASE_HEXABOMB_DAMAGE, BULLET_SPEED, Color.YELLOW, GameTags.ENEMY_TEAM_TAGS, BULLET_COOLDOWN, Optional.empty());
+        for (int i = 0; i < 20; i++) {
+            LaserWeapon laser = new LaserWeapon(BASE_DAMAGE, trans.position, Vec2.down(), Color.RED, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 5, Optional.of(effect));
+            skyLasers.add(laser);
+        }
+
+        weapon = new HexaBombLauncher(BASE_HEXABOMB_DAMAGE, BULLET_SPEED, Color.YELLOW, GameTags.ENEMY_TEAM_TAGS, HEXABOMB_COOLDOWN, Optional.empty());
     }
 
     @Override
@@ -118,6 +133,8 @@ public class BossEnemy extends Enemy {
 
         Vec2 direction = trans.position.directionTo(playerTransform.position.add(offset)).multiply(SPEED*speedCoeff);
         tangible.velocity.moveTowardsEq(direction, 1000*delta());
+        
+        trans.rotation = (float) Math.toDegrees(tangible.velocity.getAngle());
     }
 
     @Override
@@ -129,8 +146,30 @@ public class BossEnemy extends Enemy {
             System.out.println("BOSS SWITCHED TO " + state);
         }
 
-        
+        if (state == State.FAR_CIRCLING) {
+            if (skyLasers.get(0).canFire()) {
+                Vec2 pos = playerTransform.position.clone();
+                pos.x += Player.SIZE*0.5f;
+
+                for (int i = 0; i < skyLasers.size(); i++) {
+                    LaserWeapon laser = skyLasers.get(i);
+                    int j = i;
+                    laser.chargeUp(() -> pos.minus(j*100-1_000, 1_000), Vec2::down, entity, b -> {});
+                }
+            }
+        }
+
         if (weapon.canFire()) weapon.fire(trans.position.clone(), trans.position.directionTo(playerTransform.position), entity);
+
+        if (health.getHealthPercentage() < HEALING_THRESHOLD && healingStopwatch.hasElapsedSecondsAdvance(HEALING_COOLDOWN)) {
+            health.heal(HEAL_AMOUNT);
+        }
     }
     
+    @Override
+    public void render() {
+        for (LaserWeapon laser : skyLasers) {
+            laser.render();
+        }
+    }
 }
