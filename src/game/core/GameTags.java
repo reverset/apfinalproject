@@ -7,5 +7,8 @@ public enum GameTags {
     ENEMY,
     ENEMY_TEAM,
     
-    BULLET,
+    BULLET;
+
+    public static final Object[] ENEMY_TEAM_TAGS = new Object[]{GameTags.ENEMY_TEAM};
+
 }

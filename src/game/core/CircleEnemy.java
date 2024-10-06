@@ -1,6 +1,8 @@
 package game.core;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import game.Color;
@@ -26,12 +28,27 @@ public class CircleEnemy extends Enemy {
     public static final int BASE_DEATH_DAMAGE = 50;
     public static final int BASE_HEALTH = 10;
 
+    public static final float BULLET_SPEED = 600;
+    public static final float DEATH_BULLET_SPEED = 100;
+
+    public static final Duration BULLET_LIFETIME = Duration.ofSeconds(1);
+    public static final Duration DEATH_BULLET_LIFETIME = Duration.ofSeconds(1);
+
+    public static final float DEGREE_PER_BULLET = 15;
+    public static final float DEGREE_PER_DEATH_BULLET = 10;
+
+    public static final float WEAPON_COOLDOWN = 1;
+
     private Vec2 desiredPosition;
     
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
         EntityOf<Enemy> entity = new EntityOf<>("Circle", Enemy.class);
+
+        Effect effect = new Effect().setLevel(level);
+        effect.setLevelWeaponScalingFunction(d -> d + ((int) Math.ceil((level-1)*5)));
+
         entity
             .addComponent(new Shader("resources/circle.frag"))
             .addComponent(new Circle(RADIUS, Color.RED))
@@ -39,7 +56,7 @@ public class CircleEnemy extends Enemy {
             .addComponent(new Tangible())
             .addComponent(new Health(BASE_HEALTH))
             .addComponent(new Rect((int) RADIUS*2, (int) RADIUS*2, Color.WHITE))
-            .addComponent(new Effect().setLevel(level))
+            .addComponent(effect)
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new CircleRenderer())
             .register(new Physics(0, 0, new Vec2(-RADIUS, -RADIUS)))
@@ -54,14 +71,8 @@ public class CircleEnemy extends Enemy {
 
 
 
-    private RadiusWeapon weapon = WeaponFactory.radiusWeapon(Color.PINK, entity, new Object[]{GameTags.ENEMY_TEAM})
-        .setDegreePerBullet(15)    
-        .setDamage(BASE_DAMAGE);
-
-    private RadiusWeapon deathWeapon = WeaponFactory.radiusWeapon(Color.PINK, entity, new Object[]{})
-        .setDegreePerBullet(10)
-        .setDamage(BASE_DEATH_DAMAGE)
-        .setSpeed(100);
+    private NovaWeapon weapon;
+    private NovaWeapon deathWeapon;
 
     @Override
     public void setup() {
@@ -72,10 +83,6 @@ public class CircleEnemy extends Enemy {
         effect = require(Effect.class);
 
         int level = effect.getLevel();
-
-        weapon.setDamage(BASE_DAMAGE + ((int) Math.ceil((level-1)*1.5)));
-        deathWeapon.setDamage(BASE_DEATH_DAMAGE + ((int) Math.ceil((level-1)/9) * 50));
-
         health.setMaxHealthAndHealth(BASE_HEALTH + ((int) Math.ceil((level-1)/9) * 50));
 
         player = GameLoop.findEntityByTag(GameTags.PLAYER);
@@ -85,12 +92,15 @@ public class CircleEnemy extends Enemy {
                 entity.register(new DespawnDistance(playerTransform, DESPAWN_DISTANCE));
             });
         });
+
+        weapon = new NovaWeapon(BASE_DAMAGE, DEGREE_PER_BULLET, BULLET_SPEED, Color.PINK, GameTags.ENEMY_TEAM_TAGS, WEAPON_COOLDOWN, BULLET_LIFETIME, Optional.of(effect));
+        deathWeapon = new NovaWeapon(BASE_DEATH_DAMAGE, DEGREE_PER_DEATH_BULLET, DEATH_BULLET_SPEED, Color.PINK, GameTags.ENEMY_TEAM_TAGS, WEAPON_COOLDOWN, DEATH_BULLET_LIFETIME, Optional.of(effect));
     }
 
     @Override
     public void ready() {
         health.onDeath.listen(n -> {
-            deathWeapon.forceFire(trans.position, null);
+            deathWeapon.forceFire(trans.position, null, entity);
             GameLoop.safeDestroy(entity);
         }, entity);
     }
@@ -109,7 +119,7 @@ public class CircleEnemy extends Enemy {
         if (playerTransform == null) return;
         
         float dist = trans.position.distance(playerTransform.position);
-        if (dist < 100 && weapon.canFire()) weapon.fire(trans.position, null);
+        if (dist < 100 && weapon.canFire()) weapon.fire(trans.position, null, entity);
 
         if (desiredPosition == null) return;
 
