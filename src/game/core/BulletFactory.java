@@ -18,7 +18,6 @@ import game.core.rendering.PolyRenderer;
 import game.core.rendering.Rect;
 import game.core.rendering.RectRender;
 import game.core.rendering.ViewCuller;
-import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
@@ -29,6 +28,29 @@ public class BulletFactory {
     public static final Duration STANDARD_BULLET_LIFE = Duration.ofSeconds(3);
 
     public static final ArrayList<EntityOf<Bullet>> bullets = new ArrayList<>(400);
+
+    public static EntityOf<Bullet> bullet(int damage, Vec2 pos, Vec2 velocity, Color color, Entity owner, Object[] ignoreTags, Duration lifetime) {
+        EntityOf<Bullet> entity = new EntityOf<>("Bullet", Bullet.class);
+
+        entity
+            .addComponent(new Transform(pos).withPosition(pos.minus(STANDARD_BULLET_SIZE*0.5f)))
+            .addComponent(() -> {
+                var tangible = new Tangible();
+                tangible.velocity = velocity;
+                return tangible;
+            })
+            .addComponent(new Rect(STANDARD_BULLET_SIZE, STANDARD_BULLET_SIZE, color))
+            .register(new Physics(1, 0))
+            .register(new RectRender())
+            .register(new RemoveAfter(lifetime))
+            .register(new ViewCuller(Vec2.screen().x+STANDARD_BULLET_SIZE))
+            .register(new Bullet(owner, damage, ignoreTags));
+        
+        entity.onReady.listenOnce(v -> bullets.add(entity));
+        entity.onDestroy.listenOnce(v -> bullets.remove(entity));
+
+        return entity;
+    }
 
     public static EntityOf<Bullet> standardBullet(int damage, Transform trans, Vec2 direction, Color color, Entity owner, Object[] ignoreTags, Duration lifetime) {
         EntityOf<Bullet> entity = new EntityOf<>("Bullet", Bullet.class);

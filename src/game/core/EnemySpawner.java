@@ -33,7 +33,8 @@ public class EnemySpawner extends ECSystem {
         
         // return Enemy.makeEntity(pos, level);
 
-        return BossEnemy.makeEntity(pos, maxLevel);
+        return Enemy.makeEntity(pos, maxLevel);
+        // return BossEnemy.makeEntity(pos, maxLevel);
     }
 
     @Override

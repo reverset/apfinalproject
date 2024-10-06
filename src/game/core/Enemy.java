@@ -1,5 +1,6 @@
 package game.core;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -28,6 +29,10 @@ public class Enemy extends ECSystem {
     public static final int BASE_DAMAGE = 5;
     public static final int BASE_HEALTH = 20;
 
+    public static final float BULLET_SPEED = 600;
+    public static final float BULLET_COOLDOWN = 3;
+    public static final Duration BULLET_LIFETIME = Duration.ofSeconds(3);
+
     public Health health;
     public Rect rect;
     public Transform trans;
@@ -41,8 +46,10 @@ public class Enemy extends ECSystem {
 
     private Vec2 desiredDirection = null;
 
-    private Weapon weapon = WeaponFactory.standardWeapon(Color.RED, entity, new Object[]{GameTags.ENEMY_TEAM})
-        .setCooldown(3);
+    // private Weapon weapon = WeaponFactory.standardWeapon(Color.RED, entity, new Object[]{GameTags.ENEMY_TEAM})
+    //     .setCooldown(3);
+
+    private SimpleWeapon weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN, Optional.empty());
 
     double timeOffset = 0;
 
@@ -51,13 +58,19 @@ public class Enemy extends ECSystem {
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
         EntityOf<Enemy> entity = new EntityOf<>("Square", Enemy.class);
+
+        Effect effect = new Effect()
+            .setLevel(level);
+            
+        effect.setLevelWeaponScalingFunction((dmg) -> effect.getLevel()*dmg);
+
         entity
             .addComponent(new Shader("resources/enemy.frag"))
             .addComponent(new Transform(position))
             .addComponent(rect)
             .addComponent(new Tangible())
             .addComponent(new Health(BASE_HEALTH))
-            .addComponent(new Effect().setLevel(level))
+            .addComponent(effect)
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new RectRender())
             .register(new Physics(0, 0))
@@ -81,7 +94,6 @@ public class Enemy extends ECSystem {
         effect = require(Effect.class);
 
         int level = effect.getLevel();
-        weapon.setDamage(level*BASE_DAMAGE);
         health.setMaxHealthAndHealth(BASE_HEALTH+((level-1)*5));
         
         player = GameLoop.findEntityByTag(GameTags.PLAYER);
@@ -113,7 +125,7 @@ public class Enemy extends ECSystem {
             desiredDirection = trans.position.directionTo(playerTransform.position).multiplyEq(SPEED);
         }
 
-        if (weapon.canFire() && BulletFactory.bullets.size() < 60) weapon.fire(rect.getCenter(trans.position), trans.position.directionTo(playerTransform.position));
+        if (weapon.canFire() && BulletFactory.bullets.size() < 60) weapon.fire(rect.getCenter(trans.position), trans.position.directionTo(playerTransform.position), entity);
 
         if (desiredDirection == null) return;
 
