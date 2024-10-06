@@ -20,7 +20,9 @@ public class HealthBar extends ECSystem {
     public static final int BOSS_BAR_Y_OFFSET = 30;
 
     public Vec2 offset;
+
     private Text message;
+    private Text healthNums;
 
     private Health health;
     private Transform trans;
@@ -36,6 +38,8 @@ public class HealthBar extends ECSystem {
     public HealthBar(Vec2 offset, String message, boolean isBoss) {
         this.offset = offset;
         this.message = new Text(message, null, 18, Color.WHITE);
+        healthNums = new Text("", null, 18, Color.WHITE);
+
         this.isBoss = isBoss;
 
         if (isBoss) {
@@ -45,6 +49,7 @@ public class HealthBar extends ECSystem {
             healthBar.width = background.width;
             healthBar.height = background.height;
             this.message.fontSize = 22;
+            healthNums.fontSize = 22;
         }
     }
 
@@ -105,11 +110,16 @@ public class HealthBar extends ECSystem {
         pos.x -= background.width*0.5f;
         message.position = pos.clone();
         message.position.x += 15;
+        
+        healthNums.text = String.format("%,d/%,d", health.getHealth(), health.getMaxHealth());
+        healthNums.position = pos.clone();
+        healthNums.position.x += background.width - healthNums.measure() - 15;
 
         background.renderRound(pos, 5, 5);
         healthBar.renderRound(pos, 5, 5);
 
         message.render();
+        healthNums.render();
     }
     
 }

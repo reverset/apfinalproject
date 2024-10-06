@@ -43,6 +43,7 @@ public class EnemySpawner extends ECSystem {
         return Enemy.makeEntity(pos, level);
     }, () -> (stopwatch.hasElapsedSeconds(minRoundTime) && enemies.size() == 0), Duration.ofSeconds(1)),
     new BossWave(() -> BossEnemy.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5))), spawnQueue);
+    // FIXME: add start method for waves.
 
     public static Entity makeEntity() {
         return new Entity("EnemySpawner")
