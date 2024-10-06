@@ -22,25 +22,26 @@ public class EnemySpawner extends ECSystem {
     }
 
     public EntityOf<Enemy> randomEntity(Vec2 pos) {
-        double rand = Math.random();
-        int level = (int) Math.max(1, maxLevel - (Math.random() * 4));
-        if (rand > 0.8) {
-            if (rand > 0.9) {
-                return CircleEnemy.makeEntity(pos, level);
-            }
-            return TriangleEnemy.makeEntity(pos, level);
-        }
+        // double rand = Math.random();
+        // int level = (int) Math.max(1, maxLevel - (Math.random() * 4));
+        // if (rand > 0.8) {
+        //     if (rand > 0.9) {
+        //         return CircleEnemy.makeEntity(pos, level);
+        //     }
+        //     return TriangleEnemy.makeEntity(pos, level);
+        // }
         
-        return Enemy.makeEntity(pos, level);
+        // return Enemy.makeEntity(pos, level);
 
+        return BossEnemy.makeEntity(pos, maxLevel);
     }
 
     @Override
     public void frame() {
-        if (enemies.size() < 10 && stopwatch.hasElapsedSecondsAdvance(0.5)) {
+        if (enemies.size() < 1 && stopwatch.hasElapsedSecondsAdvance(0.5)) {
             Vec2 offset = Vec2.randomUnit().multiplyEq(Vec2.screen().x + Enemy.SIZE);
-            Vec2 spawnPosition = Vec2.screenCenter().screenToWorldEq().addEq(offset);
-            // Vec2 spawnPosition = Vec2.screenCenter().screenToWorldEq();
+            // Vec2 spawnPosition = Vec2.screenCenter().screenToWorldEq().addEq(offset);
+            Vec2 spawnPosition = Vec2.screenCenter().screenToWorldEq();
             EntityOf<Enemy> entity = randomEntity(spawnPosition);
             
             enemies.add(entity);

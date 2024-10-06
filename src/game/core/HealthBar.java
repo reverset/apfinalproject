@@ -12,23 +12,44 @@ import game.ecs.ECSystem;
 import game.ecs.comps.Transform;
 
 public class HealthBar extends ECSystem {
+    public static final int BAR_WIDTH = 100;
+    public static final int BAR_HEIGHT = 10;
+
+    public static final int BOSS_BAR_WIDTH = 500;
+    public static final int BOSS_BAR_HEIGHT = 20;
+    public static final int BOSS_BAR_Y_OFFSET = 30;
 
     public Vec2 offset;
-    
     private Text message;
 
     private Health health;
     private Transform trans;
     private Optional<Effect> effect;
     
-    private Rect healthBar = new Rect(100, 10, Color.RED);
-    private Rect background = new Rect(100, 10, Color.GRAY);
+    private Rect healthBar = new Rect(BAR_WIDTH, BAR_HEIGHT, Color.RED);
+    private Rect background = new Rect(BAR_WIDTH, BAR_HEIGHT, Color.GRAY);
 
     private Tween<float[]> colorTween = null;
 
-    public HealthBar(Vec2 offset, String message) {
+    private boolean isBoss;
+
+    public HealthBar(Vec2 offset, String message, boolean isBoss) {
         this.offset = offset;
         this.message = new Text(message, null, 18, Color.WHITE);
+        this.isBoss = isBoss;
+
+        if (isBoss) {
+            background.width = BOSS_BAR_WIDTH;
+            background.height = BOSS_BAR_HEIGHT;
+
+            healthBar.width = background.width;
+            healthBar.height = background.height;
+            this.message.fontSize = 22;
+        }
+    }
+
+    public HealthBar(Vec2 offset, String message) {
+        this(offset, message, false);
     }
 
     @Override
@@ -52,33 +73,41 @@ public class HealthBar extends ECSystem {
         });
         
         health.onDamage.listen(i -> colorTween.start());
-        
-        // Stopwatch stop = new Stopwatch();
-        // health.onDamage.listen((i) -> {
-        //     schedule(List.of(() -> {
-        //         healthBar.color = Color.WHITE;
-        //         stop.restart();
-        //         return true;
-        //     }, () -> stop.hasElapsedSeconds(0.1), 
-        //     () -> {
-        //         healthBar.color = Color.RED;
-        //         return true;
-        //     }));
-        // });
     }
 
     @Override
     public void frame() {
-        healthBar.width = (int) (health.getHealthPercentage()*100);
+        healthBar.width = (int) (health.getHealthPercentage()*background.width);
     }
 
     @Override
     public void render() {
+        if (isBoss) {
+            return;
+        }
+
         Vec2 pos = trans.position.add(offset);
         background.renderRound(pos, 5, 5);
         healthBar.renderRound(pos, 5, 5);
 
         message.position = pos.addEq(0, -10);
+        message.render();
+    }
+
+    @Override
+    public void hudRender() {
+        if (isBoss) bossBarRender();
+    }
+
+    public void bossBarRender() {
+        Vec2 pos = Vec2.screenCenter();
+        pos.y = BOSS_BAR_Y_OFFSET;
+        pos.x -= background.width*0.5f;
+        message.position = pos;
+
+        background.renderRound(pos, 5, 5);
+        healthBar.renderRound(pos, 5, 5);
+
         message.render();
     }
     
