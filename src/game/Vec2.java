@@ -319,6 +319,10 @@ public class Vec2 {
 		return (float) Math.sqrt(Math.pow(other.x-x, 2) + Math.pow(other.y-y, 2));
 	}
 
+	public float distanceSquared(Vec2 other) {
+		return (float) (Math.pow(other.x-x, 2) + Math.pow(other.y-y, 2));
+	}
+
 	public float getAngle() {
 		return (float) Math.atan2(y, x);
 	}

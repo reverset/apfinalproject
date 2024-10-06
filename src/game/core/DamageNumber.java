@@ -86,12 +86,12 @@ public class DamageNumber extends ECSystem {
         final int SHIFT = 8;
 
         text.color = Color.BLACK; // kinda ugly but whatever
-        text.position.x -= SHIFT/2;
+        text.position.x -= SHIFT/8;
         text.position.y -= SHIFT/2;
         text.fontSize += SHIFT;
         text.render();
         text.fontSize -= SHIFT;
-        text.position.x += SHIFT/2;
+        text.position.x += SHIFT/8;
         text.position.y += SHIFT/2;
 
         text.color = color;

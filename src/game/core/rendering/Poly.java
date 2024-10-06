@@ -1,8 +1,12 @@
 package game.core.rendering;
 
 import game.Color;
+import game.Shader;
 import game.Vec2;
 import game.ecs.Component;
+
+import java.util.Optional;
+
 import com.raylib.Raylib;
 
 public class Poly implements Component {

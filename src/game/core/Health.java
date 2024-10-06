@@ -60,6 +60,13 @@ public class Health implements Component {
         return setHealth(maxHealth);
     }
 
+    public Health kill() {
+        health = 0;
+        onDeath.emit(null);
+        confirmedDeath = true;
+        return this;
+    }
+
     public float getHealthPercentage() {
         return (float)health / (float) maxHealth;
     }
