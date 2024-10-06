@@ -1,5 +1,7 @@
 package game.core;
 
+import java.util.Optional;
+
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
@@ -22,8 +24,7 @@ public class TriangleEnemy extends Enemy {
     Vec2 desiredPosition;
     Tween<?> movementTween;
 
-    RayWeapon weapon = new RayWeapon(Vec2.zero(), Vec2.up(), BASE_DAMAGE, SHOOT_DISTANCE, 0.1f, 0, new Object[]{GameTags.ENEMY_TEAM})
-        .setForce(1_000);
+    LaserWeapon weapon;
 
     Color rayColor = new Color(255, 140, 0, 0);
     boolean freezeRotation = false;
@@ -33,13 +34,17 @@ public class TriangleEnemy extends Enemy {
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         // Supplier<Float> timeSupplier = ECSystem::time; // ????
         EntityOf<Enemy> entity = new EntityOf<>("Triangle", Enemy.class);
+
+        Effect effect = new Effect().setLevel(level);
+        effect.setLevelWeaponScalingFunction(d -> d + (level-1)*10);
+
         entity
             .addComponent(new Transform(position))
             .addComponent(new Tangible())
             .addComponent(new Health(BASE_HEALTH))
             .addComponent(new Triangle(position, SIZE, SIZE, Color.ORANGE))
             .addComponent(new Rect((int) SIZE, (int) SIZE, Color.WHITE))
-            .addComponent(new Effect().setLevel(level))
+            .addComponent(effect)
             // .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new TriangleRenderer())
             .register(new Physics(0, 0, new Vec2(-SIZE*0.5f, -SIZE*0.5f)))
@@ -70,10 +75,9 @@ public class TriangleEnemy extends Enemy {
         effect = require(Effect.class);
 
         int level = effect.getLevel();
-
-        weapon.setDamage(BASE_DAMAGE + (level-1)*10);
         health.setMaxHealthAndHealth(BASE_HEALTH + (level-1)*10);
         
+        weapon = new LaserWeapon(BASE_DAMAGE, trans.position, getFacing(), Color.ORANGE, SHOOT_DISTANCE, 1_000, 15, 0, new Object[]{GameTags.ENEMY_TEAM}, 0.1f, Optional.of(effect));
     }
 
     @Override
@@ -97,34 +101,8 @@ public class TriangleEnemy extends Enemy {
             movementTween.start();
             desiredPosition = null;
 
-
-            // movementTween.onFinish.listen((n) -> { // Laser animation, should just use TweenAnimation lol
-            //     GameLoop.makeTween(Tween.lerp(0, 50), 3, val -> {
-            //         weapon.ray.position = trans.position;
-            //         weapon.ray.direction = getFacing();
-            //         weapon.ray.updateRay();
-
-            //         rayColor.a = val.byteValue();
-
-            //         if (rayColor.a > 40) freezeRotation = true;
-            //     }).start().onFinish.listen(nn -> {
-            //         weapon.fire(trans.position, getFacing());
-
-            //         GameLoop.makeTween(Tween.lerp(255, 0), 0.5, val -> {
-            //             weapon.ray.position = trans.position;
-            //             weapon.ray.direction = getFacing();
-            //             weapon.ray.updateRay();
-    
-            //             rayColor.a = val.byteValue();
-
-            //             if (rayColor.a == 0) freezeRotation = false;
-            //         }).start();
-
-            //     }, entity);
-            // }, entity);
-
             movementTween.onFinish.listen(n -> {
-                weapon.chargeUp(() -> trans.position, this::getFacing, rayColor, entity, impending -> freezeRotation = impending);
+                weapon.chargeUp(() -> trans.position, this::getFacing, entity, impending -> freezeRotation = impending);
             }, entity);
         }
     }
@@ -141,6 +119,6 @@ public class TriangleEnemy extends Enemy {
 
     @Override
     public void render() {
-        weapon.ray.renderEx(15, rayColor);
+        weapon.render();
     }
 }

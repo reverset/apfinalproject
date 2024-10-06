@@ -28,9 +28,7 @@ public class SimpleWeapon extends Weapon2 {
 
     @Override
     void forceFire(Vec2 position, Vec2 direction, Entity owner) {
-        int dmg = effect.isPresent() 
-            ? effect.get().getDesiredWeaponDamage(this, baseDamage) 
-            : baseDamage;
+        int dmg = getDesiredDamage(baseDamage);
 
         Vec2 velocity = direction.multiply(bulletSpeed);
         EntityOf<Bullet> bullet = BulletFactory.bullet(dmg, position, velocity, color, owner, ignoreTags, lifetime);

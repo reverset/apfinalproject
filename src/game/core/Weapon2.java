@@ -32,4 +32,12 @@ public abstract class Weapon2 { // old weapon system was terrible, this is attem
     public boolean canFire() {
         return shootTimer.hasElapsedSeconds(cooldown);
     }
+
+    public int getDesiredDamage(int base) {
+        return effect.isPresent() 
+            ? effect.get().getDesiredWeaponDamage(this, base) 
+            : base;
+    }
+
+    public void render() {}
 }

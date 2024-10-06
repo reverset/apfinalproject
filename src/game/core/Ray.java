@@ -26,6 +26,12 @@ public class Ray {
 
         updateRay();
     }
+
+    public void updateRay(Vec2 pos, Vec2 dir) {
+        position = pos;
+        direction = dir;
+        updateRay();
+    }
     
     public void updateRay() {
         endPoint = position.add(direction.multiply(length));
