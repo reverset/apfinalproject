@@ -70,7 +70,10 @@ public class EnemySpawner extends ECSystem {
     @Override
     public void frame() {
         boolean waveChange = round.update();
-        if (waveChange) totalEnemiesThisWave = 0;
+        if (waveChange) {
+            totalEnemiesThisWave = 0;
+            stopwatch.start();
+        }
 
         if (!spawnQueue.isEmpty()) {
             EntityOf<Enemy> enemy = spawnQueue.poll();
@@ -91,5 +94,6 @@ public class EnemySpawner extends ECSystem {
 
     @Override
     public void setup() {
+        stopwatch.start();
     }
 }
