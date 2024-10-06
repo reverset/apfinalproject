@@ -1,5 +1,8 @@
 package game;
 
+import java.util.Collection;
+import java.util.List;
+
 public class MoreMath {
     public static float clamp(float val, float min, float max) {
         float v = Math.max(val, min);
@@ -55,5 +58,9 @@ public class MoreMath {
     public static <T extends Enum<?>> T pickRandomEnumeration(Class<T> clazz) {
         T[] constants = clazz.getEnumConstants();
         return constants[(int) (Math.random()*constants.length)];
+    }
+
+    public static <T> T pick(List<T> list) {
+        return list.get((int) (Math.random()*list.size()));
     }
 }

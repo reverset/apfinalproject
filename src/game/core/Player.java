@@ -194,7 +194,7 @@ public class Player extends ECSystem implements Controllable {
             warningText.position.x = desired.x - warningText.measure()*0.5f;
             warningText.render();
 
-            if (warningStopwatch.hasElapsedSeconds(3)) {
+            if (warningStopwatch.hasElapsedSeconds(5)) {
                 warningNotifVisible = false;
                 warningStopwatch.stop();
             };
