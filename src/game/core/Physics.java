@@ -109,7 +109,11 @@ public class Physics extends ECSystem {
         for (var obj : physicsObjects.get(layerMask)) {
             if (obj == this) continue;
 
-            if (obj.collisionRect.overlaps(obj.trans.position.add(obj.hitBoxOffset), trans.position.add(hitBoxOffset), collisionRect)) {
+            if (obj.collisionRect.overlaps(
+                obj.trans.position.x+obj.hitBoxOffset.x, obj.trans.position.y+obj.hitBoxOffset.y, 
+                trans.position.x + hitBoxOffset.x, trans.position.y + hitBoxOffset.y, 
+                collisionRect)) {
+                
                 tangible.onCollision.emit(obj);
             }
         }

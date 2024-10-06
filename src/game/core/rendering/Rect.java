@@ -35,6 +35,13 @@ public class Rect implements Component {
         return new Rect((int) diameter, (int) diameter, color);
     }
     
+    public boolean overlaps(float x, float y, float ox, float oy, Rect other) {
+        internal.x(x).y(y);
+
+        var otherPointer = other.getPointer().x(ox).y(oy);
+        return Raylib.CheckCollisionRecs(internal, otherPointer);
+    }
+
     public boolean overlaps(Vec2 position, Vec2 otherPosition, Rect other) {
         internal.x(position.x).y(position.y);
 
