@@ -98,29 +98,33 @@ public class TriangleEnemy extends Enemy {
             desiredPosition = null;
 
 
-            movementTween.onFinish.listen((n) -> { // Laser animation, should just use TweenAnimation lol
-                GameLoop.makeTween(Tween.lerp(0, 50), 3, val -> {
-                    weapon.ray.position = trans.position;
-                    weapon.ray.direction = getFacing();
-                    weapon.ray.updateRay();
+            // movementTween.onFinish.listen((n) -> { // Laser animation, should just use TweenAnimation lol
+            //     GameLoop.makeTween(Tween.lerp(0, 50), 3, val -> {
+            //         weapon.ray.position = trans.position;
+            //         weapon.ray.direction = getFacing();
+            //         weapon.ray.updateRay();
 
-                    rayColor.a = val.byteValue();
+            //         rayColor.a = val.byteValue();
 
-                    if (rayColor.a > 40) freezeRotation = true;
-                }).start().onFinish.listen(nn -> {
-                    weapon.fire(trans.position, getFacing());
+            //         if (rayColor.a > 40) freezeRotation = true;
+            //     }).start().onFinish.listen(nn -> {
+            //         weapon.fire(trans.position, getFacing());
 
-                    GameLoop.makeTween(Tween.lerp(255, 0), 0.5, val -> {
-                        weapon.ray.position = trans.position;
-                        weapon.ray.direction = getFacing();
-                        weapon.ray.updateRay();
+            //         GameLoop.makeTween(Tween.lerp(255, 0), 0.5, val -> {
+            //             weapon.ray.position = trans.position;
+            //             weapon.ray.direction = getFacing();
+            //             weapon.ray.updateRay();
     
-                        rayColor.a = val.byteValue();
+            //             rayColor.a = val.byteValue();
 
-                        if (rayColor.a == 0) freezeRotation = false;
-                    }).start();
+            //             if (rayColor.a == 0) freezeRotation = false;
+            //         }).start();
 
-                }, entity);
+            //     }, entity);
+            // }, entity);
+
+            movementTween.onFinish.listen(n -> {
+                weapon.chargeUp(() -> trans.position, this::getFacing, rayColor, entity, impending -> freezeRotation = impending);
             }, entity);
         }
     }

@@ -28,7 +28,7 @@ public class Ray {
     }
     
     public void updateRay() {
-        endPoint = position.add(direction.multiplyEq(length));
+        endPoint = position.add(direction.multiply(length));
     }
 
     public Optional<Ray.RayResult> test() {

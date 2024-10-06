@@ -20,6 +20,14 @@ public class Stopwatch {
         return hasElapsedSeconds(duration.toMillis() / 1_000.0);
     }
 
+    public boolean hasElapsedAdvance(Duration duration) {
+        if (hasElapsedSeconds(duration.toMillis() / 1_000.0)) {
+            restart();
+            return true;
+        }
+        return false;
+    }
+
     public boolean hasElapsedSeconds(double seconds) {
         return Raylib.GetTime() > startTime + seconds;
     }

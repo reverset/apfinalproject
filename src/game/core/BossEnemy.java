@@ -47,11 +47,11 @@ public class BossEnemy extends Enemy {
     private Stopwatch stateChange = new Stopwatch();
 
     private Weapon weapon = WeaponFactory.hexaBombWeapon(Color.YELLOW, entity, new Object[]{GameTags.ENEMY_TEAM})
-        .setDamage(BASE_DAMAGE)
+        .setDamage(BASE_HEXABOMB_DAMAGE)
         .setCooldown(1);
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
-        EntityOf<Enemy> entity = new EntityOf<>("Boss", Enemy.class);
+        EntityOf<Enemy> entity = new EntityOf<>("The Hexagon Worm", Enemy.class);
 
         Supplier<Float> timeSupplier = () -> time()*10; // ????
         entity
@@ -101,7 +101,7 @@ public class BossEnemy extends Enemy {
 
             for (int i = 0; i < parts.length; i++) {
                 GameLoop.safeDestroy(parts[i]);
-                GameLoop.safeTrack(HealingOrb.makeEntity(trans.position, BASE_DEATH_HEALING));
+                GameLoop.safeTrack(HealingOrb.makeEntity(trans.position.add(Vec2.randomUnit().multiplyEq(50)), BASE_DEATH_HEALING));
             }
         }, entity);
     }
