@@ -1,6 +1,8 @@
 package game.core;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 
 import com.raylib.Raylib;
 
@@ -23,12 +25,18 @@ public class Player extends ECSystem implements Controllable {
     public static final float MAX_SPEED = 200;
     public static final int SIZE = 30;
 
+    public static final int BASE_DAMAGE = 5;
+    public static final int BULLET_SPEED = 800;
+
+    public static final Duration BULLET_LIFETIME = Duration.ofSeconds(3);
+
     public final Text healthText = new Text("N/A", new Vec2(15, Vec2.screen().y-64), 54, new Color(255, 255, 255, 255));
     private Tangible tangible;
     private Physics physics;
     private Transform trans;
     private Rect rect;
     private Health health;
+    private Effect effect;
 
     private TweenAnimation healthPulseAnimation;
 
@@ -39,11 +47,14 @@ public class Player extends ECSystem implements Controllable {
     private Stopwatch warningStopwatch = new Stopwatch();
 
     public static Entity makeEntity() {
+        Effect effect = new Effect().setLevel(1);
+
         return new Entity("Player")
             .addComponent(new Transform())
             .addComponent(new Health(200))
             .addComponent(new Rect(SIZE, SIZE, Color.GREEN))
             .addComponent(new Tangible())
+            .addComponent(effect)
             .register(new RectRender())
             .register(new Physics(0, 0))
             .register(new Player())
@@ -52,9 +63,11 @@ public class Player extends ECSystem implements Controllable {
     }
 
 
-    private Weapon weapon = WeaponFactory.standardWeapon(Color.AQUA, entity, new Object[]{GameTags.PLAYER_TEAM})
-        .setCooldown(0.2f)
-        .setSpeed(800);
+    // private Weapon weapon = WeaponFactory.standardWeapon(Color.AQUA, entity, new Object[]{GameTags.PLAYER_TEAM})
+    //     .setCooldown(0.2f)
+    //     .setSpeed(800);
+
+    private Weapon2 weapon;
 
     @Override
     public void setup() {
@@ -63,6 +76,7 @@ public class Player extends ECSystem implements Controllable {
         trans = require(Transform.class);
         rect = require(Rect.class);
         health = require(Health.class);
+        effect = require(Effect.class);
 
         final int INITIAL_FONT_SIZE = 54;
         final double HEALTH_PULSE_LENGTH = 0.1;
@@ -79,6 +93,8 @@ public class Player extends ECSystem implements Controllable {
         })));
 
         entity.register(healthPulseAnimation);
+
+        weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.AQUA, GameTags.PLAYER_TEAM_TAGS, BULLET_LIFETIME, 0.2f, Optional.of(effect));
     }
 
     public Vec2 getCenter() {
@@ -146,7 +162,7 @@ public class Player extends ECSystem implements Controllable {
     private void tryFireWeapon() {
         if (weapon.canFire()) {
             Vec2 direction = trans.position.add(new Vec2(rect.width*0.5f, rect.height*0.5f)).directionTo(GameLoop.getMousePosition());
-            weapon.fire(rect.getCenter(trans.position), direction);
+            weapon.fire(rect.getCenter(trans.position), direction, entity);
         }
     }
 

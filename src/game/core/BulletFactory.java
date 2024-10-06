@@ -53,51 +53,6 @@ public class BulletFactory {
         return entity;
     }
 
-    public static EntityOf<Bullet> standardBullet(int damage, Transform trans, Vec2 direction, Color color, Entity owner, Object[] ignoreTags, Duration lifetime) {
-        EntityOf<Bullet> entity = new EntityOf<>("Bullet", Bullet.class);
-        
-        entity
-            .addComponent(trans.withPosition(trans.position.minus(STANDARD_BULLET_SIZE*0.5f)))
-            .addComponent(() -> {
-                var tangible = new Tangible();
-                tangible.velocity = direction.multiply(STANDARD_BULLET_SPEED);
-                return tangible;
-            })
-            .addComponent(new Rect(STANDARD_BULLET_SIZE, STANDARD_BULLET_SIZE, color))
-            .register(new Physics(1, 0))
-            .register(new RectRender())
-            .register(new RemoveAfter(lifetime))
-            .register(new ViewCuller(Vec2.screen().x+STANDARD_BULLET_SIZE))
-            .register(new Bullet(owner, damage, ignoreTags));
-        
-        entity.onReady.listenOnce(v -> bullets.add(entity));
-        entity.onDestroy.listenOnce(v -> bullets.remove(entity));
-        
-        return entity;
-    }
-
-    public static EntityOf<HexaBomb> hexaBomb(int damagePerPellet, Transform trans, Vec2 direction, Color color, Entity owner, Object[] ignoreTags, Duration lifetime) {
-        EntityOf<HexaBomb> entity = new EntityOf<>("hexabomb", HexaBomb.class);
-
-        Supplier<Float> timeSupplier = GameLoop::getTime;
-        entity
-            .addComponent(trans)
-            .addComponent(new Shader("resources/hexabomb.frag"))
-            .addComponent(() -> {
-                var tangible = new Tangible();
-                tangible.velocity = direction.multiply(HexaBomb.SPEED);
-                return tangible;
-            })
-            .addComponent(Rect.around(HexaBomb.RADIUS*2, color))
-            .addComponent(new Poly(6, HexaBomb.RADIUS, Color.YELLOW))
-            .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
-            .register(new PolyRenderer())
-            .register(new Physics(1, 0))
-            .register(new HexaBomb(lifetime, owner, damagePerPellet, ignoreTags));
-
-        return entity;
-    }
-
     public static EntityOf<HexaBomb> hexaBomb(int damagePerPellet, Vec2 pos, Vec2 velocity, Color color, Entity owner, Object[] ignoreTags, Duration lifetime) {
         EntityOf<HexaBomb> entity = new EntityOf<>("hexabomb", HexaBomb.class);
 

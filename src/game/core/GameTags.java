@@ -10,5 +10,5 @@ public enum GameTags {
     BULLET;
 
     public static final Object[] ENEMY_TEAM_TAGS = new Object[]{GameTags.ENEMY_TEAM};
-
+    public static final Object[] PLAYER_TEAM_TAGS = new Object[]{GameTags.PLAYER_TEAM};
 }
