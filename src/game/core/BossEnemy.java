@@ -2,6 +2,7 @@ package game.core;
 
 import java.lang.annotation.ElementType;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import game.Color;
@@ -46,14 +47,12 @@ public class BossEnemy extends Enemy {
 
     private Stopwatch stateChange = new Stopwatch();
 
-    private Weapon weapon = WeaponFactory.hexaBombWeapon(Color.YELLOW, entity, new Object[]{GameTags.ENEMY_TEAM})
-        .setDamage(BASE_HEXABOMB_DAMAGE)
-        .setCooldown(1);
+    private HexaBombLauncher weapon;
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("The Hexagon Worm", Enemy.class);
 
-        Supplier<Float> timeSupplier = () -> time()*10; // ????
+        Supplier<Float> timeSupplier = () -> time()*10;
         entity
             .addComponent(new Shader("resources/enemy.frag"))
             .addComponent(new Poly(6, RADIUS, Color.RED))
@@ -87,6 +86,8 @@ public class BossEnemy extends Enemy {
             last = body;
             parts[i-1] = body;
         }
+
+        weapon = new HexaBombLauncher(BASE_HEXABOMB_DAMAGE, BULLET_SPEED, Color.YELLOW, GameTags.ENEMY_TEAM_TAGS, BULLET_COOLDOWN, Optional.empty());
     }
 
     @Override
@@ -129,7 +130,7 @@ public class BossEnemy extends Enemy {
         }
 
         
-        if (weapon.canFire()) weapon.fire(trans.position, trans.position.directionTo(playerTransform.position));
+        if (weapon.canFire()) weapon.fire(trans.position.clone(), trans.position.directionTo(playerTransform.position), entity);
     }
     
 }

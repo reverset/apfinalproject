@@ -3,6 +3,7 @@ package game.core;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import game.Color;
@@ -93,6 +94,28 @@ public class BulletFactory {
             .register(new PolyRenderer())
             .register(new Physics(1, 0))
             .register(new HexaBomb(lifetime, owner, damagePerPellet, ignoreTags));
+
+        return entity;
+    }
+
+    public static EntityOf<HexaBomb> hexaBomb(int damagePerPellet, Vec2 pos, Vec2 velocity, Color color, Entity owner, Object[] ignoreTags, Duration lifetime) {
+        EntityOf<HexaBomb> entity = new EntityOf<>("hexabomb", HexaBomb.class);
+
+        Supplier<Float> timeSupplier = GameLoop::getTime;
+        entity
+            .addComponent(new Transform(pos))
+            .addComponent(new Shader("resources/hexabomb.frag")) // update shader to use color given.
+            .addComponent(() -> {
+                var tangible = new Tangible();
+                tangible.velocity = velocity;
+                return tangible;
+            })
+            .addComponent(Rect.around(HexaBomb.RADIUS*2, Color.WHITE))
+            .addComponent(new Poly(6, HexaBomb.RADIUS, color))
+            .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
+            .register(new PolyRenderer())
+            .register(new Physics(1, 0))
+            .register(new HexaBomb(lifetime, owner, damagePerPellet, ignoreTags, color));
 
         return entity;
     }

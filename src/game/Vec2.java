@@ -35,6 +35,22 @@ public class Vec2 {
 		return new Vec2(1, 1);
 	}
 
+	public static Vec2 ne() {
+		return new Vec2(1, -1).normalizeEq();
+	}
+
+	public static Vec2 se() {
+		return new Vec2(1, 1).normalizeEq();
+	}
+
+	public static Vec2 sw() {
+		return new Vec2(-1, 1).normalizeEq();
+	}
+
+	public static Vec2 nw() {
+		return new Vec2(-1, -1).normalizeEq();
+	}
+
 	public static Vec2 screen() {
 		return new Vec2(
 			GameLoop.SCREEN_WIDTH,
