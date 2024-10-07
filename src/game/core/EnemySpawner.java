@@ -25,7 +25,6 @@ public class EnemySpawner extends ECSystem {
     private Queue<EntityOf<Enemy>> spawnQueue = new LinkedList<>();
 
     private final Stopwatch stopwatch = new Stopwatch();
-    private final static float minRoundTime = 5f;
 
     private Round round = new Round(List.of(new Wave(() -> {
         if (totalEnemiesThisWave > 5) return null;
@@ -41,13 +40,24 @@ public class EnemySpawner extends ECSystem {
         }
         
         return Enemy.makeEntity(pos, level);
-    }, () -> (stopwatch.hasElapsedSeconds(minRoundTime) && enemies.size() == 0), Duration.ofSeconds(1)),
-    new BossWave(() -> BossEnemy.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5))), spawnQueue);
-    // FIXME: add start method for waves.
+    }, 5, Duration.ofSeconds(1)),
+    new BossWave(() -> BossEnemy.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5))), this);
 
     public static Entity makeEntity() {
         return new Entity("EnemySpawner")
             .register(new EnemySpawner());
+    }
+
+    public int getSpawnedEnemyCountForWave() {
+        return totalEnemiesThisWave;
+    }
+
+    public ArrayList<Entity> getEnemies() {
+        return enemies;
+    }
+
+    public Queue<EntityOf<Enemy>> getSpawnQueue() {
+        return spawnQueue;
     }
 
     public EntityOf<Enemy> randomEntity(Vec2 pos) {
@@ -72,8 +82,8 @@ public class EnemySpawner extends ECSystem {
     public void frame() {
         boolean waveChange = round.update();
         if (waveChange) {
-            totalEnemiesThisWave = 0;
             stopwatch.start();
+            totalEnemiesThisWave = 0;
         }
 
         if (!spawnQueue.isEmpty()) {
@@ -96,5 +106,6 @@ public class EnemySpawner extends ECSystem {
     @Override
     public void setup() {
         stopwatch.start();
+        round.getWave().start();
     }
 }

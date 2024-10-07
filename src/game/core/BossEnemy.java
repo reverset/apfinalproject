@@ -143,7 +143,6 @@ public class BossEnemy extends Enemy {
 
         if (stateChange.hasElapsedSecondsAdvance(STATE_CHANGE_TIME)) {
             state = MoreMath.pickRandomEnumeration(State.class);
-            System.out.println("BOSS SWITCHED TO " + state);
         }
 
         if (state == State.FAR_CIRCLING) {

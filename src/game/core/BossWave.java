@@ -13,24 +13,17 @@ public class BossWave extends Wave {
 
     private Duration delay;
     private boolean started = false;
-    private boolean init = false;
-    private boolean messageShown = false;
     private Stopwatch stopwatch = new Stopwatch();
 
     private boolean finished = false;
 
     public BossWave(Supplier<EntityOf<Enemy>> enemies, Duration delay) {
-        super(enemies, null, null);
+        super(enemies, 0, null);
         this.delay = delay;
     }
 
     @Override
-    public void update() { // add method for the start of a wave.
-        if (!init) {
-            stopwatch.start();
-            init = true;
-        }
-
+    public void update() {
         if (!started && stopwatch.hasElapsed(delay)) {
             started = true;
 
@@ -41,17 +34,23 @@ public class BossWave extends Wave {
                 finished = true;
             }, enemy);
 
-        } else if (!messageShown) {
-            messageShown = true;
-            Optional<Entity> playerEntity = GameLoop.findEntityByTag(GameTags.PLAYER);
-            if (playerEntity.isEmpty()) {
-                finished = true;
-                return;
-            }
-
-            Player player = playerEntity.get().getSystem(Player.class).orElseThrow();
-            player.animatedWarningNotif("A BOSS APPROACHES", 3);
         }
+    }
+
+    @Override
+    public void start() {
+        stopwatch.restart();
+        finished = false;
+        started = false;
+
+        Optional<Entity> playerEntity = GameLoop.findEntityByTag(GameTags.PLAYER);
+        if (playerEntity.isEmpty()) {
+            finished = true;
+            return;
+        }
+
+        Player player = playerEntity.get().getSystem(Player.class).orElseThrow();
+        player.animatedWarningNotif("A BOSS APPROACHES", 3);
     }
 
     @Override

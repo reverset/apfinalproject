@@ -10,17 +10,20 @@ import game.Stopwatch;
 
 public class Wave {
     public Queue<EntityOf<Enemy>> spawnQueue;
+    public boolean waveStarted = false;
+    
+    EnemySpawner spawner;
 
     private Duration spawnRate;
     
     private Stopwatch timer = new Stopwatch();
-    private BooleanSupplier finish;
+    private int totalEnemies;
     
     Supplier<EntityOf<Enemy>> enemies;
 
-    public Wave(Supplier<EntityOf<Enemy>> enemies, BooleanSupplier finish, Duration spawnRate) {
+    public Wave(Supplier<EntityOf<Enemy>> enemies, int totalEnemies, Duration spawnRate) {
         this.enemies = enemies;
-        this.finish = finish;
+        this.totalEnemies = totalEnemies;
         this.spawnRate = spawnRate;
     }
 
@@ -31,7 +34,9 @@ public class Wave {
         }
     }
 
+    public void start() {}
+
     public boolean isFinished() {
-        return finish.getAsBoolean();
+        return (totalEnemies < spawner.getSpawnedEnemyCountForWave()) && (spawner.getEnemies().size() == 0);
     }
 }

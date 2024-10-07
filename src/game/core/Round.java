@@ -1,32 +1,43 @@
 package game.core;
 
 import java.util.List;
-import java.util.Queue;
-
-import game.EntityOf;
 
 public class Round {
     private List<Wave> waves;
     private int currentWave = 0;
 
-    public Round(List<Wave> waves, Queue<EntityOf<Enemy>> spawnQueue) {
+    public Round(List<Wave> waves, EnemySpawner spawner) {
         this.waves = waves;
         for (Wave wave : waves) {
-            wave.spawnQueue = spawnQueue;
+            wave.spawner = spawner;
+            wave.spawnQueue = spawner.getSpawnQueue();
         }
     }
 
-    public boolean update() { // true if wave changed.
+    public Wave getWave() {
+        return waves.get(currentWave);
+    }
+
+    public int getWaveIndex() {
+        return currentWave;
+    }
+
+    public boolean update() {
         Wave wave = waves.get(currentWave);
-        wave.update();
-        
-        if (wave.isFinished()) {
+        if (!wave.waveStarted) {
+            wave.waveStarted = true;
+            wave.start();
+            return true;
+        } else if (wave.isFinished()) {
+            wave.waveStarted = false;
             currentWave += 1;
             if (currentWave >= waves.size()) {
                 currentWave = 0;
             }
-            return true;
+        } else {
+            wave.update();
         }
+
         return false;
     }
 }

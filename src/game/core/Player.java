@@ -62,11 +62,6 @@ public class Player extends ECSystem implements Controllable {
             .addTags(GameTags.PLAYER, GameTags.PLAYER_TEAM);
     }
 
-
-    // private Weapon weapon = WeaponFactory.standardWeapon(Color.AQUA, entity, new Object[]{GameTags.PLAYER_TEAM})
-    //     .setCooldown(0.2f)
-    //     .setSpeed(800);
-
     private Weapon2 weapon;
 
     @Override
@@ -94,7 +89,7 @@ public class Player extends ECSystem implements Controllable {
 
         entity.register(healthPulseAnimation);
 
-        weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.AQUA, GameTags.PLAYER_TEAM_TAGS, BULLET_LIFETIME, 0.2f, Optional.of(effect));
+        weapon = new SimpleWeapon(100, BULLET_SPEED, Color.AQUA, GameTags.PLAYER_TEAM_TAGS, BULLET_LIFETIME, 0.2f, Optional.of(effect));
     }
 
     public Vec2 getCenter() {
