@@ -43,6 +43,7 @@ public class BossEnemy extends Enemy {
     public static final int HEAL_AMOUNT = 15;
     public static final float HEALING_THRESHOLD = 0.5f;
     public static final float HEALING_COOLDOWN = 2f;
+    public static final float MELEE_COOLDOWN = 1f;
     
     public static final int BASE_DAMAGE = 100;
     
@@ -52,8 +53,10 @@ public class BossEnemy extends Enemy {
     
     private State state = State.FAR_CIRCLING;
     
-    private Stopwatch stateChange = new Stopwatch();
     public Stopwatch healingStopwatch = new Stopwatch();
+    private Stopwatch stateChange = new Stopwatch();
+    
+    private Stopwatch meleeTimer = new Stopwatch();
 
     private HexaBombLauncher weapon;
     private List<LaserWeapon> skyLasers = new ArrayList<>();
@@ -118,6 +121,18 @@ public class BossEnemy extends Enemy {
             for (int i = 0; i < parts.length; i++) {
                 GameLoop.safeDestroy(parts[i]);
                 GameLoop.safeTrack(HealingOrb.makeEntity(trans.position.add(Vec2.randomUnit().multiplyEq(50)), BASE_DEATH_HEALING));
+            }
+        }, entity);
+
+        tangible.onCollision.listen(other -> {
+            if (!meleeTimer.hasElapsedSecondsAdvance(MELEE_COOLDOWN)) return;
+            
+            if (other.entity.hasAnyTag(GameTags.PLAYER_TEAM_TAGS)) {
+                int dmg = (int) (health.getMaxHealth()*0.1f);
+                other.entity.getComponent(Health.class).ifPresent(health -> health.damage(dmg));
+                other.applyForce(tangible.velocity.normalize().multiplyEq(1_000));
+
+                GameLoop.safeTrack(DamageNumber.makeEntity(trans.position.clone(), dmg, Color.ORANGE));
             }
         }, entity);
     }

@@ -22,6 +22,7 @@ public class HexaBomb extends Bullet {
 
     public static final Duration LIFETIME = Duration.ofSeconds(2);
     public static final Duration PELLET_LIFETIME = Duration.ofSeconds(3);
+    public static final float CHARGEUP = 1;
 
     Duration lifetime;
     Stopwatch detonationStopwatch = new Stopwatch();
@@ -60,15 +61,15 @@ public class HexaBomb extends Bullet {
 
         detonation = new NovaWeapon(damage, DEGREE_PER_PELLET, PELLET_SPEED, color, ignoreTags, 0, PELLET_LIFETIME, Optional.empty());
 
-        altDetonation = new LaserWeapon(damage*2, trans.position, Vec2.right(), Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
-        altDetonation2 = new LaserWeapon(damage*2, trans.position, Vec2.left(), Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
-        altDetonation3 = new LaserWeapon(damage*2, trans.position, Vec2.up(), Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
-        altDetonation4 = new LaserWeapon(damage*2, trans.position, Vec2.down(), Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
+        altDetonation = new LaserWeapon(damage*2, trans.position, Vec2.right(), CHARGEUP, Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
+        altDetonation2 = new LaserWeapon(damage*2, trans.position, Vec2.left(), CHARGEUP, Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
+        altDetonation3 = new LaserWeapon(damage*2, trans.position, Vec2.up(), CHARGEUP, Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
+        altDetonation4 = new LaserWeapon(damage*2, trans.position, Vec2.down(), CHARGEUP, Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
 
-        altDetonation5 = new LaserWeapon(damage*2, trans.position, Vec2.ne(), Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
-        altDetonation6 = new LaserWeapon(damage*2, trans.position, Vec2.nw(), Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
-        altDetonation7 = new LaserWeapon(damage*2, trans.position, Vec2.sw(), Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
-        altDetonation8 = new LaserWeapon(damage*2, trans.position, Vec2.se(), Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
+        altDetonation5 = new LaserWeapon(damage*2, trans.position, Vec2.ne(), CHARGEUP, Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
+        altDetonation6 = new LaserWeapon(damage*2, trans.position, Vec2.nw(), CHARGEUP, Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
+        altDetonation7 = new LaserWeapon(damage*2, trans.position, Vec2.sw(), CHARGEUP, Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
+        altDetonation8 = new LaserWeapon(damage*2, trans.position, Vec2.se(), CHARGEUP, Color.YELLOW, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 0, Optional.empty());
     }
 
     @Override

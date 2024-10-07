@@ -28,11 +28,13 @@ public class LaserWeapon extends Weapon2 {
 
     private Ray ray;
     private boolean charging = false;
+    private float chargeUpSeconds;
 
-    public LaserWeapon(int damage, Vec2 position, Vec2 direction, Color color, float length, float knockback, float laserThickness, int layerMask, Object[] ignoreTags, float cooldown, Optional<Effect> effect) {
+    public LaserWeapon(int damage, Vec2 position, Vec2 direction, float chargeUpSeconds, Color color, float length, float knockback, float laserThickness, int layerMask, Object[] ignoreTags, float cooldown, Optional<Effect> effect) {
         super(cooldown, effect);
         this.position = position;
         this.direction = direction;
+        this.chargeUpSeconds = chargeUpSeconds;
         this.color = color.cloneIfImmutable();
         this.color.a = 0;
         this.damage = damage;
@@ -43,6 +45,10 @@ public class LaserWeapon extends Weapon2 {
         this.ignoreTags = ignoreTags;
 
         ray = new Ray(position, direction, length, layerMask);
+    }
+
+    public LaserWeapon(int damage, Vec2 position, Vec2 direction, Color color, float length, float knockback, float laserThickness, int layerMask, Object[] ignoreTags, float cooldown, Optional<Effect> effect) {
+        this(damage, position, direction, 3, color, length, knockback, laserThickness, layerMask, ignoreTags, cooldown, effect);
     }
 
     public boolean isCharging() {
@@ -76,7 +82,7 @@ public class LaserWeapon extends Weapon2 {
 
     public Tween<Float> chargeUp(Supplier<Vec2> position, Supplier<Vec2> direction, Entity entity, Consumer<Boolean> impending) {
         charging = true;
-        var tween = GameLoop.makeTween(Tween.lerp(0, 50), 3, val -> { // CLEANUP WITH TWEEN ANIMATION TODO
+        var tween = GameLoop.makeTween(Tween.lerp(0, 50), chargeUpSeconds, val -> { // CLEANUP WITH TWEEN ANIMATION TODO
             ray.position = position.get();
             ray.direction = direction.get();
             ray.updateRay();

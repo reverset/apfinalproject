@@ -89,7 +89,7 @@ public class Player extends ECSystem implements Controllable {
 
         entity.register(healthPulseAnimation);
 
-        weapon = new SimpleWeapon(100, BULLET_SPEED, Color.AQUA, GameTags.PLAYER_TEAM_TAGS, BULLET_LIFETIME, 0.2f, Optional.of(effect));
+        weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.AQUA, GameTags.PLAYER_TEAM_TAGS, BULLET_LIFETIME, 0.2f, Optional.of(effect));
     }
 
     public Vec2 getCenter() {
