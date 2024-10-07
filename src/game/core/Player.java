@@ -112,7 +112,7 @@ public class Player extends ECSystem implements Controllable {
 
                     @Override
                     public void setup() {
-                        textTween = GameLoop.makeTween(Tween.lerp(12, 200), 0.1f, val -> {
+                        textTween = GameLoop.makeTween(Tween.lerp(12, 200), 0.2f, val -> {
                             text.fontSize = val.intValue();
                             text.position.x = originalX - text.measure()*0.35f;
                         }).start();
@@ -120,11 +120,6 @@ public class Player extends ECSystem implements Controllable {
 
                     @Override
                     public void frame() {
-                        if (textTween.isFinished()) {
-                            text.fontSize = (int) (Math.sin(timeDouble()*5)*50+200);
-                            text.position.x = originalX - text.measure()*0.35f;
-                        }
-
                         if (Raylib.IsKeyPressed(Raylib.KEY_ENTER)) {
                             GameLoop.clearAllEntities();
                             GameLoop.defer(() -> {
@@ -152,7 +147,8 @@ public class Player extends ECSystem implements Controllable {
             tangible.velocity.minusEq(tangible.velocity.normalize().multiplyEq(50));
         }
             
-        physics.applyForce(moveVector.multiplyEq(500));
+        physics.applyForce(moveVector.multiplyEq(2000));
+
         
         // Friction
         if (MoreMath.isApprox(moveVector.x, 0)) tangible.velocity.x = MoreMath.moveTowards(tangible.velocity.x, 0, 500 * delta());
