@@ -74,7 +74,7 @@ public class Bullet extends ECSystem {
         double alphaCoeff = 1.0;
         if (left < FADE_THRESHOLD) {
             long dur = removeAfter.duration.toMillis();
-            alphaCoeff = (left / FADE_THRESHOLD);
+            alphaCoeff = Math.max(left / FADE_THRESHOLD, 0);
         }
 
         rect.color.a = (byte) (alphaCoeff*255);
