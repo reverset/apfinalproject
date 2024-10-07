@@ -49,7 +49,7 @@ public class Enemy extends ECSystem {
     // private Weapon weapon = WeaponFactory.standardWeapon(Color.RED, entity, new Object[]{GameTags.ENEMY_TEAM})
     //     .setCooldown(3);
 
-    private SimpleWeapon weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN, Optional.empty());
+    private SimpleWeapon weapon;
 
     double timeOffset = 0;
 
@@ -106,6 +106,8 @@ public class Enemy extends ECSystem {
         
         timeOffset = (Math.random()+0.5) * 2;
         movementStopwatch.start();
+
+        weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN, Optional.of(effect));
     }
     
     @Override
