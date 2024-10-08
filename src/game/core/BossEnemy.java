@@ -125,12 +125,15 @@ public class BossEnemy extends Enemy {
         }, entity);
 
         tangible.onCollision.listen(other -> {
-            if (!meleeTimer.hasElapsedSecondsAdvance(MELEE_COOLDOWN)) return;
             
             if (other.entity.hasAnyTag(GameTags.PLAYER_TEAM_TAGS)) {
+                if (!meleeTimer.hasElapsedSecondsAdvance(MELEE_COOLDOWN)) return;
                 int dmg = (int) (health.getMaxHealth()*0.1f);
                 other.entity.getComponent(Health.class).ifPresent(health -> health.damage(dmg));
-                other.applyForce(tangible.velocity.normalize().multiplyEq(1_000));
+                
+                Transform otherTrans = other.entity.getComponent(Transform.class).orElseThrow();
+                Vec2 knockback = trans.position.directionTo(otherTrans.position).multiplyEq(1_000);
+                other.impulse(knockback);
 
                 GameLoop.safeTrack(DamageNumber.makeEntity(trans.position.clone(), dmg, Color.ORANGE));
             }

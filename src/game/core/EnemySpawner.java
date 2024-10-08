@@ -31,7 +31,7 @@ public class EnemySpawner extends ECSystem {
 
         Vec2 pos = getOffScreenPos();
         double rand = Math.random();
-        int level = (int) Math.max(1, maxLevel - (Math.random() * 4));
+        int level = (int) Math.max(1, getMaxLevel() - (Math.random() * 4));
         if (rand > 0.8) {
             if (rand > 0.9) {
                 return CircleEnemy.makeEntity(pos, level);
@@ -58,6 +58,10 @@ public class EnemySpawner extends ECSystem {
 
     public Queue<EntityOf<Enemy>> getSpawnQueue() {
         return spawnQueue;
+    }
+
+    public int getMaxLevel() {
+        return maxLevel;
     }
 
     public EntityOf<Enemy> randomEntity(Vec2 pos) {
