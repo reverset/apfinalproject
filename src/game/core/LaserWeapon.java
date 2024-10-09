@@ -73,7 +73,7 @@ public class LaserWeapon extends Weapon2 {
             health.ifPresent(h -> {
                 DamageInfo info = new DamageInfo(damage, this, collision.position());
                 info = h.damage(info);
-                GameLoop.safeTrack(DamageNumber.makeEntity(collision.position(), info.damage(), Color.WHITE));
+                // GameLoop.safeTrack(DamageNumber.makeEntity(collision.position(), info.damage(), Color.WHITE));
             });
             collision.physics().impulse(direction.multiply(knockback));
         }

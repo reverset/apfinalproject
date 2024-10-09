@@ -28,10 +28,9 @@ public class SimpleWeapon extends Weapon2 {
 
     @Override
     void forceFire(Vec2 position, Vec2 direction, Entity owner) {
-        int dmg = getDesiredDamage(baseDamage);
 
         Vec2 velocity = direction.multiply(bulletSpeed);
-        EntityOf<Bullet> bullet = BulletFactory.bullet(dmg, position, velocity, color, owner, ignoreTags, lifetime);
+        EntityOf<Bullet> bullet = BulletFactory.bullet(baseDamage, effect, position, velocity, color, owner, ignoreTags, lifetime);
         GameLoop.safeTrack(bullet);
 
         bullet.getMainSystem().onHit.listen(phy -> onHit.emit(phy), bullet);

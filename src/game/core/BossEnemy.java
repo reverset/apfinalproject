@@ -141,7 +141,7 @@ public class BossEnemy extends Enemy {
                 Vec2 knockback = trans.position.directionTo(otherTrans.position).multiplyEq(1_000);
                 other.impulse(knockback);
 
-                GameLoop.safeTrack(DamageNumber.makeEntity(trans.position.clone(), dmg, Color.ORANGE));
+                // GameLoop.safeTrack(DamageNumber.makeEntity(trans.position.clone(), dmg, Color.ORANGE));
             }
         }, entity);
     }

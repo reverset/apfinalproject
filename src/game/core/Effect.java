@@ -13,7 +13,7 @@ public class Effect implements Component {
         int calculate(DamageInfo info);
 
         default DamageInfo compute(DamageInfo info) {
-            return new DamageInfo(calculate(info), info.weapon());
+            return new DamageInfo(calculate(info), info.weapon(), info.position(), info.extraInfo());
         }
     }
 

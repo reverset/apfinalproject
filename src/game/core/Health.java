@@ -2,6 +2,8 @@ package game.core;
 
 import java.util.Optional;
 
+import game.Color;
+import game.GameLoop;
 import game.Signal;
 import game.Stopwatch;
 import game.ecs.Component;
@@ -38,7 +40,7 @@ public class Health implements Component {
     }
 
 
-    public void heal(int life) {
+    public void heal(int life) { // rework soon
         health += life;
         health = Math.min(maxHealth, health);
         onHeal.emit(life);
@@ -62,6 +64,10 @@ public class Health implements Component {
     }
 
     public DamageInfo damage(DamageInfo info) {
+        return damage(info, true);
+    }
+
+    public DamageInfo damage(DamageInfo info, boolean showNumbers) {
         if (!invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return DamageInfo.ofNone();
         
         DamageInfo inf = info;
@@ -75,7 +81,13 @@ public class Health implements Component {
             confirmedDeath = true; 
             onDeath.emit(null);
         }
-
+        
+        if (showNumbers) {
+            final DamageInfo i = inf; // for the closure.
+            inf.position().ifPresent(pos -> {
+                GameLoop.safeTrack(DamageNumber.makeEntity(pos, i.damage(), Color.WHITE));
+            });
+        }
         return inf;
     }
 

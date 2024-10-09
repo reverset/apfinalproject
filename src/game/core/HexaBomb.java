@@ -41,14 +41,14 @@ public class HexaBomb extends Bullet {
 
     private Color color;
 
-    public HexaBomb(Duration lifetime, Entity owner, int damage, Object[] ignoreTags, Color color) {
-        super(owner, damage, ignoreTags);
+    public HexaBomb(Duration lifetime, Optional<Effect> effect, Entity owner, int damage, Object[] ignoreTags, Color color) {
+        super(owner, damage, effect, ignoreTags);
         this.lifetime = lifetime;
         this.color = color.cloneIfImmutable();
     }
 
     public HexaBomb(Duration lifetime, Entity owner, int damage, Object[] ignoreTags) {
-        this(lifetime, owner, damage, ignoreTags, Color.YELLOW);
+        this(lifetime, Optional.empty(), owner, damage, ignoreTags, Color.YELLOW);
     }
     
     @Override

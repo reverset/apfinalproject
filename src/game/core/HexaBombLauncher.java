@@ -26,8 +26,7 @@ public class HexaBombLauncher extends Weapon2 {
 
     @Override
     void forceFire(Vec2 position, Vec2 direction, Entity owner) {
-        int dmg = getDesiredDamage(damage);
-        EntityOf<HexaBomb> hexaBomb = BulletFactory.hexaBomb(dmg, position, direction.multiply(speed), color, owner, ignoreTags, HexaBomb.LIFETIME);
+        EntityOf<HexaBomb> hexaBomb = BulletFactory.hexaBomb(damage, effect, position, direction.multiply(speed), color, owner, ignoreTags, HexaBomb.LIFETIME);
 
         GameLoop.safeTrack(hexaBomb);
     }

@@ -1,5 +1,7 @@
 package game.core;
 
+import java.util.Optional;
+
 import com.raylib.Raylib;
 
 import game.Color;
@@ -28,10 +30,13 @@ public class Bullet extends ECSystem {
     Rect rect;
     Object[] ignoreTags;
 
-    public Bullet(Entity owner, int damage, Object[] ignoreTags) {
+    private Optional<Effect> effect;
+
+    public Bullet(Entity owner, int damage, Optional<Effect> effect, Object[] ignoreTags) {
         this.owner = owner;
         this.damage = damage;
         this.ignoreTags = ignoreTags;
+        this.effect = effect;
     }
 
     @Override
@@ -50,20 +55,25 @@ public class Bullet extends ECSystem {
         return damage;
     }
 
+    public DamageInfo computeDamage() {
+        DamageInfo info = new DamageInfo(damage, null, trans.position.clone());
+        return effect.isPresent()
+            ? effect.get().computeDamage(info)
+            : info;
+    }
+
     @Override
     public void ready() {
         tangible.onCollision.listen((otherPhysics) -> {
             if (otherPhysics.entity != owner && !otherPhysics.entity.hasTag(GameTags.BULLET) && !otherPhysics.entity.hasAnyTag(ignoreTags)) {
-                DamageInfo damage = new DamageInfo(getDamage(), null, trans.position);
+                DamageInfo damage = computeDamage();
                 
                 var healthOpt = otherPhysics.entity.getComponent(Health.class);
                 if (healthOpt.isPresent()) damage = healthOpt.get().damage(damage);
 
-                
+                System.out.println(damage);
                 otherPhysics.entity.getSystem(Physics.class).ifPresent((physics) -> physics.impulse(tangible.velocity.normalize().multiplyEq(100)));
                 GameLoop.safeDestroy(entity);
-
-                GameLoop.safeTrack(DamageNumber.makeEntity(trans.position, damage.damage(), Color.WHITE));
 
                 onHit.emit(otherPhysics);
             }
