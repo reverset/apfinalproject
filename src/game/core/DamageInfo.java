@@ -2,19 +2,24 @@ package game.core;
 
 import java.util.Optional;
 
+import game.Color;
 import game.Vec2;
 
-public record DamageInfo(int damage, Weapon2 weapon, Optional<Vec2> position, Optional<Object[]> extraInfo) {
+public record DamageInfo(int damage, Weapon2 weapon, Optional<Vec2> position, Optional<Object[]> extraInfo, Color damageColor) {
     public DamageInfo(int damage, Weapon2 weapon, Vec2 position, Object[] extraInfo) {
-        this(damage, weapon, Optional.of(position), Optional.of(extraInfo));
+        this(damage, weapon, Optional.of(position), Optional.of(extraInfo), Color.WHITE);
+    }
+
+    public DamageInfo(int damage, Weapon2 weapon, Vec2 position, Color color) {
+        this(damage, weapon, Optional.of(position), Optional.empty(), color);
     }
 
     public DamageInfo(int damage, Weapon2 weapon, Vec2 position) {
-        this(damage, weapon, Optional.of(position), Optional.empty());
+        this(damage, weapon, Optional.of(position), Optional.empty(), Color.WHITE);
     }
 
     public DamageInfo(int damage, Weapon2 weapon) {
-        this(damage, weapon, Optional.empty(), Optional.empty());
+        this(damage, weapon, Optional.empty(), Optional.empty(), Color.WHITE);
     }
 
     public static DamageInfo ofNone() {
@@ -22,9 +27,16 @@ public record DamageInfo(int damage, Weapon2 weapon, Optional<Vec2> position, Op
     }
 
     public DamageInfo setExtras(Object[] extra) {
-        return new DamageInfo(damage, weapon, position, Optional.of(extra));
+        return new DamageInfo(damage, weapon, position, Optional.of(extra), Color.WHITE);
     }
 
+    public DamageInfo setColor(Color color) {
+        return new DamageInfo(damage, weapon, position, extraInfo, color);
+    }
+
+    public DamageInfo setDamage(int dmg) {
+        return new DamageInfo(dmg, weapon, position, extraInfo, damageColor);
+    }
 
     public boolean hasExtra(Object obj) {
         if (extraInfo.isEmpty()) return false;

@@ -20,7 +20,7 @@ public class EnemySpawner extends ECSystem {
 
     private final Stopwatch levelIncrease = new Stopwatch();
     
-    private int maxLevel = 5;
+    private int maxLevel = 1;
     
     private Queue<EntityOf<Enemy>> spawnQueue = new LinkedList<>();
 
@@ -29,17 +29,7 @@ public class EnemySpawner extends ECSystem {
     private Round round = new Round(List.of(new Wave(() -> {
         if (totalEnemiesThisWave > 5) return null;
 
-        Vec2 pos = getOffScreenPos();
-        double rand = Math.random();
-        int level = (int) Math.max(1, getMaxLevel() - (Math.random() * 4));
-        if (rand > 0.8) {
-            if (rand > 0.9) {
-                return CircleEnemy.makeEntity(pos, level);
-            }
-            return TriangleEnemy.makeEntity(pos, level);
-        }
-        
-        return Enemy.makeEntity(pos, level);
+        return randomEntity(getOffScreenPos());
     }, 5, Duration.ofSeconds(1)),
     new BossWave(() -> BossEnemy.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5))), this);
 
@@ -61,12 +51,13 @@ public class EnemySpawner extends ECSystem {
     }
 
     public int getMaxLevel() {
+        System.out.println(maxLevel);
         return maxLevel;
     }
 
     public EntityOf<Enemy> randomEntity(Vec2 pos) {
         double rand = Math.random();
-        int level = (int) Math.max(1, maxLevel - (Math.random() * 4));
+        int level = (int) Math.max(1, getMaxLevel() - (Math.random() * 4));
         if (rand > 0.8) {
             if (rand > 0.9) {
                 return CircleEnemy.makeEntity(pos, level);
@@ -84,6 +75,10 @@ public class EnemySpawner extends ECSystem {
 
     @Override
     public void frame() {
+        if (levelIncrease.hasElapsedSecondsAdvance(5)) {
+            maxLevel += 1;
+        }
+        
         boolean waveChange = round.update();
         if (waveChange) {
             stopwatch.start();
@@ -102,9 +97,6 @@ public class EnemySpawner extends ECSystem {
             }, enemy);
         }
         
-        if (levelIncrease.hasElapsedSecondsAdvance(5)) {
-            maxLevel += 1;
-        }
     }
 
     @Override

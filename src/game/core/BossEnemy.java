@@ -138,7 +138,7 @@ public class BossEnemy extends Enemy {
                 Transform otherTrans = other.entity.getComponent(Transform.class).orElseThrow();
                 
                 int dmg = (int) (otherHealth.getMaxHealth()*0.1f);
-                otherHealth.damage(new DamageInfo(dmg, null, trans.position.clone()));
+                otherHealth.damage(new DamageInfo(dmg, null, trans.position.clone(), DamageColor.MELEE));
                 
                 Vec2 knockback = trans.position.directionTo(otherTrans.position).multiplyEq(1_000);
                 other.impulse(knockback);

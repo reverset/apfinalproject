@@ -13,7 +13,7 @@ public class Effect implements Component {
         int calculate(DamageInfo info);
 
         default DamageInfo compute(DamageInfo info) {
-            return new DamageInfo(calculate(info), info.weapon(), info.position(), info.extraInfo());
+            return info.setDamage(calculate(info));
         }
     }
 
@@ -30,11 +30,6 @@ public class Effect implements Component {
     public Effect setLevel(int l) {
         level = l;
         return this;
-    }
-
-    @Deprecated
-    public int getDesiredWeaponDamage(Weapon2 weapon, int damage) {
-        return damage;
     }
 
     public DamageInfo computeDamage(DamageInfo info) {

@@ -33,13 +33,6 @@ public abstract class Weapon2 { // old weapon system was terrible, this is attem
         return shootTimer.hasElapsedSeconds(cooldown);
     }
 
-    @Deprecated
-    public int getDesiredDamage(int base) {
-        return effect.isPresent() 
-            ? effect.get().getDesiredWeaponDamage(this, base) 
-            : base;
-    }
-
     public DamageInfo getDesiredDamage(DamageInfo info) {
         return effect.isPresent()
             ? effect.get().computeDamage(info)

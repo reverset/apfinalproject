@@ -13,10 +13,7 @@ public class Health implements Component {
     private int maxHealth;
     private boolean confirmedDeath = false;
 
-    @Deprecated
-    public final Signal<Integer> onDamage = new Signal<>();
-    
-    public final Signal<DamageInfo> onDamageWithInfo = new Signal<>();
+    public final Signal<DamageInfo> onDamage = new Signal<>();
     public final Signal<Integer> onHeal = new Signal<>();
     public final Signal<Void> onDeath = new Signal<>();
 
@@ -63,8 +60,7 @@ public class Health implements Component {
 
         int dmg = inf.damage();
         health -= dmg;
-        onDamage.emit(dmg);
-        onDamageWithInfo.emit(inf);
+        onDamage.emit(inf);
         if (health <= 0 && !confirmedDeath) {
             confirmedDeath = true; 
             onDeath.emit(null);
@@ -73,7 +69,7 @@ public class Health implements Component {
         if (showNumbers) {
             final DamageInfo i = inf; // for the closure.
             inf.position().ifPresent(pos -> {
-                GameLoop.safeTrack(DamageNumber.makeEntity(pos, i.damage(), Color.WHITE));
+                GameLoop.safeTrack(DamageNumber.makeEntity(pos, i.damage(), i.damageColor()));
             });
         }
         return inf;

@@ -106,13 +106,13 @@ public class Player extends ECSystem implements Controllable {
             GameLoop.safeDestroy(entity);
             GameLoop.safeTrack(new Entity("Death Screen")
                 .register(new ECSystem() {
-                    private Text text = new Text("DEFEAT", Vec2.screenCenter().addEq(0, -50), 54, Color.WHITE).center();
+                    private Text text = new Text("DEFEAT", Vec2.screenCenter().addEq(0, -100), 54, Color.WHITE).center();
                     private float originalX = text.position.x;
                     private Tween<Float> textTween;
 
                     @Override
                     public void setup() {
-                        textTween = GameLoop.makeTween(Tween.lerp(12, 200), 0.2f, val -> {
+                        textTween = GameLoop.makeTween(Tween.lerp(400, 200), 0.2f, val -> {
                             text.fontSize = val.intValue();
                             text.position.x = originalX - text.measure()*0.35f;
                         }).start();
