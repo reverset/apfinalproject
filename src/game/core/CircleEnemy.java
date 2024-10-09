@@ -94,7 +94,7 @@ public class CircleEnemy extends Enemy {
         });
 
         weapon = new NovaWeapon(BASE_DAMAGE, DEGREE_PER_BULLET, BULLET_SPEED, Color.PINK, GameTags.ENEMY_TEAM_TAGS, WEAPON_COOLDOWN, BULLET_LIFETIME, Optional.of(effect));
-        deathWeapon = new NovaWeapon(BASE_DEATH_DAMAGE, DEGREE_PER_DEATH_BULLET, DEATH_BULLET_SPEED, Color.PINK, GameTags.ENEMY_TEAM_TAGS, WEAPON_COOLDOWN, DEATH_BULLET_LIFETIME, Optional.of(effect));
+        deathWeapon = new NovaWeapon(BASE_DEATH_DAMAGE, DEGREE_PER_DEATH_BULLET, DEATH_BULLET_SPEED, Color.PINK, GameTags.NONE, WEAPON_COOLDOWN, DEATH_BULLET_LIFETIME, Optional.of(effect));
     }
 
     @Override
