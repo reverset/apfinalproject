@@ -1,5 +1,7 @@
 package game.core;
 
+import java.util.Optional;
+
 import game.Signal;
 import game.Stopwatch;
 import game.ecs.Component;
@@ -9,18 +11,32 @@ public class Health implements Component {
     private int maxHealth;
     private boolean confirmedDeath = false;
 
+    @Deprecated
     public final Signal<Integer> onDamage = new Signal<>();
+    
+    public final Signal<DamageInfo> onDamageWithInfo = new Signal<>();
     public final Signal<Integer> onHeal = new Signal<>();
     public final Signal<Void> onDeath = new Signal<>();
 
     private float invincibilityDuration = 0;
+    private Optional<Effect> effect;
 
     private final Stopwatch invincibilityStopwatch = new Stopwatch();
     
-    public Health(int maxHp) {
+    public Health(int maxHp, Optional<Effect> effect) {
         maxHealth = maxHp;
         health = maxHealth;
+        this.effect = effect;
     }
+
+    public Health(int maxHp, Effect effect) {
+        this(maxHp, Optional.of(effect));
+    }
+
+    public Health(int maxHp) {
+        this(maxHp, Optional.empty());
+    }
+
 
     public void heal(int life) {
         health += life;
@@ -33,7 +49,8 @@ public class Health implements Component {
         return this;
     }
 
-    public void damage(int dmg) { // TODO: make this function return the amount of damage actually done.
+    @Deprecated
+    public void damage(int dmg) {
         if (!invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return;
 
         health -= dmg;
@@ -42,6 +59,24 @@ public class Health implements Component {
             confirmedDeath = true; 
             onDeath.emit(null);
         }
+    }
+
+    public DamageInfo damage(DamageInfo info) {
+        if (!invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return DamageInfo.ofNone();
+        
+        DamageInfo inf = info;
+        if (effect.isPresent()) inf = effect.get().computeDamageResistance(inf);
+
+        int dmg = inf.damage();
+        health -= dmg;
+        onDamage.emit(dmg);
+        onDamageWithInfo.emit(inf);
+        if (health <= 0 && !confirmedDeath) {
+            confirmedDeath = true; 
+            onDeath.emit(null);
+        }
+
+        return inf;
     }
 
     public int getHealth() {

@@ -47,14 +47,14 @@ public class CircleEnemy extends Enemy {
         EntityOf<Enemy> entity = new EntityOf<>("Circle", Enemy.class);
 
         Effect effect = new Effect().setLevel(level);
-        effect.setLevelWeaponScalingFunction(d -> d + ((int) Math.ceil((level-1)*5)));
+        effect.addDamageScaling(d -> d.damage() + ((int) Math.ceil((level-1)*5)));
 
         entity
             .addComponent(new Shader("resources/circle.frag"))
             .addComponent(new Circle(RADIUS, Color.RED))
             .addComponent(new Transform(position))
             .addComponent(new Tangible())
-            .addComponent(new Health(BASE_HEALTH))
+            .addComponent(new Health(BASE_HEALTH, effect))
             .addComponent(new Rect((int) RADIUS*2, (int) RADIUS*2, Color.WHITE))
             .addComponent(effect)
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))

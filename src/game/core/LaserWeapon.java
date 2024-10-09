@@ -63,8 +63,6 @@ public class LaserWeapon extends Weapon2 {
     @Override
     void forceFire(Vec2 position, Vec2 direction, Entity owner) {
         ray.updateRay(position, direction.clone());
-        int dmg = getDesiredDamage(damage);
-
         List<Ray.RayResult> collisions = ray.testForAll();
 
         for (var collision : collisions) {
@@ -73,8 +71,9 @@ public class LaserWeapon extends Weapon2 {
 
             Optional<Health> health = collisionEntity.getComponent(Health.class);
             health.ifPresent(h -> {
-                h.damage(dmg);
-                GameLoop.safeTrack(DamageNumber.makeEntity(collision.position(), dmg, Color.WHITE));
+                DamageInfo info = new DamageInfo(damage, this, collision.position());
+                info = h.damage(info);
+                GameLoop.safeTrack(DamageNumber.makeEntity(collision.position(), info.damage(), Color.WHITE));
             });
             collision.physics().impulse(direction.multiply(knockback));
         }

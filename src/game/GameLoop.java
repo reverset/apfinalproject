@@ -262,9 +262,21 @@ public class GameLoop {
 			Raylib.GetMouseY()
 		).screenToWorldEq();
 	}
+
+	private static void forEachEntitySafe(Consumer<Entity> action) {
+		ListIterator<Entity> iter = entities.listIterator();
+		while (iter.hasNext()) {
+			try {
+				action.accept(iter.next());
+			} catch (RecoverableException e) {
+				e.printStackTrace();
+				iter.remove();
+			}
+		}
+	}
 	
 	private static void frameUpdate() {
-		getEntitiesIterator().forEachRemaining(Entity::frame);
+		forEachEntitySafe(Entity::frame);
 	}
 	
 	private static void renderUpdate() {

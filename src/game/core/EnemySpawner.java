@@ -20,7 +20,7 @@ public class EnemySpawner extends ECSystem {
 
     private final Stopwatch levelIncrease = new Stopwatch();
     
-    private int maxLevel = 1;
+    private int maxLevel = 5;
     
     private Queue<EntityOf<Enemy>> spawnQueue = new LinkedList<>();
 

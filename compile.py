@@ -1,7 +1,7 @@
 import subprocess
 
 subprocess.run(
-    "javac --class-path ./jaylib.jar ./src/game/*.java ./src/game/ecs/*.java ./src/game/ecs/comps/*.java ./src/game/core/*.java ./src/game/core/rendering/*.java -d ./test/",
+    "javac -Xlint:deprecation --class-path ./jaylib.jar ./src/game/*.java ./src/game/ecs/*.java ./src/game/ecs/comps/*.java ./src/game/core/*.java ./src/game/core/rendering/*.java -d ./test/",
     shell=True,
     check=True,
 )

@@ -36,12 +36,12 @@ public class TriangleEnemy extends Enemy {
         EntityOf<Enemy> entity = new EntityOf<>("Triangle", Enemy.class);
 
         Effect effect = new Effect().setLevel(level);
-        effect.setLevelWeaponScalingFunction(d -> d + (level-1)*10);
+        effect.addDamageScaling(d -> d.damage() + (level-1)*10);
 
         entity
             .addComponent(new Transform(position))
             .addComponent(new Tangible())
-            .addComponent(new Health(BASE_HEALTH))
+            .addComponent(new Health(BASE_HEALTH, effect))
             .addComponent(new Triangle(position, SIZE, SIZE, Color.ORANGE))
             .addComponent(new Rect((int) SIZE, (int) SIZE, Color.WHITE))
             .addComponent(effect)

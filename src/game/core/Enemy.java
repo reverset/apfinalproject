@@ -62,14 +62,14 @@ public class Enemy extends ECSystem {
         Effect effect = new Effect()
             .setLevel(level);
             
-        effect.setLevelWeaponScalingFunction((dmg) -> effect.getLevel()*dmg);
+        effect.addDamageScaling(d -> effect.getLevel()*d.damage());
 
         entity
             .addComponent(new Shader("resources/enemy.frag"))
             .addComponent(new Transform(position))
             .addComponent(rect)
             .addComponent(new Tangible())
-            .addComponent(new Health(BASE_HEALTH))
+            .addComponent(new Health(BASE_HEALTH, effect))
             .addComponent(effect)
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new RectRender())

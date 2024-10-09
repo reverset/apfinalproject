@@ -51,8 +51,8 @@ public class BossBody extends ECSystem {
         tangible = require(Tangible.class);
         health = require(Health.class);
 
-        health.onDamage.listen(dmg -> {
-            boss.health.damage(dmg);
+        health.onDamageWithInfo.listen(info -> {
+            boss.health.damage(info.setExtras(new Object[]{BossBody.class}));
         }, entity);
     }
 

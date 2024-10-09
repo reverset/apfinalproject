@@ -64,15 +64,18 @@ public class BossEnemy extends Enemy {
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("The Hexagon Worm", Enemy.class);
 
+        Effect effect = new Effect().setLevel(level);
+        effect.addDamageScaling(d -> !d.hasExtra(BossBody.class) ? d.damage()*2 : d.damage());
+
         Supplier<Float> timeSupplier = () -> time()*10;
         entity
             .addComponent(new Shader("resources/enemy.frag"))
             .addComponent(new Poly(6, RADIUS, Color.RED))
             .addComponent(new Transform(position))
             .addComponent(Rect.around(RADIUS*2, Color.WHITE))
-            .addComponent(new Effect().setLevel(level))
+            .addComponent(effect)
             .addComponent(new Tangible())
-            .addComponent(new Health(BASE_HEALTH).withInvincibilityDuration(0.1f))
+            .addComponent(new Health(BASE_HEALTH, effect).withInvincibilityDuration(0.1f))
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new HealthBar(new Vec2(-RADIUS, -100), entity.name, true))
             .register(new Physics(0, 0, new Vec2(-RADIUS, -RADIUS)))
@@ -128,10 +131,13 @@ public class BossEnemy extends Enemy {
             
             if (other.entity.hasAnyTag(GameTags.PLAYER_TEAM_TAGS)) {
                 if (!meleeTimer.hasElapsedSecondsAdvance(MELEE_COOLDOWN)) return;
-                int dmg = (int) (health.getMaxHealth()*0.1f);
-                other.entity.getComponent(Health.class).ifPresent(health -> health.damage(dmg));
-                
+
+                Health otherHealth = other.entity.getComponent(Health.class).orElseThrow(); // should probably use more concrete checks
                 Transform otherTrans = other.entity.getComponent(Transform.class).orElseThrow();
+                
+                int dmg = (int) (otherHealth.getMaxHealth()*0.1f);
+                otherHealth.damage(new DamageInfo(dmg, null, trans.position.clone()));
+                
                 Vec2 knockback = trans.position.directionTo(otherTrans.position).multiplyEq(1_000);
                 other.impulse(knockback);
 
