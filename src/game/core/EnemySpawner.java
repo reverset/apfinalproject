@@ -51,7 +51,6 @@ public class EnemySpawner extends ECSystem {
     }
 
     public int getMaxLevel() {
-        System.out.println(maxLevel);
         return maxLevel;
     }
 

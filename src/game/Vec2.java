@@ -127,6 +127,16 @@ public class Vec2 {
 		return this;
 	}
 
+	public Vec2 invert() {
+		return new Vec2(1/x, 1/y);
+	}
+
+	public Vec2 invertEq() {
+		x = 1 / x;
+		y = 1 /y;
+		return this;
+	}
+
 	public Vec2 setEq(float ox, float oy) {
 		x = ox;
 		y = oy;

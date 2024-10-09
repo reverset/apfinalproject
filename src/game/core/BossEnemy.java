@@ -65,8 +65,9 @@ public class BossEnemy extends Enemy {
         EntityOf<Enemy> entity = new EntityOf<>("The Hexagon Worm", Enemy.class);
 
         Effect effect = new Effect().setLevel(level);
-        effect.addDamageRecievingResponse(d -> {
-            return !d.hasExtra(BossBody.class) ? d.damage()*2 : d.damage();
+        effect.addDamageRecievingResponseExtra(d -> {
+            boolean headshot = !d.hasExtra(BossBody.class);
+            return d.setDamageAndColor(headshot ? d.damage()*2 : d.damage(), headshot ? DamageColor.CRITICAL : DamageColor.NORMAL);            
         });
 
         Supplier<Float> timeSupplier = () -> time()*10;
@@ -132,18 +133,23 @@ public class BossEnemy extends Enemy {
         tangible.onCollision.listen(other -> {
             
             if (other.entity.hasAnyTag(GameTags.PLAYER_TEAM_TAGS)) {
+                
+                Optional<Transform> otherTrans = other.entity.getComponent(Transform.class);
+                if (otherTrans.isPresent()) {
+                    if (otherTrans.get().position.distance(trans.position) > RADIUS) return;
+                }
+                
                 if (!meleeTimer.hasElapsedSecondsAdvance(MELEE_COOLDOWN)) return;
-
+                
                 Health otherHealth = other.entity.getComponent(Health.class).orElseThrow(); // should probably use more concrete checks
-                Transform otherTrans = other.entity.getComponent(Transform.class).orElseThrow();
                 
                 int dmg = (int) (otherHealth.getMaxHealth()*0.1f);
                 otherHealth.damage(new DamageInfo(dmg, null, trans.position.clone(), DamageColor.MELEE));
                 
-                Vec2 knockback = trans.position.directionTo(otherTrans.position).multiplyEq(1_000);
-                other.impulse(knockback);
-
-                // GameLoop.safeTrack(DamageNumber.makeEntity(trans.position.clone(), dmg, Color.ORANGE));
+                if (otherTrans.isPresent()) {
+                    Vec2 knockback = trans.position.directionTo(otherTrans.get().position).multiplyEq(1_000);
+                    other.impulse(knockback);
+                }
             }
         }, entity);
     }

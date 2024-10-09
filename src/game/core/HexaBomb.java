@@ -47,10 +47,6 @@ public class HexaBomb extends Bullet {
         this.color = color.cloneIfImmutable();
     }
 
-    public HexaBomb(Duration lifetime, Entity owner, int damage, Object[] ignoreTags) {
-        this(lifetime, Optional.empty(), owner, damage, ignoreTags, Color.YELLOW);
-    }
-    
     @Override
     public void setup() {
         trans = require(Transform.class);

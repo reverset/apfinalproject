@@ -38,6 +38,10 @@ public record DamageInfo(int damage, Weapon2 weapon, Optional<Vec2> position, Op
         return new DamageInfo(dmg, weapon, position, extraInfo, damageColor);
     }
 
+    public DamageInfo setDamageAndColor(int dmg, Color color) {
+        return new DamageInfo(dmg, weapon, position, extraInfo, color);
+    }
+
     public boolean hasExtra(Object obj) {
         if (extraInfo.isEmpty()) return false;
 

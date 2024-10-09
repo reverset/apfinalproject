@@ -1,6 +1,7 @@
 package game.core;
 
 import java.util.ArrayList;
+import java.util.function.Function;
 
 import game.ecs.Component;
 
@@ -64,6 +65,25 @@ public class Effect implements Component {
 
     public Effect addDamageRecievingResponse(DamageCalculator scale) {
         damageResponse.add(scale);
+        return this;
+    }
+
+    public Effect addDamageRecievingResponseExtra(Function<DamageInfo, DamageInfo> func) {
+        var calc = new DamageCalculator() {
+
+            @Override
+            public int calculate(DamageInfo info) {
+                return func.apply(info).damage();
+            }
+
+            @Override
+            public DamageInfo compute(DamageInfo info) {
+                return func.apply(info);
+            }
+            
+        };
+
+        damageResponse.add(calc);
         return this;
     }
 }
