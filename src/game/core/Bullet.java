@@ -71,7 +71,6 @@ public class Bullet extends ECSystem {
                 var healthOpt = otherPhysics.entity.getComponent(Health.class);
                 if (healthOpt.isPresent()) damage = healthOpt.get().damage(damage);
 
-                System.out.println(damage);
                 otherPhysics.entity.getSystem(Physics.class).ifPresent((physics) -> physics.impulse(tangible.velocity.normalize().multiplyEq(100)));
                 GameLoop.safeDestroy(entity);
 

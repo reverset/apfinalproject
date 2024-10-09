@@ -9,7 +9,7 @@ public class Effect implements Component {
         int get(int dmg);
     }
 
-    public interface WeaponDamageCalculator {
+    public interface DamageCalculator {
         int calculate(DamageInfo info);
 
         default DamageInfo compute(DamageInfo info) {
@@ -20,7 +20,8 @@ public class Effect implements Component {
     private int level = 1;
     WeaponLevelScale levelWeaponScale = (d) -> d;
 
-    private ArrayList<WeaponDamageCalculator> damageScaling = new ArrayList<>();
+    private ArrayList<DamageCalculator> damageScaling = new ArrayList<>();
+    private ArrayList<DamageCalculator> damageResponse = new ArrayList<>();
 
     public int getLevel() {
         return level;
@@ -45,9 +46,13 @@ public class Effect implements Component {
         return inf;
     }
 
-    // TODO
     public DamageInfo computeDamageResistance(DamageInfo info) {
-        return info;
+        DamageInfo inf = info;
+        for (var scale : damageResponse) {
+            inf = scale.compute(info);
+        }
+
+        return inf;
     }
 
     @Deprecated
@@ -57,8 +62,13 @@ public class Effect implements Component {
         return this;
     }
 
-    public Effect addDamageScaling(WeaponDamageCalculator scale) {
+    public Effect addDamageScaling(DamageCalculator scale) {
         damageScaling.add(scale);
+        return this;
+    }
+
+    public Effect addDamageRecievingResponse(DamageCalculator scale) {
+        damageResponse.add(scale);
         return this;
     }
 }

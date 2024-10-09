@@ -65,7 +65,9 @@ public class BossEnemy extends Enemy {
         EntityOf<Enemy> entity = new EntityOf<>("The Hexagon Worm", Enemy.class);
 
         Effect effect = new Effect().setLevel(level);
-        effect.addDamageScaling(d -> !d.hasExtra(BossBody.class) ? d.damage()*2 : d.damage());
+        effect.addDamageRecievingResponse(d -> {
+            return !d.hasExtra(BossBody.class) ? d.damage()*2 : d.damage();
+        });
 
         Supplier<Float> timeSupplier = () -> time()*10;
         entity

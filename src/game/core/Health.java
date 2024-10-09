@@ -51,18 +51,6 @@ public class Health implements Component {
         return this;
     }
 
-    @Deprecated
-    public void damage(int dmg) {
-        if (!invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return;
-
-        health -= dmg;
-        onDamage.emit(dmg);
-        if (health <= 0 && !confirmedDeath) {
-            confirmedDeath = true; 
-            onDeath.emit(null);
-        }
-    }
-
     public DamageInfo damage(DamageInfo info) {
         return damage(info, true);
     }
