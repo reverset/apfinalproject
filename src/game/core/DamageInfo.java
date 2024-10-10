@@ -69,7 +69,7 @@ public record DamageInfo(int damage, Entity victim, Weapon2 weapon, Optional<Vec
     }
 
     public DamageInfo setDamageAndColor(int dmg, Color color) {
-        return new DamageInfo(dmg, victim, weapon, position, extraInfo, color);
+        return new DamageInfo(dmg, victim, weapon, position, extraInfo, getColorPriority(color));
     }
 
     public boolean hasExtra(Object obj) {

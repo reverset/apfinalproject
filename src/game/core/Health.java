@@ -52,7 +52,16 @@ public class Health implements Component {
         return damage(info, true);
     }
 
+    public boolean isDead() {
+        return health == 0;
+    }
+
+    public boolean isAlive() {
+        return health > 0;
+    }
+
     public DamageInfo damage(DamageInfo info, boolean showNumbers) {
+        if (isDead()) return DamageInfo.ofNone();
         if (!invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return DamageInfo.ofNone();
         
         DamageInfo inf = info;
