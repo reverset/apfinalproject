@@ -144,7 +144,7 @@ public class BossEnemy extends Enemy {
                 Health otherHealth = other.entity.getComponent(Health.class).orElseThrow(); // should probably use more concrete checks
                 
                 int dmg = (int) (otherHealth.getMaxHealth()*0.1f);
-                otherHealth.damage(new DamageInfo(dmg, null, trans.position.clone(), DamageColor.MELEE));
+                otherHealth.damage(new DamageInfo(dmg, other.entity, null, trans.position.clone(), DamageColor.MELEE));
                 
                 if (otherTrans.isPresent()) {
                     Vec2 knockback = trans.position.directionTo(otherTrans.get().position).multiplyEq(1_000);

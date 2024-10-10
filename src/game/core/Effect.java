@@ -19,10 +19,10 @@ public class Effect implements Component {
     }
 
     private int level = 1;
-    WeaponLevelScale levelWeaponScale = (d) -> d;
 
     private ArrayList<DamageCalculator> damageScaling = new ArrayList<>();
     private ArrayList<DamageCalculator> damageResponse = new ArrayList<>();
+    private ArrayList<Powerup> powerups = new ArrayList<>();
 
     public int getLevel() {
         return level;
@@ -39,6 +39,10 @@ public class Effect implements Component {
             inf = scale.compute(info);
         }
 
+        for (var power : powerups) {
+            inf = power.outgoingDamageMod(info);
+        }
+
         return inf;
     }
 
@@ -48,14 +52,11 @@ public class Effect implements Component {
             inf = scale.compute(info);
         }
 
+        for (var power : powerups) {
+            inf = power.incomingDamageMod(info);
+        }
+
         return inf;
-    }
-
-    @Deprecated
-    public Effect setLevelWeaponScalingFunction(WeaponLevelScale levelWeaponScale) {
-        this.levelWeaponScale = levelWeaponScale;
-
-        return this;
     }
 
     public Effect addDamageScaling(DamageCalculator scale) {
@@ -84,6 +85,16 @@ public class Effect implements Component {
         };
 
         damageResponse.add(calc);
+        return this;
+    }
+
+    public Effect registerPowerup(Powerup powerup) {
+        powerups.add(powerup);
+        return this;
+    }
+
+    public Effect unregisterPowerup(Powerup powerup) {
+        powerups.remove(powerup);
         return this;
     }
 }

@@ -39,6 +39,15 @@ public class Color {
 		
 		// Janitor.registerAsyncSafe(this, internal::close);
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return false;
+	}
+
+	public boolean equals(Color obj) {
+		return r == obj.r && g == obj.g && b == obj.b && a == obj.a;
+	}
 	
 	public Color(byte r, byte g, byte b, byte a) {
 		this(r, g, b, a, new Raylib.Color());

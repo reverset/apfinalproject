@@ -55,8 +55,8 @@ public class Bullet extends ECSystem {
         return damage;
     }
 
-    public DamageInfo computeDamage() {
-        DamageInfo info = new DamageInfo(damage, null, trans.position.clone());
+    public DamageInfo computeDamage(Entity victim) {
+        DamageInfo info = new DamageInfo(damage, victim, null, trans.position.clone());
         return effect.isPresent()
             ? effect.get().computeDamage(info)
             : info;
@@ -66,7 +66,7 @@ public class Bullet extends ECSystem {
     public void ready() {
         tangible.onCollision.listen((otherPhysics) -> {
             if (otherPhysics.entity != owner && !otherPhysics.entity.hasTag(GameTags.BULLET) && !otherPhysics.entity.hasAnyTag(ignoreTags)) {
-                DamageInfo damage = computeDamage();
+                DamageInfo damage = computeDamage(otherPhysics.entity);
                 
                 var healthOpt = otherPhysics.entity.getComponent(Health.class);
                 if (healthOpt.isPresent()) damage = healthOpt.get().damage(damage);

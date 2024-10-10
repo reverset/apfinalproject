@@ -28,9 +28,13 @@ public class DamageNumber extends ECSystem {
 
     TweenAnimation animation;
 
+    Vec2 velocity;
+
     public DamageNumber(int value, Color color) {
         this.value = value;
         this.color = color;
+
+        velocity = Vec2.randomUnit().multiplyEq(100);
     }
 
     public static EntityOf<DamageNumber> makeEntity(Vec2 pos, int value, Color color) {
@@ -78,7 +82,7 @@ public class DamageNumber extends ECSystem {
 
     @Override
     public void frame() {
-        text.position.y -= 50 * delta();
+        text.position.addEq(velocity.multiply(delta()));
     }
     
     @Override

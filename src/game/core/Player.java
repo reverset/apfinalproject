@@ -49,7 +49,9 @@ public class Player extends ECSystem implements Controllable {
     public static Entity makeEntity() {
         Effect effect = new Effect().setLevel(1);
 
-        return new Entity("Player")
+        Entity entity = new Entity("Player");
+
+        entity
             .addComponent(new Transform())
             .addComponent(new Health(200, effect))
             .addComponent(new Rect(SIZE, SIZE, Color.GREEN))
@@ -59,7 +61,10 @@ public class Player extends ECSystem implements Controllable {
             .register(new Physics(0, 0))
             .register(new Player())
             .register(new Controller<>(Player.class))
+            .register(new Diamond(entity, null, effect, 1))
             .addTags(GameTags.PLAYER, GameTags.PLAYER_TEAM);
+
+        return entity;
     }
 
     private Weapon2 weapon;
