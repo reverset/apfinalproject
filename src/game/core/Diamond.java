@@ -25,12 +25,12 @@ public class Diamond extends Powerup {
 
             GameLoop.runAfter(entity, Duration.ofMillis(500), () -> {
                 if (health.isAlive()) {
-                    if (Math.random() > 0.1*level) return;
+                    // if (Math.random() > 0.1*level) return;
 
                     health.damage(info.setPosition(victTrans.position.clone()).setColor(DamageColor.SPECIAL));
                     Entity damageEffect = new Entity("Diamond Effect");
 
-                    X x = new X(victTrans.position.addRandomByCoeff(10), Color.RED, 15, 0);
+                    X x = new X(victTrans.position.addRandomByCoeff(10), Color.RED, 8, 0);
                     damageEffect
                         .addComponent(x)
                         .register(new Tween<>(Tween.overEase(0, 50, 20), 0.2f, val -> {
