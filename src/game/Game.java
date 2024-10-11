@@ -14,6 +14,8 @@ import game.core.Tangible;
 import game.core.rendering.Circle;
 import game.core.rendering.Rect;
 import game.core.rendering.RectRender;
+import game.core.rendering.X;
+import game.core.rendering.XRenderer;
 import game.ecs.Component;
 import game.ecs.ECSystem;
 
@@ -40,7 +42,6 @@ public class Game {
 		GameLoop.track(EnemySpawner.makeEntity());
 
 		GameLoop.track(Player.makeEntity());
-		// GameLoop.track(Enemy.makeEntity(new Vec2(100, 100)));
 	}
 	
 }

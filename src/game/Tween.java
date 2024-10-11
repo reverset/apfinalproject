@@ -43,6 +43,16 @@ public class Tween<T> extends ECSystem {
         };
     }
 
+    // This feels wrong but idk
+    public static TweenFunction<Float> overEase(float from, float to, float overshoot) {
+        return percent -> {
+            final float onePlusOver = overshoot + 1;
+
+            float calc = 1 + onePlusOver * ((float) Math.pow(percent - 1, 3)) + overshoot * ((float) Math.pow(percent - 1, 2));
+            return (to - from) * calc + from;
+        };
+    }
+
 
     public Tween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
         this(supplier, durationSeconds, true, updater);

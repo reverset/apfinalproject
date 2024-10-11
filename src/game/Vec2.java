@@ -207,6 +207,13 @@ public class Vec2 {
 		return new Vec2(x + scalar, y + scalar);
 	}
 
+	public Vec2 addRandomByCoeff(float coeff) {
+		Vec2 res = randomUnit().multiplyEq(coeff);
+		res.x = x + res.x;
+		res.y = y + res.y;
+		return res;
+	}
+
 	public Vec2 addEq(Vec2 other) {
 		x += other.x;
 		y += other.y;

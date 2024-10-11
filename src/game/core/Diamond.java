@@ -2,7 +2,12 @@ package game.core;
 
 import java.time.Duration;
 
+import game.Color;
 import game.GameLoop;
+import game.RemoveAfter;
+import game.Tween;
+import game.core.rendering.X;
+import game.core.rendering.XRenderer;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
@@ -19,7 +24,23 @@ public class Diamond extends Powerup {
             Transform victTrans = vict.getComponent(Transform.class).orElseThrow();
 
             GameLoop.runAfter(entity, Duration.ofMillis(500), () -> {
-                health.damage(info.setPosition(victTrans.position.clone()).setColor(DamageColor.SPECIAL));
+                if (health.isAlive()) {
+                    if (Math.random() > 0.1*level) return;
+
+                    health.damage(info.setPosition(victTrans.position.clone()).setColor(DamageColor.SPECIAL));
+                    Entity damageEffect = new Entity("Diamond Effect");
+
+                    X x = new X(victTrans.position.addRandomByCoeff(10), Color.RED, 15, 0);
+                    damageEffect
+                        .addComponent(x)
+                        .register(new Tween<>(Tween.overEase(0, 50, 20), 0.2f, val -> {
+                            x.setLength(val);
+                        }).setDestroy(false).start())
+                        .register(new RemoveAfter(Duration.ofMillis(500)))
+                        .register(new XRenderer());
+                    
+                    GameLoop.safeTrack(damageEffect);
+                }
             });
         });
 
