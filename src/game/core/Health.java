@@ -2,7 +2,6 @@ package game.core;
 
 import java.util.Optional;
 
-import game.Color;
 import game.GameLoop;
 import game.Signal;
 import game.Stopwatch;

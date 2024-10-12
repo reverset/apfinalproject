@@ -1,5 +1,10 @@
 package game;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -209,6 +214,36 @@ public class GameLoop {
 	}
 	
 	public static void runBlocking() {
+		try {
+			runBlockingActual();
+		} catch (Exception e) {
+			StringWriter stringWriter = new StringWriter();
+			e.printStackTrace(new PrintWriter(stringWriter));
+			String errmsg = stringWriter.toString();
+
+			File errFile = new File("./err.stacktrace");
+			if (!errFile.exists()) {
+				try {
+					errFile.createNewFile();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+					System.out.println("Failed to create err file.");
+				}
+			}
+
+			try {
+				FileWriter writer = new FileWriter(errFile);
+				writer.write(errmsg);
+				writer.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+
+			throw e;
+		}
+	}
+
+	private static void runBlockingActual() {
 		while (!Raylib.WindowShouldClose() && !shouldShutdown) {
 			frameUpdate();
 			infrequentUpdate();
@@ -266,11 +301,12 @@ public class GameLoop {
 	private static void forEachEntitySafe(Consumer<Entity> action) {
 		ListIterator<Entity> iter = entities.listIterator();
 		while (iter.hasNext()) {
+			Entity en = iter.next();
 			try {
-				action.accept(iter.next());
+				action.accept(en);
 			} catch (RecoverableException e) {
 				e.printStackTrace();
-				iter.remove();
+				GameLoop.safeDestroy(en);
 			}
 		}
 	}
