@@ -22,7 +22,13 @@ import game.ecs.ECSystem;
 public class Game {
 	public static void main(String[] args) { // Everything might be a bit over engineered...
 		GameLoop.init();
-		GameLoop.setPostProcessShader(new Shader("resources/bloom.frag"));
+
+		Shader post = new Shader("resources/post.frag");
+		post.setResetFunction(() -> {
+			post.setShaderValue("vignetteStrength", 0f);
+		});
+
+		GameLoop.setPostProcessShader(post);
 
 		loadLevel();
 
@@ -30,7 +36,8 @@ public class Game {
 		// System.exit(0);
 	}
 	
-	public static void loadLevel() {
+	public static void loadLevel() { // make abstraction to handle levels TODO
+		GameLoop.getPostProcessShader().ifPresent(Shader::reset);
 		GameLoop.setMainCamera(Camera.makeEntity(
 			new Transform(), new CameraSettings(Vec2.screenCenter(), 1)
 		));

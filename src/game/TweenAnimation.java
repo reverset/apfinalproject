@@ -29,16 +29,15 @@ public class TweenAnimation extends ECSystem {
 
         var tween = tweens.get(pointer);
 
-        // tween.onFinish.listenOnce(n -> {
-        //     pointer += 1;
-        //     start(false);
-        // });
-
         tween.start();
     }
 
     public void start() {
         start(true);
+    }
+
+    public boolean isRunning() {
+        return tweens.get(pointer).isRunning();
     }
 
     @Override

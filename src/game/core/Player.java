@@ -39,6 +39,7 @@ public class Player extends ECSystem implements Controllable {
     private Effect effect;
 
     private TweenAnimation healthPulseAnimation;
+    private TweenAnimation healthCriticalVignette;
 
     private boolean warningNotifVisible = false;
     private Color warningColor = new Color(255, 0, 0, 0);
@@ -92,7 +93,21 @@ public class Player extends ECSystem implements Controllable {
                 healthText.position.y = Vec2.screen().y - 10 - healthText.fontSize;
         })));
 
+        healthCriticalVignette = new TweenAnimation(List.of(
+            new Tween<>(Tween.lerp(0, 1), 0.1f, val -> {
+                GameLoop.getPostProcessShader().ifPresent(shader -> {
+                    shader.setShaderValue("vignetteStrength", val.floatValue());
+                });
+            }),
+            new Tween<>(Tween.lerp(1, 0), 0.5f, val -> {
+                GameLoop.getPostProcessShader().ifPresent(shader -> {
+                    shader.setShaderValue("vignetteStrength", val.floatValue());
+                });
+            })
+        ));
+
         entity.register(healthPulseAnimation);
+        entity.register(healthCriticalVignette);
 
         weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.AQUA, GameTags.PLAYER_TEAM_TAGS, BULLET_LIFETIME, 0.2f, Optional.of(effect));
     }
@@ -105,6 +120,10 @@ public class Player extends ECSystem implements Controllable {
     public void ready() {
         health.onDamage.listen(v -> {
             healthPulseAnimation.start();
+
+            if (health.isCritical() && !healthCriticalVignette.isRunning()) {
+                healthCriticalVignette.start();
+            }
         }, entity);
 
         health.onDeath.listenOnce((v) -> {

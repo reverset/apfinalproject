@@ -25,6 +25,8 @@ public class GameLoop {
 	public static final int SCREEN_WIDTH = 1280; // This width and height are actually the render size.
 	public static final int SCREEN_HEIGHT = 720;
 
+	public static final boolean LOG_ERR_TO_FILE = true;
+
 	public static final float INFREQUENT_UPDATE_RATE = 1f / 32;
 	public static float timeScale = 1f;
 
@@ -49,6 +51,7 @@ public class GameLoop {
 
 	private static final PollingIterator<Runnable> deferIterator = new PollingIterator<>(deferments);
 
+
 	public static Camera getMainCamera() {
 		return mainCameraSystem;
 	}
@@ -67,6 +70,10 @@ public class GameLoop {
 
 	public static void setPostProcessShader(Shader shader) {
 		postProcesShader = shader;
+	}
+
+	public static Optional<Shader> getPostProcessShader() {
+		return Optional.ofNullable(postProcesShader);
 	}
 
 	public static void disablePostProcessShader() {
@@ -217,26 +224,28 @@ public class GameLoop {
 		try {
 			runBlockingActual();
 		} catch (Exception e) {
-			StringWriter stringWriter = new StringWriter();
-			e.printStackTrace(new PrintWriter(stringWriter));
-			String errmsg = stringWriter.toString();
-
-			File errFile = new File("./err.stacktrace");
-			if (!errFile.exists()) {
+			if (LOG_ERR_TO_FILE) {
+				StringWriter stringWriter = new StringWriter();
+				e.printStackTrace(new PrintWriter(stringWriter));
+				String errmsg = stringWriter.toString();
+	
+				File errFile = new File("./err.stacktrace");
+				if (!errFile.exists()) {
+					try {
+						errFile.createNewFile();
+					} catch (IOException ioe) {
+						ioe.printStackTrace();
+						System.out.println("Failed to create err file.");
+					}
+				}
+	
 				try {
-					errFile.createNewFile();
+					FileWriter writer = new FileWriter(errFile);
+					writer.write(errmsg);
+					writer.close();
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
-					System.out.println("Failed to create err file.");
 				}
-			}
-
-			try {
-				FileWriter writer = new FileWriter(errFile);
-				writer.write(errmsg);
-				writer.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
 			}
 
 			throw e;
@@ -335,7 +344,6 @@ public class GameLoop {
 
 		if (postProcesShader != null) postProcesShader.activate();
 		
-		// Raylib.DrawTextureRec(renderTexture.texture(), screenRect, Vec2.zero().getPointer(), Jaylib.WHITE);
 		float scale = getScreenTextureScale();
 
 		scaledScreenRect
@@ -348,7 +356,7 @@ public class GameLoop {
 			renderTexture.texture(),
 			screenRect,
 			scaledScreenRect,
-			Vec2.ZERO.getPointer(),
+			Vec2.ZERO.getPointerNoUpdate(),
 			0,
 			Color.WHITE.getPointer()
 		);

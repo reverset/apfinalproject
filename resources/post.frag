@@ -2,17 +2,25 @@
 
 precision mediump float;
 
-varying vec2 fragTexCoord;
-varying vec4 fragColor;
-
+in vec2 fragTexCoord;
+out vec4 fragColor;
 uniform sampler2D texture0;
+
+// Bloom
 uniform vec4 colDiffuse;
 
 const vec2 size = vec2(1280, 720);   // render size
 const float samples = 5.0;          // pixels per axis; higher = bigger glow, worse performance
 const float quality = 2.5;             // lower = smaller glow, better quality
 
-void main() {
+// Vignette
+uniform float vignetteRadius = 0.1;
+uniform float vignetteBlur = 0.9;
+uniform vec3 vignetteColor = vec3(1, 0, 0);
+
+uniform float vignetteStrength = 0;
+
+vec4 bloom() {
     vec4 sum = vec4(0);
     vec2 sizeFactor = vec2(1)/size*quality;
     
@@ -28,5 +36,17 @@ void main() {
         }
     }
 
-    gl_FragColor = ((sum/(samples*samples)) + source)*colDiffuse;
+    return ((sum/(samples*samples)) + source)*colDiffuse;
 }
+
+vec4 vignette() {
+    return mix(texture(texture0, fragTexCoord), vec4(vignetteColor, 1.0), smoothstep(vignetteRadius, vignetteRadius + vignetteBlur, distance(fragTexCoord, vec2(0.5, 0.5))));
+}
+
+void main() {
+    vec4 bloomColor = bloom();
+    vec4 vignetteColor = vignette();
+
+    fragColor = bloomColor + vignetteColor * vignetteStrength;
+}
+
