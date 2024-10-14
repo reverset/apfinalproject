@@ -341,7 +341,8 @@ public class GameLoop {
 		Raylib.EndTextureMode();
 		
 		Raylib.BeginDrawing();
-
+		Raylib.ClearBackground(Jaylib.BLACK);
+		
 		if (postProcesShader != null) postProcesShader.activate();
 		
 		float scale = getScreenTextureScale();
