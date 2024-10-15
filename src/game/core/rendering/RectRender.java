@@ -13,6 +13,7 @@ public class RectRender extends Renderer {
     private Transform trans;
     private Optional<Shader> shader;
     private boolean hidden = false;
+    private boolean hudMode = false;
 
     @Override
     public void setup() {
@@ -21,8 +22,29 @@ public class RectRender extends Renderer {
         shader = optionallyRequire(Shader.class);
     }
 
+    public RectRender setHudMode(boolean hudMode) {
+        this.hudMode = hudMode;
+        return this;
+    }
+
     @Override
     public void render() {
+        if (hudMode) return;
+        if (hidden) return;
+
+        if (shader.isPresent()) {
+            Shader shade = shader.get();
+            shade.activate();
+            Raylib.DrawRectangle(trans.position.xInt(), trans.position.yInt(), rect.width, rect.height, rect.color.getPointer());
+            shade.deactivate();
+        } else {
+            Raylib.DrawRectangle(trans.position.xInt(), trans.position.yInt(), rect.width, rect.height, rect.color.getPointer());
+        }
+    }
+
+    @Override
+    public void hudRender() {
+        if (!hudMode) return;
         if (hidden) return;
 
         if (shader.isPresent()) {

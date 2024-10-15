@@ -51,6 +51,8 @@ public class GameLoop {
 
 	private static final PollingIterator<Runnable> deferIterator = new PollingIterator<>(deferments);
 
+	private static final Vec2 worldMouseVec = new Vec2();
+	private static final Vec2 mouseVec = new Vec2();
 
 	public static Camera getMainCamera() {
 		return mainCameraSystem;
@@ -301,10 +303,11 @@ public class GameLoop {
 	}
 
 	public static Vec2 getMousePosition() {
-		return new Vec2(
-			Raylib.GetMouseX(),
-			Raylib.GetMouseY()
-		).screenToWorldEq();
+		return worldMouseVec.setEq(Raylib.GetMouseX(), Raylib.GetMouseY()).screenToWorldEq();
+	}
+
+	public static Vec2 getMouseScreenPosition() {
+		return mouseVec.setEq(Raylib.GetMouseX(), Raylib.GetMouseY());
 	}
 
 	private static void forEachEntitySafe(Consumer<Entity> action) {

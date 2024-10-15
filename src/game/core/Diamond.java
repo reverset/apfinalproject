@@ -56,5 +56,15 @@ public class Diamond extends Powerup {
     public void levelUp() {
         level += 1;
     }
+
+    @Override
+    public String getName() {
+        return "D'amico Diamond";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Chance to reapply damage.";
+    }
     
 }

@@ -1,6 +1,7 @@
 package game.core;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.Function;
 
 import game.ecs.Component;
@@ -86,6 +87,31 @@ public class Effect implements Component {
 
         damageResponse.add(calc);
         return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Powerup> Optional<T> getPowerUp(Class<T> clazz) {
+        for (var power: powerups) {
+            if (power.getClass().equals(clazz)) {
+                return Optional.of((T) power);
+            }
+        }
+        return Optional.empty();
+    }
+
+
+    public <T extends Powerup> boolean hasPowerUp(Class<T> clazz) {
+        return getPowerUp(clazz).isPresent();
+    }
+
+    public <T extends Powerup> boolean hasPowerUpThenIncrementLevel(Class<T> clazz) {
+        Optional<T> power = getPowerUp(clazz);
+
+        power.ifPresent(p -> {
+            p.level += 1;
+        });
+
+        return power.isPresent();
     }
 
     public Effect registerPowerup(Powerup powerup) {

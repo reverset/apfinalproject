@@ -62,7 +62,7 @@ public class Player extends ECSystem implements Controllable {
             .register(new Physics(0, 0))
             .register(new Player())
             .register(new Controller<>(Player.class))
-            .register(new Diamond(entity, null, effect, 1))
+            // .register(new Diamond(entity, null, effect, 1))
             .addTags(GameTags.PLAYER, GameTags.PLAYER_TEAM);
 
         return entity;
@@ -121,7 +121,7 @@ public class Player extends ECSystem implements Controllable {
         health.onDamage.listen(v -> {
             healthPulseAnimation.start();
 
-            if (health.isCritical() && !healthCriticalVignette.isRunning()) {
+            if ((health.isCritical() || v.damage() >= health.getMaxHealth()*0.1f) && !healthCriticalVignette.isRunning()) {
                 healthCriticalVignette.start();
             }
         }, entity);

@@ -19,10 +19,12 @@ public abstract class Powerup extends ECSystem {
     public abstract int getMaxLevel();
     public abstract void levelUp();
 
+    public abstract String getName();
+    public abstract String getDescription();
+
     public boolean canLevelUp() {
         return level < getMaxLevel();
     }
-
 
     @Override
     public void setup() {

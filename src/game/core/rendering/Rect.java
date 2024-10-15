@@ -49,6 +49,13 @@ public class Rect implements Component {
         return Raylib.CheckCollisionRecs(internal, otherPointer);
     }
 
+    public boolean pointWithin(Vec2 position, Vec2 point) {
+        internal.x(position.x).y(position.y);
+
+        return (position.x <= point.x && point.x <= position.x+width) 
+            && (position.y <= point.y && point.y <= position.y+height);
+    }
+
     public Optional<Vec2> checkRayHit(Vec2 position, Ray ray) { // TODO FIXME
         internal.x(position.x).y(position.y);
 

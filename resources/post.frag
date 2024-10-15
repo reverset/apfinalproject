@@ -20,6 +20,7 @@ uniform vec3 vignetteColor = vec3(1, 0, 0);
 
 uniform float vignetteStrength = 0;
 
+// https://github.com/raysan5/raylib/blob/master/examples/shaders/resources/shaders/glsl100/bloom.fs
 vec4 bloom() {
     vec4 sum = vec4(0);
     vec2 sizeFactor = vec2(1)/size*quality;
@@ -39,6 +40,7 @@ vec4 bloom() {
     return ((sum/(samples*samples)) + source)*colDiffuse;
 }
 
+// https://github.com/Apfelstrudel-Technologien/raylibVignette
 vec4 vignette() {
     return mix(texture(texture0, fragTexCoord), vec4(vignetteColor, 1.0), smoothstep(vignetteRadius, vignetteRadius + vignetteBlur, distance(fragTexCoord, vec2(0.5, 0.5))));
 }

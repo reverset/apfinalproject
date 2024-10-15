@@ -6,10 +6,12 @@ import game.ecs.Entity;
 import game.ecs.comps.Transform;
 import game.core.Background;
 import game.core.CircleEnemy;
+import game.core.Diamond;
 import game.core.Enemy;
 import game.core.EnemySpawner;
 import game.core.Physics;
 import game.core.Player;
+import game.core.RandomPowerup;
 import game.core.Tangible;
 import game.core.rendering.Circle;
 import game.core.rendering.Rect;
@@ -49,6 +51,9 @@ public class Game {
 		GameLoop.track(EnemySpawner.makeEntity());
 
 		GameLoop.track(Player.makeEntity());
+
+		GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), new Diamond(null, null, null, 0)));
+		
 	}
 	
 }
