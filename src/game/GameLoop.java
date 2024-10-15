@@ -54,6 +54,24 @@ public class GameLoop {
 	private static final Vec2 worldMouseVec = new Vec2();
 	private static final Vec2 mouseVec = new Vec2();
 
+	private static boolean paused = false;
+
+	public static void togglePause() {
+		paused = !paused;
+	}
+
+	public static boolean isPaused() {
+		return paused;
+	}
+
+	public static void pause() {
+		paused = true;
+	}
+
+	public static void unpause() {
+		paused = false;
+	}
+
 	public static Camera getMainCamera() {
 		return mainCameraSystem;
 	}
@@ -268,7 +286,7 @@ public class GameLoop {
 
 	public static void infrequentUpdate() {
 		if (infrequentUpdateStopwatch.hasElapsedSecondsAdvance(INFREQUENT_UPDATE_RATE)) {
-			getEntitiesIterator().forEachRemaining(Entity::infrequentUpdate);
+			forEachEntitySafe(Entity::infrequentUpdate);
 		}
 	}
 	
@@ -314,6 +332,7 @@ public class GameLoop {
 		ListIterator<Entity> iter = entities.listIterator();
 		while (iter.hasNext()) {
 			Entity en = iter.next();
+			if (!en.runWhilePaused && paused) continue;
 			try {
 				action.accept(en);
 			} catch (RecoverableException e) {

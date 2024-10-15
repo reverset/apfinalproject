@@ -11,6 +11,7 @@ import game.Signal;
 public class Entity {
 	public final Signal<Void> onReady = new Signal<>();
 	public final Signal<Void> onDestroy = new Signal<>();
+	public boolean runWhilePaused = false;
 
 	private final ArrayList<ECSystem> systems = new ArrayList<>();
 	private final ArrayList<Component> components = new ArrayList<>();
@@ -24,6 +25,7 @@ public class Entity {
 	private boolean hidden = false;
 
 	private boolean manifested = false;
+
 
 	public Entity(String name) {
 		this.name = name;
