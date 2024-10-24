@@ -51,7 +51,7 @@ public class Player extends ECSystem implements Controllable {
         Effect effect = new Effect().setLevel(1);
 
         Entity entity = new Entity("Player");
-
+        
         entity
             .addComponent(new Transform())
             .addComponent(new Health(200, effect))

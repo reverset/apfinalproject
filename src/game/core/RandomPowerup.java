@@ -16,6 +16,7 @@ import game.ecs.comps.Transform;
 public class RandomPowerup {
     public static Entity makeButton(Vec2 pos, Powerup powerup) {
         Entity entity = new Entity("random powerup");
+        entity.runWhilePaused = true;
         
         Rect rect = new Rect(200, 200, Color.DARK_RED);
         Transform trans = new Transform(rect.centerize(pos));
@@ -30,6 +31,7 @@ public class RandomPowerup {
 
                 @Override
                 public void setup() {
+                    GameLoop.pause();
                 }
 
                 @Override
@@ -40,6 +42,9 @@ public class RandomPowerup {
                 
             })
             .register(new Button(() -> {
+                GameLoop.defer(() -> {
+                    GameLoop.unpause();
+                });
                 Optional<Entity> playerEntity = GameLoop.findEntityByTag(GameTags.PLAYER);
 
                 playerEntity.ifPresent(player -> { // this is atrocious, please improve eventually FIXME
