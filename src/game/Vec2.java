@@ -339,6 +339,17 @@ public class Vec2 {
 		return this;
 	}
 
+	public Vec2 toVirtualScreenEq() {
+		float scale = GameLoop.getScreenTextureScale();
+
+		x = (x - (Raylib.GetScreenWidth() - (GameLoop.SCREEN_WIDTH * scale)) * 0.5f) / scale;
+		y = (y - (Raylib.GetScreenHeight() - (GameLoop.SCREEN_HEIGHT * scale)) * 0.5f) / scale;
+
+		clampEq(0, 0, GameLoop.SCREEN_WIDTH, GameLoop.SCREEN_HEIGHT);
+
+		return this;
+	}
+
 	public Vec2 distanceVector(Vec2 other) {
 		return (other.minus(this));
 	}

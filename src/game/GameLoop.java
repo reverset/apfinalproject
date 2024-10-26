@@ -178,7 +178,7 @@ public class GameLoop {
 				return true;
 			}
 			));
-
+		
 		stopwatch.start();
 		GameLoop.schedule(toSchedule);
 	}
@@ -325,7 +325,7 @@ public class GameLoop {
 	}
 
 	public static Vec2 getMouseScreenPosition() {
-		return mouseVec.setEq(Raylib.GetMouseX(), Raylib.GetMouseY());
+		return mouseVec.setEq(Raylib.GetMouseX(), Raylib.GetMouseY()).toVirtualScreenEq();
 	}
 
 	private static void forEachEntitySafe(Consumer<Entity> action) {
