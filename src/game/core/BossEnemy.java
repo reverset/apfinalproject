@@ -75,13 +75,13 @@ public class BossEnemy extends Enemy {
             .addComponent(new Shader("resources/enemy.frag"))
             .addComponent(new Poly(6, RADIUS, Color.RED))
             .addComponent(new Transform(position))
-            .addComponent(Rect.around(RADIUS*2, Color.WHITE))
+            .addComponent(new Rect((int) (RADIUS * MoreMath.ROOT_TWO), (int) (RADIUS * MoreMath.ROOT_TWO), Color.WHITE))
             .addComponent(effect)
             .addComponent(new Tangible())
             .addComponent(new Health(BASE_HEALTH, effect).withInvincibilityDuration(0.1f))
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new HealthBar(new Vec2(-RADIUS, -100), entity.name, true))
-            .register(new Physics(0, 0, new Vec2(-RADIUS, -RADIUS)))
+            .register(new Physics(0, 0, new Vec2(-RADIUS/MoreMath.ROOT_TWO, -RADIUS/MoreMath.ROOT_TWO)))
             .register(new PolyRenderer())
             .register(new BossEnemy())
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
@@ -135,9 +135,6 @@ public class BossEnemy extends Enemy {
             if (other.entity.hasAnyTag(GameTags.PLAYER_TEAM_TAGS)) {
                 
                 Optional<Transform> otherTrans = other.entity.getComponent(Transform.class);
-                if (otherTrans.isPresent()) {
-                    if (otherTrans.get().position.distance(trans.position) > RADIUS) return;
-                }
                 
                 if (!meleeTimer.hasElapsedSecondsAdvance(MELEE_COOLDOWN)) return;
                 

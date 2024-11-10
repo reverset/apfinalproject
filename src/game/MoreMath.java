@@ -3,6 +3,8 @@ package game;
 import java.util.List;
 
 public class MoreMath {
+    public static final float ROOT_TWO = (float) Math.sqrt(2);
+
     public static float clamp(float val, float min, float max) {
         float v = Math.max(val, min);
         return Math.min(v, max);
