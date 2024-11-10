@@ -75,6 +75,11 @@ public class Tween<T> extends ECSystem {
         return this;
     }
 
+    public Tween<T> runWhilePaused(boolean run) {
+        entity.runWhilePaused = run;
+        return this;
+    }
+
     public void stop() {
         startTime = -1;
     }

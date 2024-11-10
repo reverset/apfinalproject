@@ -111,7 +111,7 @@ public class GameLoop {
 		return entity;
 	}
 
-	public static <T> Tween<T> makeTween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
+public static <T> Tween<T> makeTween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
 		var tween = new Tween<>(supplier, durationSeconds, updater);
 		Entity entity = new Entity("tween")
 			.register(tween);

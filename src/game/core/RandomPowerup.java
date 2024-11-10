@@ -1,11 +1,13 @@
 package game.core;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import game.Button;
 import game.Color;
 import game.GameLoop;
 import game.Text;
+import game.Tween;
 import game.Vec2;
 import game.core.rendering.Rect;
 import game.core.rendering.RectRender;
@@ -19,32 +21,42 @@ public class RandomPowerup {
         entity.runWhilePaused = true;
         
         Rect rect = new Rect(200, 200, Color.DARK_RED);
-        Transform trans = new Transform(rect.centerize(pos));
+        
+        Vec2 desiredPos = rect.centerize(pos);
+        Transform trans = new Transform(desiredPos.clone());
+        trans.position.y = -100;
+
         entity
             .addComponent(trans)
             .addComponent(rect)
             .register(new RectRender().setHudMode(true))
             .register(new ECSystem() {
 
-                Text name = new Text(powerup.getName(), trans.position.clone(), 24, Color.WHITE);
-                Text description = new Text(powerup.getDescription(), trans.position.add(0, 200), 24, Color.WHITE);
+                Text name = new Text(powerup.getName(), trans.position, 24, Color.WHITE);
+                Text description = null;
 
                 @Override
                 public void setup() {
                     GameLoop.pause();
+                    GameLoop.makeTween(Tween.overEase(-200, desiredPos.y, 1), 1, val -> {
+                        trans.position.y = val;
+                    }).runWhilePaused(true).start().onFinish.listenOnce(n -> {
+                        description = new Text(powerup.getDescription(), trans.position.add(0, 200), 24, Color.WHITE);
+                    });
                 }
 
                 @Override
                 public void hudRender() {
                     name.render();
-                    description.render();
+                    if (description != null) description.render();
                 }
                 
             })
             .register(new Button(() -> {
-                GameLoop.defer(() -> {
+                GameLoop.runAfter(null, Duration.ofMillis(50), () -> {
                     GameLoop.unpause();
                 });
+
                 Optional<Entity> playerEntity = GameLoop.findEntityByTag(GameTags.PLAYER);
 
                 playerEntity.ifPresent(player -> { // this is atrocious, please improve eventually FIXME

@@ -13,7 +13,7 @@ public class ScheduledAction implements Binded {
     private Entity entity;
     
     public ScheduledAction(Entity entity, List<Supplier<Boolean>> actions) {
-        entity.bind(this);
+        if (entity != null) entity.bind(this);
         this.actions = new LinkedList<>(actions);
     }
 
