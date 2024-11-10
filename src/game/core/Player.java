@@ -29,8 +29,10 @@ public class Player extends ECSystem implements Controllable {
     public static final int BULLET_SPEED = 800;
 
     public static final Duration BULLET_LIFETIME = Duration.ofSeconds(3);
+    
+    private final Text healthText = new Text("N/A", new Vec2(15, Vec2.screen().y-64), 54, new Color(255, 255, 255, 255));
+    private final Text maxHealthText = new Text("N/A", new Vec2(120, Vec2.screen().y-64+(34/2)), 34, Color.ORANGE);
 
-    public final Text healthText = new Text("N/A", new Vec2(15, Vec2.screen().y-64), 54, new Color(255, 255, 255, 255));
     private Tangible tangible;
     private Physics physics;
     private Transform trans;
@@ -207,7 +209,9 @@ public class Player extends ECSystem implements Controllable {
             healthText.color.g = (byte) 255;
             healthText.color.b = (byte) 255;
         }
-
+        maxHealthText.text = "/ " + health.getMaxHealth();
+        
+        maxHealthText.render();
         healthText.render();
 
         if (warningNotifVisible) { // probably want to abstract this away somewhere
