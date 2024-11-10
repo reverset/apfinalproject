@@ -1,6 +1,6 @@
 #version 330
 
-out vec2 fragTexCoord;
+in vec2 fragTexCoord;
 out vec4 fragColor;
 
 uniform float time = 0.0;
