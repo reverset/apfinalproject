@@ -52,7 +52,7 @@ public class Game {
 
 		GameLoop.track(Player.makeEntity());
 
-		GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), new Diamond(null, null, null, 0)));
+		RandomPowerup.showScreen();
 		
 	}
 	

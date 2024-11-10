@@ -9,6 +9,7 @@ import game.GameLoop;
 import game.Text;
 import game.Tween;
 import game.Vec2;
+import game.core.rendering.HealthPowerup;
 import game.core.rendering.Rect;
 import game.core.rendering.RectRender;
 import game.ecs.ECSystem;
@@ -16,6 +17,11 @@ import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
 public class RandomPowerup {
+    public static void showScreen() {
+        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), new Diamond(null, null, null, 0)));
+        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthPowerup(null, null, null, 0)));
+    }
+
     public static Entity makeButton(Vec2 pos, Powerup powerup) {
         Entity entity = new Entity("random powerup");
         entity.runWhilePaused = true;
@@ -70,8 +76,11 @@ public class RandomPowerup {
                     
                 });
 
-                GameLoop.safeDestroy(entity);
-            }));
+                for (var selects : GameLoop.findEntitiesByTag("powerupselect")) {
+                    GameLoop.safeDestroy(selects);
+                }
+
+            })).addTags("powerupselect");
         
         return entity;
     }
