@@ -7,6 +7,7 @@ public class RayTexture {
     
     public RayTexture(Raylib.Texture internal) {
         this.internal = internal;
+        Raylib.SetTextureFilter(internal, Raylib.TEXTURE_FILTER_POINT);
 
         Janitor.register(this, () -> {
             Raylib.UnloadTexture(internal);

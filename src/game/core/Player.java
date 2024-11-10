@@ -3,6 +3,7 @@ package game.core;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import com.raylib.Raylib;
 
@@ -10,8 +11,11 @@ import game.Color;
 import game.Game;
 import game.GameLoop;
 import game.MoreMath;
+import game.Shader;
+import game.ShaderUpdater;
 import game.Stopwatch;
 import game.Text;
+import game.Tuple;
 import game.Tween;
 import game.TweenAnimation;
 import game.Vec2;
@@ -60,6 +64,8 @@ public class Player extends ECSystem implements Controllable {
             .addComponent(new Rect(SIZE, SIZE, Color.GREEN))
             .addComponent(new Tangible())
             .addComponent(effect)
+            // .addComponent(new Shader("resources/pastelcycle.frag"))
+            // .register(new ShaderUpdater(List.of(ShaderUpdater.timeUpdater())))
             .register(new RectRender())
             .register(new Physics(0, 0))
             .register(new Player())
