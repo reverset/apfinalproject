@@ -74,8 +74,7 @@ public class TriangleEnemy extends Enemy {
         health = require(Health.class);
         effect = require(Effect.class);
 
-        int level = effect.getLevel();
-        health.setMaxHealthAndHealth(BASE_HEALTH + (level-1)*10);
+        health.setMaxHealthAndHealth(BASE_HEALTH + (effect.getLevel()-1)*10);
         
         weapon = new LaserWeapon(BASE_DAMAGE, trans.position, getFacing(), Color.ORANGE, SHOOT_DISTANCE, 1_000, 15, 0, new Object[]{GameTags.ENEMY_TEAM}, 0.1f, Optional.of(effect));
     }

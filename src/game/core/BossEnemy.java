@@ -128,6 +128,10 @@ public class BossEnemy extends Enemy {
                 GameLoop.safeDestroy(parts[i]);
                 GameLoop.safeTrack(HealingOrb.makeEntity(trans.position.add(Vec2.randomUnit().multiplyEq(50)), BASE_DEATH_HEALING));
             }
+            
+            GameLoop.defer(() -> {
+                RandomPowerup.showScreen();
+            });
         }, entity);
 
         tangible.onCollision.listen(other -> {

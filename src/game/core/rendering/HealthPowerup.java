@@ -23,7 +23,11 @@ public class HealthPowerup extends Powerup {
         health = require(Health.class);
         initialHealth = health.getMaxHealth();
 
+        boolean wasAtFull = initialHealth >= health.getMaxHealth();
         health.setMaxHealth(initialHealth + currentHealthBonus);
+        if (wasAtFull) {
+            health.setHealth(health.getMaxHealth());
+        }
     }
 
     @Override

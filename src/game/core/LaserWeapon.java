@@ -15,6 +15,8 @@ public class LaserWeapon extends Weapon2 {
     Vec2 position;
     Vec2 direction;
 
+    Optional<Effect> effect;
+
     Color color;
 
     float length;
@@ -43,6 +45,7 @@ public class LaserWeapon extends Weapon2 {
         this.laserThickness = laserThickness;
         this.layerMask = layerMask;
         this.ignoreTags = ignoreTags;
+        this.effect = effect;
 
         ray = new Ray(position, direction, length, layerMask);
     }
@@ -72,6 +75,9 @@ public class LaserWeapon extends Weapon2 {
             Optional<Health> health = collisionEntity.getComponent(Health.class);
             health.ifPresent(h -> {
                 DamageInfo info = new DamageInfo(damage, collisionEntity, this, collision.position());
+                if (effect.isPresent()) {
+                    info = effect.get().computeDamage(info);
+                }
                 info = h.damage(info);
                 // GameLoop.safeTrack(DamageNumber.makeEntity(collision.position(), info.damage(), Color.WHITE));
             });
