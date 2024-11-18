@@ -11,6 +11,8 @@ import com.raylib.Jaylib;
 
 public class Shader implements Component {
     public static final int UNIFORM_FLOAT = 0;
+    public static final int UNIFORM_VEC2 = 1;
+    public static final int UNIFORM_VEC4 = 3;
     public static final int UNIFORM_INT = 4;
 
     private final Raylib.Shader internal;  
@@ -41,6 +43,20 @@ public class Shader implements Component {
         int loc = getLocation(name);
 
         Raylib.SetShaderValue(internal, loc, new IntPointer(new int[]{value ? 1 : 0}), UNIFORM_INT);
+        return this;
+    }
+
+    public Shader setShaderValue(String name, Color value) { // UNTESTED
+        int loc = getLocation(name);
+
+        Raylib.SetShaderValue(internal, loc, new FloatPointer(new float[]{value.r, value.g, value.b, value.a}), UNIFORM_VEC4);
+        return this;
+    }
+
+    public Shader setShaderValue(String name, Vec2 value) { // UNTESTED
+        int loc = getLocation(name);
+
+        Raylib.SetShaderValue(internal, loc, new FloatPointer(new float[]{value.x, value.y}), UNIFORM_VEC2);
         return this;
     }
 
