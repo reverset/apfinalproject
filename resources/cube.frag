@@ -67,7 +67,7 @@ void main() {
         }
     }
     
-    float shade = 1.2 - totalDist*totalDist / maxDist;
+    float shade = 0.9 - 2*totalDist / maxDist;
     vec3 finalColor = vec3(shade, shade * 0.4, shade * 0.4);
     
     color = vec4(finalColor, hit ? 1.0 : 0.0);
