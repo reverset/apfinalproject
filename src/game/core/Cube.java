@@ -61,7 +61,7 @@ public class Cube extends Enemy {
     }
 
     @Override
-    public void frame() {
+    public void frame() { // Why is this rendered here, why not render()? When render() is called, the GameLoop is already drawing to a render texture. Raylib doesn't support drawing to multiple render textures at the same time.
         shader.with(() -> {
             Raylib.BeginTextureMode(renderTexture);
             Raylib.ClearBackground(Jaylib.BLANK);
