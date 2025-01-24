@@ -134,6 +134,15 @@ public class Entity {
 		system.setup();
 		return this;
 	}
+
+	public Entity unregister(ECSystem system) {
+		if (systems.contains(system)) {
+			systems.remove(system);
+		} else {
+			// todo
+		}
+		return this;
+	}
 	
 	public Entity addComponent(Component component) {
 		components.add(component);

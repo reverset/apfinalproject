@@ -6,7 +6,7 @@ import com.raylib.Raylib;
 
 
 public class Stopwatch {
-    private double startTime = -1;
+    double startTime = -1;
 
     public void start() {
         if (startTime == -1) startTime = Raylib.GetTime();
