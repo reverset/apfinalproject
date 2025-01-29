@@ -20,6 +20,7 @@ public class RandomPowerup {
     public static void showScreen() {
         GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), new Diamond(null, null, null, 0)));
         GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthPowerup(null, null, null, 0)));
+        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(-400, 0), new HealthRegenPowerup(null, null, null, 0)));
     }
 
     public static Entity makeButton(Vec2 pos, Powerup powerup) {
