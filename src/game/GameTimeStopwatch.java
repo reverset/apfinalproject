@@ -17,12 +17,21 @@ public class GameTimeStopwatch extends Stopwatch implements Binded {
         var e = new ECSystem() {
             @Override
             public void setup() {}
+            
+            @Override
+            public void frame() {
+                tick(delta());
+            }
         };
         autoTickSys = e;
         return e;
     }
 
     public void tick(float delta) {
+        if (elapsedMillis == -1) {
+            System.out.println("Cannot tick unstarted GameTimeStopwatch");
+            throw new RecoverableException();
+        }
         elapsedMillis += delta;
     }
 
@@ -43,7 +52,7 @@ public class GameTimeStopwatch extends Stopwatch implements Binded {
 
     @Override
     public boolean hasElapsedSeconds(double seconds) {
-        return elapsedMillis / 1_000 < seconds;
+        return elapsedMillis / 1_000 > seconds;
     }
 
     @Override
@@ -54,6 +63,8 @@ public class GameTimeStopwatch extends Stopwatch implements Binded {
     @Override
     public void unbind(Entity e) {
         stop();
-        e.unregister(autoTickSys);
+        GameLoop.defer(() -> {
+            e.unregister(autoTickSys);
+        });
     }
 }

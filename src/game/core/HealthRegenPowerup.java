@@ -24,6 +24,7 @@ public class HealthRegenPowerup extends Powerup {
         if (!initialized && entity != null) {
             health = entity.getComponent(Health.class).orElseThrow(() -> new RecoverableException());
             initialized = true;
+            stopwatch.start();
         }
 
         float delta = infreqDelta();
