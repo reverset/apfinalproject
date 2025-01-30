@@ -55,7 +55,7 @@ public class RandomPowerup {
                 @Override
                 public void hudRender() {
                     name.render();
-                    if (description != null) description.render();
+                    if (description != null) description.renderWithNewlines();
                 }
                 
             })

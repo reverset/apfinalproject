@@ -8,8 +8,8 @@ import game.RecoverableException;
 import game.ecs.Entity;
 
 public class HealthRegenPowerup extends Powerup {
-    private static final Duration HEALTH_RATE = Duration.ofMillis(5_000);
-    private static final int BASE_HEALTH = 10;
+    private static final Duration HEALTH_RATE = Duration.ofMillis(3_000);
+    private static final int BASE_HEALTH = 5;
     private Health health;
     private GameTimeStopwatch stopwatch = new GameTimeStopwatch();
     private boolean initialized = false;
@@ -42,6 +42,7 @@ public class HealthRegenPowerup extends Powerup {
 
     @Override
     public void levelUp() {
+        System.out.println("Health regen level up.");
         level += 1;
     }
 
@@ -52,6 +53,6 @@ public class HealthRegenPowerup extends Powerup {
 
     @Override
     public String getDescription() {
-        return "Passively regenerate health over time.";
+        return "Passively regenerate \nhealth over time.";
     }
 }

@@ -19,6 +19,14 @@ public class Text {
         Raylib.DrawText(text, position.xInt(), position.yInt(), fontSize, color.getPointer());
     }
 
+    public void renderWithNewlines() {
+        String[] txts = text.split("\n");
+        for (int i = 0; i < txts.length; i++) {
+            var t = txts[i];
+            Raylib.DrawText(t, position.xInt(), position.yInt() + (i*fontSize), fontSize, color.getPointer());
+        }
+    }
+
     public int measure() {
         return Raylib.MeasureText(text, fontSize);
     }
