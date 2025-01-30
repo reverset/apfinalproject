@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.function.Consumer;
@@ -111,7 +112,7 @@ public class GameLoop {
 		return entity;
 	}
 
-public static <T> Tween<T> makeTween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
+	public static <T> Tween<T> makeTween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
 		var tween = new Tween<>(supplier, durationSeconds, updater);
 		Entity entity = new Entity("tween")
 			.register(tween);
@@ -162,10 +163,12 @@ public static <T> Tween<T> makeTween(TweenFunction<T> supplier, double durationS
 	}
 
 	public static void defer(Runnable action) {
+		Objects.requireNonNull(action);
 		deferments.add(action);
 	}
 
 	public static void schedule(ScheduledAction action) {
+		Objects.requireNonNull(action);
 		scheduledActions.add(action);
 	}
 
