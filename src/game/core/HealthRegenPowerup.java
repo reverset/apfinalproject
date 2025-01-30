@@ -28,7 +28,7 @@ public class HealthRegenPowerup extends Powerup {
         }
 
         float delta = infreqDelta();
-        stopwatch.tick(delta * 1_000.0f); // FIXME TODO!!!
+        stopwatch.tick(delta * 1_000.0f);
 
         if (stopwatch.hasElapsedAdvance(HealthRegenPowerup.HEALTH_RATE)) {
             health.heal(level * HealthRegenPowerup.BASE_HEALTH);
