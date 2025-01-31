@@ -50,7 +50,11 @@ public record DamageInfo(int damage, Entity victim, Weapon2 weapon, Optional<Vec
     }
 
     public DamageInfo setPosition(Vec2 pos) {
-        return new DamageInfo(damage, victim, weapon, Optional.of(pos), extraInfo, damageColor);
+        return new DamageInfo(damage, victim, weapon, Optional.ofNullable(pos), extraInfo, damageColor);
+    }
+
+    public DamageInfo setPosition(Optional<Vec2> pos) {
+        return new DamageInfo(damage, victim, weapon, pos, extraInfo, damageColor);
     }
 
     public Color getColorPriority(Color color) {

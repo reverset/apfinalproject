@@ -3,7 +3,6 @@ package game.core;
 
 import java.time.Duration;
 
-import game.EntityOf;
 import game.GameTimeStopwatch;
 import game.RecoverableException;
 import game.ecs.Entity;
@@ -35,8 +34,7 @@ public class HealthRegenPowerup extends Powerup {
         if (stopwatch.hasElapsedAdvance(HealthRegenPowerup.HEALTH_RATE) && !health.isHealthSaturated()) {
             var position = entity
                 .getComponent(Transform.class)
-                .map(trans -> trans.position.clone())
-                .orElse(null);
+                .map(trans -> trans.position.clone());
 
             var info = new DamageInfo(-(level * HealthRegenPowerup.BASE_HEALTH), entity, null)
                 .setPosition(position);
