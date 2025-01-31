@@ -10,7 +10,7 @@ import game.ecs.comps.Transform;
 
 public class HealthRegenPowerup extends Powerup {
     private static final Duration HEALTH_RATE = Duration.ofMillis(3_000);
-    private static final int BASE_HEALTH = 5;
+    private static final int BASE_HEALTH = 15;
     private Health health;
     private GameTimeStopwatch stopwatch = new GameTimeStopwatch();
     private boolean initialized = false;

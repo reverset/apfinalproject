@@ -97,7 +97,7 @@ public class BossEnemy extends Enemy {
         effect = require(Effect.class);
 
         Entity last = entity;
-        for (int i = 1; i <= 14; i++) {
+        for (int i = 1; i <= PARTS; i++) {
             final int j = i;
             Transform t = last.getComponent(Transform.class).orElseThrow();
             EntityOf<BossBody> body = BossBody.makeEntity(this, () -> t.position, () -> tangible.velocity.normalize().multiplyEq(j*4));

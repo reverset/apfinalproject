@@ -2,6 +2,7 @@ package game.ecs;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -129,6 +130,7 @@ public class Entity {
 	}
 
 	public Entity register(ECSystem system) {
+		Objects.requireNonNull(system);
 		system.entity = this;
 		systems.add(system);
 		system.setup();
@@ -136,6 +138,7 @@ public class Entity {
 	}
 
 	public Entity unregister(ECSystem system) {
+		Objects.requireNonNull(system);
 		if (systems.contains(system)) {
 			systems.remove(system);
 		} else {
@@ -145,17 +148,20 @@ public class Entity {
 	}
 	
 	public Entity addComponent(Component component) {
+		Objects.requireNonNull(component);
 		components.add(component);
 		return this;
 	}
 
 	public Entity addComponent(Supplier<Component> comSupplier) {
+		Objects.requireNonNull(comSupplier);
 		addComponent(comSupplier.get());
 		return this;
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends ECSystem> Optional<T> getSystem(Class<T> sys) {
+		Objects.requireNonNull(sys);
 		Iterator<ECSystem> iter = systemIterator();
 		
 		while (iter.hasNext()) {
@@ -169,6 +175,7 @@ public class Entity {
 
 	@SuppressWarnings("unchecked")
 	public <T extends Component> Optional<T> getComponent(Class<T> sys) {
+		Objects.requireNonNull(sys);
 		Iterator<Component> iter = componentIterator();
 		
 		while (iter.hasNext()) {

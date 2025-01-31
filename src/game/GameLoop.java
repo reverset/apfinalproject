@@ -102,17 +102,21 @@ public class GameLoop {
 	}
 
 	public static void setMainCamera(Entity entity) {
+		Objects.requireNonNull(entity);
 		mainCamera = entity;
 		mainCameraSystem = mainCamera.getSystem(Camera.class).orElseThrow(() -> new RuntimeException("Missing Camera system when setting a new Camera entity."));
 	}
 	
 	public static <T extends Entity> T track(T entity) {
+		Objects.requireNonNull(entity);
 		entities.add(entity);
 		entity.ready();
 		return entity;
 	}
 
 	public static <T> Tween<T> makeTween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
+		Objects.requireNonNull(supplier);
+		Objects.requireNonNull(updater);
 		var tween = new Tween<>(supplier, durationSeconds, updater);
 		Entity entity = new Entity("tween")
 			.register(tween);
@@ -134,11 +138,13 @@ public class GameLoop {
 	}
 
 	public static void destroy(Entity entity) {
+		Objects.requireNonNull(entity);
 		entity.destroy();
 		entities.remove(entity);
 	}
 
 	public static void safeDestroy(Entity entity) {
+		Objects.requireNonNull(entity);
 		GameLoop.defer(() -> {
 			if (entities.contains(entity)) {
 				destroy(entity);
@@ -173,6 +179,7 @@ public class GameLoop {
 	}
 
 	public static void runAfter(Entity entity, Duration duration, Runnable action) {
+		Objects.requireNonNull(action);
 		Stopwatch stopwatch = new Stopwatch();
 		var toSchedule = new ScheduledAction(entity, List.of(
 			() -> stopwatch.hasElapsed(duration),
