@@ -13,7 +13,7 @@ public class Health implements Component {
     private boolean confirmedDeath = false;
 
     public final Signal<DamageInfo> onDamage = new Signal<>();
-    public final Signal<Integer> onHeal = new Signal<>();
+    public final Signal<DamageInfo> onHeal = new Signal<>();
     public final Signal<Void> onDeath = new Signal<>();
 
     private float invincibilityDuration = 0;
@@ -35,20 +35,13 @@ public class Health implements Component {
         this(maxHp, Optional.empty());
     }
 
-
-    public void heal(int life) { // rework soon
-        health += life;
-        health = Math.min(maxHealth, health);
-        onHeal.emit(life);
-    }
-
     public Health withInvincibilityDuration(float dur) {
         invincibilityDuration = dur;
         return this;
     }
 
-    public DamageInfo damage(DamageInfo info) {
-        return damage(info, true);
+    public DamageInfo damageOrHeal(DamageInfo info) {
+        return damageOrHeal(info, true);
     }
 
     public boolean isDead() {
@@ -59,16 +52,36 @@ public class Health implements Component {
         return health > 0;
     }
 
-    public DamageInfo damage(DamageInfo info, boolean showNumbers) {
+    public boolean isHealthSaturated() {
+        return health >= maxHealth;
+    }
+
+    public DamageInfo heal(DamageInfo info) {
+        if (info.isHarmful()) throw new IllegalArgumentException("Invoked damage() with a positive damageinfo.");
+        return damageOrHeal(info);
+    }
+
+    public DamageInfo damage(DamageInfo info) {
+        if (info.isHealing()) throw new IllegalArgumentException("Invoked damage() with a negative damageinfo.");
+        return damageOrHeal(info);
+    }
+
+    /**
+     * This method is used for dealing damage AND healing. The only differentiation is from
+     * whether or not the damage is positive or negative.
+    **/
+    public DamageInfo damageOrHeal(DamageInfo info, boolean showNumbers) {
         if (isDead()) return DamageInfo.ofNone();
-        if (!invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return DamageInfo.ofNone();
+        if (info.isHarmful() && !invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return DamageInfo.ofNone();
         
         DamageInfo inf = info;
         if (effect.isPresent()) inf = effect.get().computeDamageResistance(inf);
 
         int dmg = inf.damage();
-        health -= dmg;
-        onDamage.emit(inf);
+        setHealthWithinBounds(health - dmg);
+        if (dmg >= 0) onDamage.emit(inf);
+        else onHeal.emit(inf);
+
         if (health <= 0 && !confirmedDeath) {
             confirmedDeath = true; 
             onDeath.emit(null);
@@ -77,7 +90,7 @@ public class Health implements Component {
         if (showNumbers) {
             final DamageInfo i = inf; // for the closure.
             inf.position().ifPresent(pos -> {
-                GameLoop.safeTrack(DamageNumber.makeEntity(pos, i.damage(), i.damageColor()));
+                GameLoop.safeTrack(DamageNumber.makeEntity(pos, i.absoluteDamageOrHeal(), i.damageColor()));
             });
         }
         return inf;
@@ -104,6 +117,13 @@ public class Health implements Component {
 
     public Health setHealth(int h) {
         health = h;
+        return this;
+    }
+
+    public Health setHealthWithinBounds(int h) {
+        health = h;
+        if (health > maxHealth) health = maxHealth;
+        if (health < 0) health = 0;
         return this;
     }
 

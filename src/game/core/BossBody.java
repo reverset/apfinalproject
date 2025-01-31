@@ -52,7 +52,7 @@ public class BossBody extends ECSystem {
         health = require(Health.class);
 
         health.onDamage.listen(info -> {
-            boss.health.damage(info.setExtras(new Object[]{BossBody.class}));
+            boss.health.damageOrHeal(info.setExtras(new Object[]{BossBody.class}));
         }, entity);
     }
 

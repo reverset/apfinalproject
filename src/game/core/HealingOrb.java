@@ -58,9 +58,10 @@ public class HealingOrb extends ECSystem {
             if (physics.entity.hasTag(GameTags.PLAYER)) {
                 GameLoop.safeDestroy(entity);
                 Health health = physics.entity.getComponent(Health.class).orElseThrow();
-                health.heal(life);
+                health.heal(new DamageInfo(-life, physics.entity, null).setPosition(trans.position.clone()));
+                // health.heal(life);
 
-                GameLoop.safeTrack(DamageNumber.makeEntity(trans.position, life, Color.GREEN));
+                // GameLoop.safeTrack(DamageNumber.makeEntity(trans.position, life, Color.GREEN));
             }
         }, entity);
     }

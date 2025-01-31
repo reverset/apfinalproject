@@ -27,7 +27,7 @@ public class Diamond extends Powerup {
                 if (health.isAlive()) {
                     if (Math.random() > 0.1*level) return;
 
-                    health.damage(info.setPosition(victTrans.position.clone()).setColor(DamageColor.SPECIAL));
+                    health.damageOrHeal(info.setPosition(victTrans.position.clone()).setColor(DamageColor.SPECIAL));
                     Entity damageEffect = new Entity("Diamond Effect");
 
                     X x = new X(victTrans.position.addRandomByCoeff(10), Color.RED, 8, 0);

@@ -145,7 +145,7 @@ public class BossEnemy extends Enemy {
                 Health otherHealth = other.entity.getComponent(Health.class).orElseThrow(); // should probably use more concrete checks
                 
                 int dmg = (int) (otherHealth.getMaxHealth()*0.1f);
-                otherHealth.damage(new DamageInfo(dmg, other.entity, null, trans.position.clone(), DamageColor.MELEE));
+                otherHealth.damageOrHeal(new DamageInfo(dmg, other.entity, null, trans.position.clone(), DamageColor.MELEE));
                 
                 if (otherTrans.isPresent()) {
                     Vec2 knockback = trans.position.directionTo(otherTrans.get().position).multiplyEq(1_000);
@@ -194,7 +194,8 @@ public class BossEnemy extends Enemy {
         if (weapon.canFire()) weapon.fire(trans.position.clone(), trans.position.directionTo(playerTransform.position), entity);
 
         if (health.getHealthPercentage() < HEALING_THRESHOLD && healingStopwatch.hasElapsedSecondsAdvance(HEALING_COOLDOWN)) {
-            health.heal(HEAL_AMOUNT);
+            // health.heal(HEAL_AMOUNT);
+            health.heal(new DamageInfo(-HEAL_AMOUNT, entity, null));
         }
     }
     

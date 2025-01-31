@@ -20,7 +20,7 @@ public class GameTimeStopwatch extends Stopwatch implements Binded {
             
             @Override
             public void frame() {
-                tick(delta());
+                tick(delta() * 1_000f);
             }
         };
         autoTickSys = e;

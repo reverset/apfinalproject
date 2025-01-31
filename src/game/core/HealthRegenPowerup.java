@@ -3,9 +3,11 @@ package game.core;
 
 import java.time.Duration;
 
+import game.EntityOf;
 import game.GameTimeStopwatch;
 import game.RecoverableException;
 import game.ecs.Entity;
+import game.ecs.comps.Transform;
 
 public class HealthRegenPowerup extends Powerup {
     private static final Duration HEALTH_RATE = Duration.ofMillis(3_000);
@@ -30,8 +32,16 @@ public class HealthRegenPowerup extends Powerup {
         float delta = infreqDelta();
         stopwatch.tick(delta * 1_000.0f);
 
-        if (stopwatch.hasElapsedAdvance(HealthRegenPowerup.HEALTH_RATE)) {
-            health.heal(level * HealthRegenPowerup.BASE_HEALTH);
+        if (stopwatch.hasElapsedAdvance(HealthRegenPowerup.HEALTH_RATE) && !health.isHealthSaturated()) {
+            var position = entity
+                .getComponent(Transform.class)
+                .map(trans -> trans.position.clone())
+                .orElse(null);
+
+            var info = new DamageInfo(-(level * HealthRegenPowerup.BASE_HEALTH), entity, null)
+                .setPosition(position);
+            // health.heal(level * HealthRegenPowerup.BASE_HEALTH);
+            health.heal(info);
         }
     }
 

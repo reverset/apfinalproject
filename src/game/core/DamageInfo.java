@@ -7,6 +7,11 @@ import game.Vec2;
 import game.ecs.Entity;
 
 public record DamageInfo(int damage, Entity victim, Weapon2 weapon, Optional<Vec2> position, Optional<Object[]> extraInfo, Color damageColor) {
+    public DamageInfo {
+        if (damage < 0)
+            damageColor = DamageColor.HEAL;
+    }
+
     public DamageInfo(int damage, Entity victim, Weapon2 weapon, Vec2 position, Object[] extraInfo) {
         this(damage, victim, weapon, Optional.of(position), Optional.of(extraInfo), Color.WHITE);
     }
@@ -57,7 +62,7 @@ public record DamageInfo(int damage, Entity victim, Weapon2 weapon, Optional<Vec
             return damageColor;
         } else if (color.equals(DamageColor.CRITICAL)) {
             return color;
-        }else if (damageColor.equals(DamageColor.NORMAL)) {
+        } else if (damageColor.equals(DamageColor.NORMAL)) {
             return color;
         }
 
@@ -82,5 +87,17 @@ public record DamageInfo(int damage, Entity victim, Weapon2 weapon, Optional<Vec
             }
         }
         return false;
+    }
+
+    public boolean isHealing() {
+        return damage < 0;
+    }
+
+    public boolean isHarmful() {
+        return !isHealing();
+    }
+
+    public int absoluteDamageOrHeal() {
+        return Math.abs(damage);
     }
 }
