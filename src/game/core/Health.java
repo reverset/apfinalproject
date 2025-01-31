@@ -57,7 +57,7 @@ public class Health implements Component {
     }
 
     public DamageInfo heal(DamageInfo info) {
-        if (info.isHarmful()) throw new IllegalArgumentException("Invoked damage() with a positive damageinfo.");
+        if (info.isHarmful()) throw new IllegalArgumentException("Invoked heal() with a positive damageinfo.");
         return damageOrHeal(info);
     }
 
