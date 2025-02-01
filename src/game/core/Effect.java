@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Function;
 
+import game.Signal;
 import game.ecs.Component;
 
 public class Effect implements Component {
@@ -20,6 +21,8 @@ public class Effect implements Component {
     }
 
     private int level = 1;
+    
+    public Signal<Integer> onLevelUp = new Signal<>();
 
     private ArrayList<DamageCalculator> damageScaling = new ArrayList<>();
     private ArrayList<DamageCalculator> damageResponse = new ArrayList<>();
@@ -104,11 +107,17 @@ public class Effect implements Component {
         return getPowerUp(clazz).isPresent();
     }
 
+    public Effect levelUp() {
+        level += 1;
+        onLevelUp.emit(level);
+        return this;
+    }
+
     public <T extends Powerup> boolean hasPowerUpThenIncrementLevel(Class<T> clazz) {
         Optional<T> power = getPowerUp(clazz);
 
         power.ifPresent(p -> {
-            p.level += 1;
+            p.levelUp();
         });
 
         return power.isPresent();

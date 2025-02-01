@@ -262,6 +262,19 @@ public class Vec2 {
 			MoreMath.clamp(y, minimums.y, maximums.y));
 	}
 
+	public Vec2 clampMagnitudeEq(float mag) {
+		return magnitude() <= mag
+			? this
+			: normalizeEq().multiplyEq(mag);
+	}
+
+	public Vec2 clampMagnitude(float mag) {
+		return magnitude() <= mag
+			? this
+			: clone().normalizeEq().multiplyEq(mag);
+	}
+	
+
 	public void clampEq(float minX, float minY, float maxX, float maxY) {
 		x = MoreMath.clamp(x, minX, maxX);
 		y = MoreMath.clamp(y, minY, maxY);
