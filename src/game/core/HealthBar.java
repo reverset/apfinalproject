@@ -28,7 +28,7 @@ public class HealthBar extends ECSystem {
     private Transform trans;
     private Optional<Effect> effect;
     
-    private Rect healthBar = new Rect(BAR_WIDTH, BAR_HEIGHT, Color.RED);
+    private Rect healthBar = new Rect(BAR_WIDTH, BAR_HEIGHT, Color.RED.cloneIfImmutable());
     private Rect background = new Rect(BAR_WIDTH, BAR_HEIGHT, Color.GRAY);
 
     private Tween<float[]> colorTween = null;
@@ -72,9 +72,13 @@ public class HealthBar extends ECSystem {
     @Override
     public void ready() {
         colorTween = (Tween<float[]>) requireOrAddSystem(Tween.class, () ->  {
-            return new Tween<>(Tween.lerp(new float[]{255, 255, 255}, new float[]{255, 0, 0}), 0.2, val -> {
-                healthBar.color = new ImmutableColor((int) val[0], (int) val[1], (int) val[2], 255);
+            return new Tween<>(Tween.lerp(255, 0), 0.2, val -> {
+                healthBar.color.g = val.byteValue();
+                healthBar.color.b = val.byteValue();
             }).setDestroy(false);
+            // return new Tween<>(Tween.lerp(new float[]{255, 255, 255}, new float[]{255, 0, 0}), 0.2, val -> {
+            //     healthBar.color = new ImmutableColor((int) val[0], (int) val[1], (int) val[2], 255);
+            // }).setDestroy(false);
         });
         
         health.onDamage.listen(i -> colorTween.start());
