@@ -1,6 +1,7 @@
 package game;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import game.ecs.ECSystem;
 import game.ecs.Entity;
@@ -50,6 +51,14 @@ public class Tween<T> extends ECSystem {
 
             float calc = 1 + onePlusOver * ((float) Math.pow(percent - 1, 3)) + overshoot * ((float) Math.pow(percent - 1, 2));
             return (to - from) * calc + from;
+        };
+    }
+
+    public static TweenFunction<Vec2> circleLerp(float fromAngle, float toAngle, float distance, Supplier<Vec2> center) {
+        var lerpFunc = lerp(fromAngle, toAngle);
+        return percent -> {
+            var desiredAngle = lerpFunc.supply(percent);
+            return Vec2.fromAngle(desiredAngle).multiplyEq(distance).addEq(center.get());
         };
     }
 

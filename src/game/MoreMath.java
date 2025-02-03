@@ -48,6 +48,14 @@ public class MoreMath {
         return (Math.random() * (1+max-min)) + min;
     }
 
+    public static boolean randomBoolean() {
+        return Math.random() > 0.5;
+    }
+
+    public static int randomSignumNonZero() {
+        return Math.random() > 0.5 ? 1 : -1;
+    }
+
     public static boolean isApprox(float a, float b, float epsilon) {
         return Math.abs(a - b) < epsilon;
     }
