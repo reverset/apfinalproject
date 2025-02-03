@@ -72,4 +72,16 @@ public class MoreMath {
     public static <T> T pick(List<T> list) {
         return list.get((int) (Math.random()*list.size()));
     }
+
+    public static float lerpAngle(float from, float to, float delta) {
+        return lerpWrap(from, to, (float) Math.TAU, delta);
+    }
+
+    public static float lerpWrap(float from, float to, float max, float delta) {
+        var negativeEq = to - max;
+        if (Math.abs(negativeEq - from) < Math.abs(to - from)) { // negative is closer
+            return lerp(from, negativeEq, delta);
+        }
+        return lerp(from, to, delta);
+    }
 }

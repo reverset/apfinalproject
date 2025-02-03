@@ -55,9 +55,8 @@ public class Tween<T> extends ECSystem {
     }
 
     public static TweenFunction<Vec2> circleLerp(float fromAngle, float toAngle, float distance, Supplier<Vec2> center) {
-        var lerpFunc = lerp(fromAngle, toAngle);
         return percent -> {
-            var desiredAngle = lerpFunc.supply(percent);
+            var desiredAngle = MoreMath.lerpAngle(fromAngle, toAngle, (float) percent);
             return Vec2.fromAngle(desiredAngle).multiplyEq(distance).addEq(center.get());
         };
     }

@@ -12,6 +12,7 @@ import com.raylib.Jaylib;
 public class Shader implements Component {
     public static final int UNIFORM_FLOAT = 0;
     public static final int UNIFORM_VEC2 = 1;
+    public static final int UNIFORM_VEC3 = 2;
     public static final int UNIFORM_VEC4 = 3;
     public static final int UNIFORM_INT = 4;
 
@@ -23,6 +24,16 @@ public class Shader implements Component {
     public Shader(String path) {
         internal = Jaylib.LoadShader("resources/default.vert", path);
         Janitor.register(this, () -> Raylib.UnloadShader(internal));
+    }
+
+    public Shader setShaderValue(String name, float[] value) {
+        if (value.length != 3) {
+            throw new IllegalArgumentException("value param must have 3 elements.");
+        }
+        int loc = getLocation(name);
+
+        Raylib.SetShaderValue(internal, loc, new FloatPointer(value), UNIFORM_VEC3);
+        return this;
     }
 
     public Shader setShaderValue(String name, float value) {
@@ -53,7 +64,7 @@ public class Shader implements Component {
         return this;
     }
 
-    public Shader setShaderValue(String name, Vec2 value) { // UNTESTED
+    public Shader setShaderValue(String name, Vec2 value) {
         int loc = getLocation(name);
 
         Raylib.SetShaderValue(internal, loc, new FloatPointer(new float[]{value.x, value.y}), UNIFORM_VEC2);

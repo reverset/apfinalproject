@@ -36,6 +36,11 @@ public class Cube extends Enemy {
     private Tween<Vec2> movementTween;
     private float playerDistance = 400;
 
+    private float[] standardCubeColorCoeffs = new float[]{1.0f, 0.4f, 0.4f};
+    private float[] shieldCubeColorCoeffs = new float[]{0.0f, 1.0f, 1.0f};
+
+    private boolean isShieldUp = true;
+
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("THE CUBE", Enemy.class);
 
@@ -53,12 +58,19 @@ public class Cube extends Enemy {
             .addComponent(effect)
             .addComponent(new Health(BASE_HEALTH, effect))
             .register(new HealthBar(new Vec2(), entity.name, true))
-            .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
+            .register(new ShaderUpdater(
+                List.of(new Tuple<>("time", timeSupplier))))
             .register(new Physics(0, 0))
             .register(new Cube())
             .addTags(GameTags.ENEMY_TEAM);
 
         return entity;
+    }
+
+    private float[] getCubeColorCoeffs() {
+        return !isShieldUp 
+            ? standardCubeColorCoeffs
+            : shieldCubeColorCoeffs;
     }
 
     @Override
@@ -83,17 +95,23 @@ public class Cube extends Enemy {
     @Override
     public void infrequentUpdate() {
         movementTick();
+        shieldTick();
     }
 
     @Override
     public void frame() { // Why is this rendered here, why not render()? When render() is called, the GameLoop is already drawing to a render texture. Raylib doesn't support drawing to multiple render textures at the same time.
         tangible.velocity.setEq(0, 0);
+        shader.setShaderValue("cubeColorCoeffs", getCubeColorCoeffs());
         shader.with(() -> {
             Raylib.BeginTextureMode(renderTexture);
             Raylib.ClearBackground(Jaylib.BLANK);
             Raylib.DrawTexture(renderTexture.texture(), 0, 0, Color.WHITE.getPointerNoUpdate());
             Raylib.EndTextureMode();
         });
+    }
+
+    private void shieldTick() {
+
     }
 
     private void movementTick() {
@@ -113,7 +131,7 @@ public class Cube extends Enemy {
             }
             
             movementTween = GameLoop.makeTween(
-                    Tween.circleLerp(currentAngle, MoreMath.randomSignumNonZero()*desiredAngle, playerDistance, () -> plTrans.position), 1.2f, val -> {
+                    Tween.circleLerp(currentAngle, desiredAngle, playerDistance, () -> plTrans.position), 1.2f, val -> {
                         trans.position = fromCenter(val);
             });
             movementTween
