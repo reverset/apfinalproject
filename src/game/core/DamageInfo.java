@@ -57,6 +57,10 @@ public record DamageInfo(int damage, Entity victim, Weapon2 weapon, Optional<Vec
         return new DamageInfo(damage, victim, weapon, pos, extraInfo, damageColor);
     }
 
+    public DamageInfo asHealing() {
+        return new DamageInfo(damage > 0 ? -damage : damage, victim, weapon, position, extraInfo, damageColor);
+    }
+
     public Color getColorPriority(Color color) {
         if (color.equals(DamageColor.SPECIAL)) {
             return color;

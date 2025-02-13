@@ -49,6 +49,8 @@ public class Cube extends Enemy {
 
     private Weapon2 weapon = null;
 
+    private GameTimeStopwatch shieldEnableStopwatch = new GameTimeStopwatch();
+
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("THE CUBE", Enemy.class);
 
@@ -89,6 +91,8 @@ public class Cube extends Enemy {
         effect = require(Effect.class);
 
         shader = require(Shader.class);
+        
+        effect.addDamageRecievingResponse(info -> isShieldUp ? info.asHealing().damage() : info.damage());
 
         var playerEntity = GameLoop.findEntityByTag(GameTags.PLAYER);
         player = playerEntity.flatMap(entity -> entity.getSystem(Player.class));
@@ -96,6 +100,8 @@ public class Cube extends Enemy {
 
         weapon = new SimpleWeapon(
             BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN_DURATION.toMillis()/1_000f, Optional.of(effect));
+        
+        shieldEnableStopwatch.bindTo(entity).start();
     }
 
     @Override
@@ -130,7 +136,11 @@ public class Cube extends Enemy {
     }
 
     private void shieldTick() {
-
+        if (!isShieldUp) {
+            if (shieldEnableStopwatch.hasElapsedAdvance(Duration.ofSeconds(2))) {
+                isShieldUp = true;
+            }
+        }
     }
 
     private void movementTick(Transform plTrans) {
