@@ -96,9 +96,6 @@ public class Cube extends Enemy {
 
         weapon = new SimpleWeapon(
             BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN_DURATION.toMillis()/1_000f, Optional.of(effect));
-        
-        burstAttackStopwatch.bindTo(entity);
-        burstAttackStopwatch.start();
     }
 
     @Override
