@@ -2,6 +2,8 @@ package game;
 
 import java.time.Duration;
 
+import javax.rmi.ssl.SslRMIClientSocketFactory;
+
 import com.raylib.Raylib;
 
 
@@ -46,5 +48,10 @@ public class Stopwatch {
 
     public boolean hasStarted() {
         return startTime != -1;
+    }
+
+    @Override
+    public String toString() {
+        return "Stopwatch(elapsed=" + (Raylib.GetTime() - startTime) + ")";
     }
 }

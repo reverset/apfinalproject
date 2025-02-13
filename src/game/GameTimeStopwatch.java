@@ -10,11 +10,11 @@ public class GameTimeStopwatch extends Stopwatch implements Binded {
 
     public GameTimeStopwatch bindTo(Entity e) {
         e.bind(this);
-        setupAutoTickSys();
+        setupAutoTickSys(e);
         return this;
     }
 
-    private ECSystem setupAutoTickSys() {
+    private ECSystem setupAutoTickSys(Entity entity) {
         var e = new ECSystem() {
             @Override
             public void setup() {}
@@ -25,6 +25,7 @@ public class GameTimeStopwatch extends Stopwatch implements Binded {
             }
         };
         autoTickSys = e;
+        entity.registerDeferred(autoTickSys);
         return e;
     }
 

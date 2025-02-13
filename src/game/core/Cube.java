@@ -24,12 +24,16 @@ import game.ecs.comps.Transform;
 public class Cube extends Enemy {
     public static final int BASE_HEALTH = 1_000;
     public static final int BASE_DAMAGE = 20;
-    public static final int BULLET_SPEED = 500;
-    public static final Duration BULLET_LIFETIME = Duration.ofSeconds(1);
-    public static final float BULLET_COOLDOWN = 1_000;
+    public static final int BULLET_SPEED = 2_000;
+    public static final int BULLET_BURST_AMOUNT = 10;
+    public static final Duration BULLET_LIFETIME = Duration.ofSeconds(5);
+    public static final Duration BURST_COOLDOWN = Duration.ofSeconds(2);
+    public static final Duration BULLET_COOLDOWN_DURATION = Duration.ofMillis(200);
     
     public static final int TEXTURE_WIDTH = 400;
     public static final int TEXTURE_HEIGHT = 400;
+
+    private GameTimeStopwatch burstAttackStopwatch = new GameTimeStopwatch();
 
     private Shader shader;
     private Raylib.RenderTexture renderTexture = Raylib.LoadRenderTexture(TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -46,7 +50,7 @@ public class Cube extends Enemy {
 
     private boolean isShieldUp = false;
 
-    private Weapon2 weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.PINK, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN, null);
+    private Weapon2 weapon = null;
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("THE CUBE", Enemy.class);
@@ -93,7 +97,9 @@ public class Cube extends Enemy {
         player = playerEntity.flatMap(entity -> entity.getSystem(Player.class));
         playerTransform = playerEntity.flatMap(entity -> entity.getComponent(Transform.class));
 
-        weapon.setEffect(effect);
+        weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.PINK, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, 0, Optional.of(effect));
+        burstAttackStopwatch.bindTo(entity);
+        burstAttackStopwatch.start();
     }
 
     @Override
@@ -124,9 +130,12 @@ public class Cube extends Enemy {
     }
 
     private void attackTick(Transform plTrans) {
-        if (weapon.canFire()) {
-            Vec2 dir = plTrans.position.minus(trans.position);
-            weapon.fire(trans.position.clone(), dir, entity);
+        if (burstAttackStopwatch.hasElapsedAdvance(BURST_COOLDOWN)) {
+            for (int i = 0; i < BULLET_BURST_AMOUNT; i++) {
+                GameLoop.runAfter(entity, BULLET_COOLDOWN_DURATION.plus(BULLET_COOLDOWN_DURATION.multipliedBy(i)), () -> {
+                    weapon.fire(getCenter(), getCenter().directionTo(plTrans.position), entity);
+                });
+            }
         }
     }
 
@@ -137,8 +146,6 @@ public class Cube extends Enemy {
     private void movementTick(Transform plTrans) {
         if (player.isEmpty() || playerTransform.isEmpty()) return;
         movementTimer.tick(infreqDelta()*1_000);
-
-        var pl = player.get();
 
         var currentAngle = (getCenter().minus(plTrans.position)).getAngle();
         if (movementTimer.hasElapsedAdvance(nextMoveTime)) {

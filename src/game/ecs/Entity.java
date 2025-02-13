@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import game.Binded;
+import game.Game;
+import game.GameLoop;
 import game.Signal;
 
 public class Entity {
@@ -127,6 +129,11 @@ public class Entity {
 
 	public Iterator<ECSystem> systemIterator() {
 		return systems.iterator();
+	}
+
+	public Entity registerDeferred(ECSystem system) {
+		GameLoop.defer(() -> register(system));
+		return this;
 	}
 
 	public Entity register(ECSystem system) {
