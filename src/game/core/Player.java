@@ -10,6 +10,7 @@ import game.Color;
 import game.Game;
 import game.GameLoop;
 import game.MoreMath;
+import game.Signal;
 import game.Stopwatch;
 import game.Text;
 import game.Tween;
@@ -30,6 +31,8 @@ public class Player extends ECSystem implements Controllable {
 
     public static final Duration BULLET_LIFETIME = Duration.ofSeconds(3);
     
+    public Signal<Enemy> onKillEnemy = new Signal<>();    
+
     private final Text healthText = new Text("N/A", new Vec2(15, Vec2.screen().y-64), 54, new Color(255, 255, 255, 255));
     private final Text maxHealthText = new Text("N/A", new Vec2(120, Vec2.screen().y-64+(34/2)), 34, Color.ORANGE);
 
@@ -50,9 +53,10 @@ public class Player extends ECSystem implements Controllable {
     private Stopwatch warningStopwatch = new Stopwatch();
 
     public static Entity makeEntity() {
-        Effect effect = new Effect().setLevel(1);
+        Effect effect = new Effect().setLevel(10);
 
         Entity entity = new Entity("Player");
+        effect.addDamageScaling(info -> effect.getLevel() * info.damage());
         
         entity
             .addComponent(new Transform())
@@ -64,6 +68,7 @@ public class Player extends ECSystem implements Controllable {
             // .register(new ShaderUpdater(List.of(ShaderUpdater.timeUpdater())))
             .register(new RectRender())
             .register(new Physics(0, 0))
+            .register(new ExpAccumulator(100))
             .register(new Player())
             .register(new Controller<>(Player.class))
             // .register(new Diamond(entity, null, effect, 1))
@@ -82,6 +87,7 @@ public class Player extends ECSystem implements Controllable {
         rect = require(Rect.class);
         health = require(Health.class);
         effect = require(Effect.class);
+        var xp = requireSystem(ExpAccumulator.class);
 
         final int INITIAL_FONT_SIZE = 54;
         final double HEALTH_PULSE_LENGTH = 0.1;
@@ -116,6 +122,19 @@ public class Player extends ECSystem implements Controllable {
         weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.AQUA, GameTags.PLAYER_TEAM_TAGS, BULLET_LIFETIME, 0.2f, Optional.of(effect));
         effect.onLevelUp.listen((level) -> {
             effect.addDamageScaling((info) -> info.absoluteDamageOrHeal() * level);
+        }, entity);
+
+        weapon.onHit.listen(phy -> {
+            var en = phy.entity.getSystem(Enemy.class);
+            en.ifPresent(enemy -> {
+                if (enemy.health.isDead()) onKillEnemy.emit(enemy);
+            });
+        }, entity);
+
+        onKillEnemy.listen(enemy -> {
+            if (enemy.isBossEnemy()) {
+                xp.accumulate(100);
+            }
         }, entity);
     }
 

@@ -55,4 +55,9 @@ public class EntityOf<T extends ECSystem> extends Entity {
 
         return entity;
     }
+
+    @Override
+    public String toString() {
+        return "EntityOf<" + systemClass.getName() + ">";
+    }
 }

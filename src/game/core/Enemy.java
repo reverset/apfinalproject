@@ -136,4 +136,8 @@ public class Enemy extends ECSystem {
 
     }
     
+    public boolean isBossEnemy() {
+        return false;
+    }
+    
 }

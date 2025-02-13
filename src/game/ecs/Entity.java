@@ -173,7 +173,7 @@ public class Entity {
 		
 		while (iter.hasNext()) {
 			ECSystem c = iter.next();
-			if (c.getClass().isAssignableFrom(sys)) {
+			if (sys.isAssignableFrom(c.getClass())) {
 				return Optional.of((T) c);
 			}
 		}

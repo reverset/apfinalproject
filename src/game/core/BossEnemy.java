@@ -205,4 +205,9 @@ public class BossEnemy extends Enemy {
             laser.render();
         }
     }
+
+    @Override
+    public boolean isBossEnemy() {
+        return true;
+    }
 }

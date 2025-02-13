@@ -73,6 +73,7 @@ public class Cube extends Enemy {
                 List.of(new Tuple<>("time", timeSupplier))))
             .register(new Physics(0, 0))
             .register(new Cube())
+            .register(new PostMortem(GameLoop::safeDestroy))
             .addTags(GameTags.ENEMY_TEAM);
 
         return entity;
@@ -195,6 +196,11 @@ public class Cube extends Enemy {
 
     public Vec2 fromCenter(Vec2 offset) {
         return offset.minus(TEXTURE_WIDTH/2f, TEXTURE_HEIGHT/2f);
+    }
+
+    @Override
+    public boolean isBossEnemy() {
+        return true;
     }
     
 }
