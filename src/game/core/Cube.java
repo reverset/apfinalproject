@@ -25,15 +25,12 @@ public class Cube extends Enemy {
     public static final int BASE_HEALTH = 1_000;
     public static final int BASE_DAMAGE = 20;
     public static final int BULLET_SPEED = 2_000;
-    public static final int BULLET_BURST_AMOUNT = 10;
     public static final Duration BULLET_LIFETIME = Duration.ofSeconds(5);
     public static final Duration BURST_COOLDOWN = Duration.ofSeconds(2);
     public static final Duration BULLET_COOLDOWN_DURATION = Duration.ofMillis(200);
     
     public static final int TEXTURE_WIDTH = 400;
     public static final int TEXTURE_HEIGHT = 400;
-
-    private GameTimeStopwatch burstAttackStopwatch = new GameTimeStopwatch();
 
     private Shader shader;
     private Raylib.RenderTexture renderTexture = Raylib.LoadRenderTexture(TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -97,7 +94,9 @@ public class Cube extends Enemy {
         player = playerEntity.flatMap(entity -> entity.getSystem(Player.class));
         playerTransform = playerEntity.flatMap(entity -> entity.getComponent(Transform.class));
 
-        weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.PINK, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, 0, Optional.of(effect));
+        weapon = new SimpleWeapon(
+            BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN_DURATION.toMillis()/1_000f, Optional.of(effect));
+        
         burstAttackStopwatch.bindTo(entity);
         burstAttackStopwatch.start();
     }
@@ -130,13 +129,7 @@ public class Cube extends Enemy {
     }
 
     private void attackTick(Transform plTrans) {
-        if (burstAttackStopwatch.hasElapsedAdvance(BURST_COOLDOWN)) {
-            for (int i = 0; i < BULLET_BURST_AMOUNT; i++) {
-                GameLoop.runAfter(entity, BULLET_COOLDOWN_DURATION.plus(BULLET_COOLDOWN_DURATION.multipliedBy(i)), () -> {
-                    weapon.fire(getCenter(), getCenter().directionTo(plTrans.position), entity);
-                });
-            }
-        }
+        if (weapon.canFire()) weapon.fire(getCenter(), getCenter().directionTo(plTrans.position), entity);
     }
 
     private void shieldTick() {
