@@ -3,8 +3,9 @@ package game;
 import com.raylib.Raylib;
 
 public class Vec2 {
+	private static Raylib.Vector2 canonVector;
 	
-	private final Raylib.Vector2 internal;
+	// private final Raylib.Vector2 internal;
 	
 	public float x;
 	public float y;
@@ -58,6 +59,10 @@ public class Vec2 {
 		);
 	}
 
+	public static Raylib.Vector2 getCanonVector() {
+		return canonVector;
+	}
+
 	public static Vec2 screenCenter() {
 		return screen().multiplyEq(0.5f);
 	}
@@ -77,10 +82,10 @@ public class Vec2 {
 	}
 	
 	public Vec2(float x, float y, Raylib.Vector2 internal) {
-		this.internal = internal;
+		// this.internal = internal;
 		this.x = x;
 		this.y = y;
-		internal.x(x).y(y);
+		// internal.x(x).y(y);
 		
 		// May have never been necessary to begin with
 		// Janitor.registerAsyncSafe(this, internal::close);
@@ -411,12 +416,21 @@ public class Vec2 {
 		return "Vec2(" + x + ", " + y + ")";
 	}
 	
+	// These used to have different implemenations, however I optimized something and no longer needed them.
+	// They remain since they are used in a LOT of code and was too lazy to change it everywhere.
+	@Deprecated
 	public Raylib.Vector2 getPointer() {
-		internal.x(x).y(y);
-		return internal;
+		return toCanonVector2();
 	}
 
+	@Deprecated
 	public Raylib.Vector2 getPointerNoUpdate() {
-		return internal;
+		return toCanonVector2();
+	}
+
+	public Raylib.Vector2 toCanonVector2() {
+		if (Vec2.canonVector == null) Vec2.canonVector = new Raylib.Vector2();
+		Vec2.canonVector.x(x).y(y);
+		return Vec2.canonVector;
 	}
 }
