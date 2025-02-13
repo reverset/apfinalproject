@@ -3,6 +3,8 @@
 uniform vec2 resolution;
 uniform float time;
 
+uniform vec3 cubeColorCoeffs;
+
 out vec4 color;
 
 void main() {
@@ -68,7 +70,7 @@ void main() {
     }
     
     float shade = 0.9 - 2*totalDist / maxDist;
-    vec3 finalColor = vec3(shade, shade * 0.4, shade * 0.4);
+    vec3 finalColor = vec3(shade * cubeColorCoeffs.x, shade * 0.4, shade * 0.4);
     
     color = vec4(finalColor, hit ? 1.0 : 0.0);
 }
