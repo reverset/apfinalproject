@@ -1,5 +1,6 @@
 package game.core;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import game.Signal;
@@ -40,4 +41,10 @@ public abstract class Weapon2 { // old weapon system was terrible, this is attem
     }
 
     public void render() {}
+
+    public Weapon2 setEffect(Effect effect) {
+        Objects.requireNonNull(effect);
+        this.effect = Optional.of(effect);
+        return this;
+    }
 }

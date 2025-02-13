@@ -8,9 +8,10 @@ public class GameTimeStopwatch extends Stopwatch implements Binded {
 
     private ECSystem autoTickSys = null;
 
-    public void bindTo(Entity e) {
+    public GameTimeStopwatch bindTo(Entity e) {
         e.bind(this);
         setupAutoTickSys();
+        return this;
     }
 
     private ECSystem setupAutoTickSys() {

@@ -23,8 +23,13 @@ import game.ecs.comps.Transform;
 
 public class Cube extends Enemy {
     public static final int BASE_HEALTH = 1_000;
-    public static int TEXTURE_WIDTH = 400;
-    public static int TEXTURE_HEIGHT = 400;
+    public static final int BASE_DAMAGE = 20;
+    public static final int BULLET_SPEED = 500;
+    public static final Duration BULLET_LIFETIME = Duration.ofSeconds(1);
+    public static final float BULLET_COOLDOWN = 1_000;
+    
+    public static final int TEXTURE_WIDTH = 400;
+    public static final int TEXTURE_HEIGHT = 400;
 
     private Shader shader;
     private Raylib.RenderTexture renderTexture = Raylib.LoadRenderTexture(TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -39,7 +44,9 @@ public class Cube extends Enemy {
     private float[] standardCubeColorCoeffs = new float[]{1.0f, 0.4f, 0.4f};
     private float[] shieldCubeColorCoeffs = new float[]{0.0f, 1.0f, 1.0f};
 
-    private boolean isShieldUp = true;
+    private boolean isShieldUp = false;
+
+    private Weapon2 weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.PINK, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN, null);
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("THE CUBE", Enemy.class);
@@ -85,6 +92,8 @@ public class Cube extends Enemy {
         var playerEntity = GameLoop.findEntityByTag(GameTags.PLAYER);
         player = playerEntity.flatMap(entity -> entity.getSystem(Player.class));
         playerTransform = playerEntity.flatMap(entity -> entity.getComponent(Transform.class));
+
+        weapon.setEffect(effect);
     }
 
     @Override
@@ -94,8 +103,12 @@ public class Cube extends Enemy {
 
     @Override
     public void infrequentUpdate() {
-        movementTick();
-        shieldTick();
+        playerTransform.ifPresent(plTrans -> {
+            attackTick(plTrans);
+            movementTick(plTrans);
+            shieldTick();
+        });
+
     }
 
     @Override
@@ -110,16 +123,22 @@ public class Cube extends Enemy {
         });
     }
 
+    private void attackTick(Transform plTrans) {
+        if (weapon.canFire()) {
+            Vec2 dir = plTrans.position.minus(trans.position);
+            weapon.fire(trans.position.clone(), dir, entity);
+        }
+    }
+
     private void shieldTick() {
 
     }
 
-    private void movementTick() {
+    private void movementTick(Transform plTrans) {
         if (player.isEmpty() || playerTransform.isEmpty()) return;
         movementTimer.tick(infreqDelta()*1_000);
 
         var pl = player.get();
-        var plTrans = playerTransform.get();
 
         var currentAngle = (getCenter().minus(plTrans.position)).getAngle();
         if (movementTimer.hasElapsedAdvance(nextMoveTime)) {
