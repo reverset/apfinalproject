@@ -7,6 +7,7 @@ public class GameTimeStopwatch extends Stopwatch implements Binded {
     private double elapsedMillis = -1;
 
     private ECSystem autoTickSys = null;
+    private boolean ignoreUnstartedTick = false;
 
     public GameTimeStopwatch bindTo(Entity e) {
         e.bind(this);
@@ -26,11 +27,13 @@ public class GameTimeStopwatch extends Stopwatch implements Binded {
         };
         autoTickSys = e;
         entity.registerDeferred(autoTickSys);
+        ignoreUnstartedTick = true;
         return e;
     }
 
     public void tick(float delta) {
         if (elapsedMillis == -1) {
+            if (ignoreUnstartedTick) return;
             System.out.println("Cannot tick unstarted GameTimeStopwatch");
             throw new RecoverableException();
         }

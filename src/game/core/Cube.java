@@ -50,6 +50,7 @@ public class Cube extends Enemy {
     private Weapon2 weapon = null;
 
     private GameTimeStopwatch shieldEnableStopwatch = new GameTimeStopwatch();
+    private GameTimeStopwatch shieldDisableStopwatch = new GameTimeStopwatch();
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("THE CUBE", Enemy.class);
@@ -102,6 +103,7 @@ public class Cube extends Enemy {
             BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN_DURATION.toMillis()/1_000f, Optional.of(effect));
         
         shieldEnableStopwatch.bindTo(entity).start();
+        shieldDisableStopwatch.bindTo(entity);
     }
 
     @Override
@@ -137,8 +139,18 @@ public class Cube extends Enemy {
 
     private void shieldTick() {
         if (!isShieldUp) {
-            if (shieldEnableStopwatch.hasElapsedAdvance(Duration.ofSeconds(2))) {
+            if (shieldEnableStopwatch.hasElapsedAdvance(Duration.ofSeconds(5))) {
+                System.out.println("CUBE >> Shield up!");
                 isShieldUp = true;
+                shieldDisableStopwatch.start();
+                shieldEnableStopwatch.stop();
+            }
+        } else {
+            if (shieldDisableStopwatch.hasElapsedAdvance(Duration.ofSeconds(2))) {
+                System.out.println("CUBE >> Shield Down!");
+                isShieldUp = false;
+                shieldDisableStopwatch.stop();
+                shieldEnableStopwatch.start();
             }
         }
     }
