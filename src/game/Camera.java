@@ -37,7 +37,7 @@ public class Camera extends ECSystem {
     }
 
     private void updateCamera() {
-        internal.target(trans.position.getPointer()).offset(settings.offset.getPointer()).zoom(settings.zoom).rotation(trans.rotation);
+        internal.target(trans.position.asCanonicalVector2()).offset(settings.offset.asCanonicalVector2()).zoom(settings.zoom).rotation(trans.rotation);
     }
 
     public Raylib.Camera2D getPointer() {

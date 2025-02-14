@@ -21,6 +21,6 @@ public class Poly implements Component {
     }
 
     public void render(Vec2 center, float rotation) {
-        Raylib.DrawPoly(center.getPointer(), sides, radius, rotation, color.getPointer());
+        Raylib.DrawPoly(center.asCanonicalVector2(), sides, radius, rotation, color.getPointer());
     }
 }

@@ -53,7 +53,7 @@ public class Player extends ECSystem implements Controllable {
     private Stopwatch warningStopwatch = new Stopwatch();
 
     public static Entity makeEntity() {
-        Effect effect = new Effect().setLevel(10);
+        Effect effect = new Effect().setLevel(1);
 
         Entity entity = new Entity("Player");
         effect.addDamageScaling(info -> effect.getLevel() * info.damage());

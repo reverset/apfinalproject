@@ -81,18 +81,8 @@ public class Vec2 {
 		).normalizeEq();
 	}
 	
-	public Vec2(float x, float y, Raylib.Vector2 internal) {
-		// this.internal = internal;
-		this.x = x;
-		this.y = y;
-		// internal.x(x).y(y);
-		
-		// May have never been necessary to begin with
-		// Janitor.registerAsyncSafe(this, internal::close);
-	}
-
 	public Vec2(Raylib.Vector2 internal) {
-		this(internal.x(), internal.y(), internal);
+		this(internal.x(), internal.y());
 		// this.internal = internal;
 		// this.x = internal.x();
 		// this.y = internal.y();
@@ -100,7 +90,8 @@ public class Vec2 {
 	}
 	
 	public Vec2(float x, float y) {
-		this(x, y, new Raylib.Vector2());
+		this.x = x;
+		this.y = y;
 	}
 	
 	public Vec2() {
@@ -138,7 +129,7 @@ public class Vec2 {
 
 	public Vec2 invertEq() {
 		x = 1 / x;
-		y = 1 /y;
+		y = 1 / y;
 		return this;
 	}
 
@@ -315,7 +306,7 @@ public class Vec2 {
 	}
 
 	public Vec2 modulus(Vec2 other) {
-		return new Vec2(Math.abs(x % other.x), Math.abs(y % other.y));
+		return new Vec2(x % other.x, y % other.y);
 	}
 
 	public Vec2 lerpEq(Vec2 other, float delta) {
@@ -339,7 +330,7 @@ public class Vec2 {
 
 		virtualPos.clampEq(0, 0, GameLoop.SCREEN_WIDTH, GameLoop.SCREEN_HEIGHT);
 
-		return new Vec2(Raylib.GetScreenToWorld2D(virtualPos.getPointer(), GameLoop.getMainCamera().getPointer()));
+		return new Vec2(Raylib.GetScreenToWorld2D(virtualPos.asCanonicalVector2(), GameLoop.getMainCamera().getPointer()));
 	}
 
 	public Vec2 screenToWorldEq() {
@@ -350,7 +341,7 @@ public class Vec2 {
 
 		clampEq(0, 0, GameLoop.SCREEN_WIDTH, GameLoop.SCREEN_HEIGHT);
 
-		try (var res = Raylib.GetScreenToWorld2D(getPointer(), GameLoop.getMainCamera().getPointer())) {
+		try (var res = Raylib.GetScreenToWorld2D(asCanonicalVector2(), GameLoop.getMainCamera().getPointer())) {
 			x = res.x();
 			y = res.y();
 		}
@@ -416,19 +407,7 @@ public class Vec2 {
 		return "Vec2(" + x + ", " + y + ")";
 	}
 	
-	// These used to have different implemenations, however I optimized something and no longer needed them.
-	// They remain since they are used in a LOT of code and was too lazy to change it everywhere.
-	@Deprecated
-	public Raylib.Vector2 getPointer() {
-		return toCanonVector2();
-	}
-
-	@Deprecated
-	public Raylib.Vector2 getPointerNoUpdate() {
-		return toCanonVector2();
-	}
-
-	public Raylib.Vector2 toCanonVector2() {
+	public Raylib.Vector2 asCanonicalVector2() {
 		if (Vec2.canonVector == null) Vec2.canonVector = new Raylib.Vector2();
 		Vec2.canonVector.x(x).y(y);
 		return Vec2.canonVector;

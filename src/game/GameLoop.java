@@ -389,7 +389,7 @@ public class GameLoop {
 			renderTexture.texture(),
 			screenRect,
 			scaledScreenRect,
-			Vec2.ZERO.getPointerNoUpdate(),
+			Raylib.Vector2Zero(),
 			0,
 			Color.WHITE.getPointer()
 		);

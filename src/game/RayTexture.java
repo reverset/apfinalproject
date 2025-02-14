@@ -16,7 +16,7 @@ public class RayTexture {
     }
 
     public void render(Vec2 position, Color tint) {
-        Raylib.DrawTextureV(internal, position.getPointer(), tint.getPointer());
+        Raylib.DrawTextureV(internal, position.asCanonicalVector2(), tint.getPointer());
     }
 
     public int width() {

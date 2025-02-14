@@ -94,7 +94,7 @@ public class Bullet extends ECSystem {
         rect.color.a = (byte) (alphaCoeff*255);
         byte temp = rect.color.a;
         rect.color.a = (byte) (64*alphaCoeff);
-        Raylib.DrawLineEx(center.getPointer(), center.minus(tangible.velocity.normalize().multiplyEq(20)).getPointer(), 10f, rect.color.getPointer());
+        Raylib.DrawLineEx(center.asCanonicalVector2(), center.minusEq(tangible.velocity.normalize().multiplyEq(20)).asCanonicalVector2(), 10f, rect.color.getPointer());
         rect.color.a = temp;
     }
 }

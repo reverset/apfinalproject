@@ -65,19 +65,19 @@ public class Rect implements Component {
 
         Raylib.Vector2 point = new Raylib.Vector2();
 
-        if (Raylib.CheckCollisionLines(ray.position.getPointer(), ray.endPoint.getPointer(), position.getPointer(), bottomLeft.getPointer(), point)) {
+        if (Raylib.CheckCollisionLines(ray.position.asCanonicalVector2(), ray.endPoint.asCanonicalVector2(), position.asCanonicalVector2(), bottomLeft.asCanonicalVector2(), point)) {
             return Optional.of(new Vec2(point));
         }
 
-        if (Raylib.CheckCollisionLines(ray.position.getPointer(), ray.endPoint.getPointer(), position.getPointer(), topRight.getPointer(), point)) {
+        if (Raylib.CheckCollisionLines(ray.position.asCanonicalVector2(), ray.endPoint.asCanonicalVector2(), position.asCanonicalVector2(), topRight.asCanonicalVector2(), point)) {
             return Optional.of(new Vec2(point));
         }
 
-        if (Raylib.CheckCollisionLines(ray.position.getPointer(), ray.endPoint.getPointer(), topRight.getPointer(), bottomRight.getPointer(), point)) {
+        if (Raylib.CheckCollisionLines(ray.position.asCanonicalVector2(), ray.endPoint.asCanonicalVector2(), topRight.asCanonicalVector2(), bottomRight.asCanonicalVector2(), point)) {
             return Optional.of(new Vec2(point));
         }
 
-        if (Raylib.CheckCollisionLines(ray.position.getPointer(), ray.endPoint.getPointer(), bottomLeft.getPointer(), bottomRight.getPointer(), point)) {
+        if (Raylib.CheckCollisionLines(ray.position.asCanonicalVector2(), ray.endPoint.asCanonicalVector2(), bottomLeft.asCanonicalVector2(), bottomRight.asCanonicalVector2(), point)) {
             return Optional.of(new Vec2(point));
         }
 

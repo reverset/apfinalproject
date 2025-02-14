@@ -30,9 +30,12 @@ public class Background extends ECSystem {
     public void render() {
         Vec2 initial = GameLoop.getMainCamera().trans.position.minus(background.width()*2, background.height()*2).roundEq(1f / background.width(), 1f / background.height());
         
+        Vec2 pos = new Vec2();
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                background.render(initial.add(new Vec2(i*background.width(), j*background.height())), Color.WHITE);
+                pos.x = i*background.width();
+                pos.y = j*background.height();
+                background.render(pos.addEq(initial), Color.WHITE);
             }
         }
 
