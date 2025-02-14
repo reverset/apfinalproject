@@ -9,6 +9,7 @@ import com.raylib.Raylib;
 import game.Color;
 import game.Game;
 import game.GameLoop;
+import game.LoadingBar;
 import game.MoreMath;
 import game.Signal;
 import game.Stopwatch;
@@ -35,6 +36,7 @@ public class Player extends ECSystem implements Controllable {
 
     private final Text healthText = new Text("N/A", new Vec2(15, Vec2.screen().y-64), 54, new Color(255, 255, 255, 255));
     private final Text maxHealthText = new Text("N/A", new Vec2(120, Vec2.screen().y-64+(34/2)), 34, Color.ORANGE);
+    private final Text levelText = new Text("0", new Vec2(Vec2.screen().x-100, Vec2.screen().y-50), 34, Color.ORANGE);
 
     private Tangible tangible;
     private Physics physics;
@@ -51,6 +53,7 @@ public class Player extends ECSystem implements Controllable {
     private Rect warningRect = new Rect(800, 50, warningColor);
     private Text warningText = new Text("null", Vec2.screenCenter().addEq(0, -227), 54, Color.WHITE);
     private Stopwatch warningStopwatch = new Stopwatch();
+    private ExpAccumulator expAccumulator;
 
     public static Entity makeEntity() {
         Effect effect = new Effect().setLevel(1);
@@ -87,7 +90,7 @@ public class Player extends ECSystem implements Controllable {
         rect = require(Rect.class);
         health = require(Health.class);
         effect = require(Effect.class);
-        var xp = requireSystem(ExpAccumulator.class);
+        expAccumulator = requireSystem(ExpAccumulator.class);
 
         final int INITIAL_FONT_SIZE = 54;
         final double HEALTH_PULSE_LENGTH = 0.1;
@@ -130,11 +133,18 @@ public class Player extends ECSystem implements Controllable {
 
         onKillEnemy.listen(enemy -> {
             if (enemy.isBossEnemy()) {
-                xp.accumulate(100);
+                expAccumulator.accumulate(100);
             } else {
-                xp.accumulate(10);
+                expAccumulator.accumulate(10);
             }
         }, entity);
+
+        var xpBar = new Entity("xp bar")
+            .addComponent(new Transform(new Vec2(0, Vec2.screen().y-10)))
+            .addComponent(new Rect(Vec2.screen().xInt(), 10, Color.AQUA))
+            .register(new LoadingBar(() -> expAccumulator.getXp(), expAccumulator.getMaxXp()));
+        
+        GameLoop.safeTrack(xpBar);
     }
 
     public Vec2 getCenter() {
@@ -237,6 +247,9 @@ public class Player extends ECSystem implements Controllable {
         maxHealthText.render();
         healthText.render();
 
+        levelText.text = "Lv" + effect.getLevel();
+        levelText.render();
+
         if (warningNotifVisible) { // probably want to abstract this away somewhere
             var desired = Vec2.screenCenter().addEq(0, -200);
             warningRect.color.a = (byte) ((Math.sin(timeDouble()*10)+1)*255*0.5);
@@ -250,7 +263,7 @@ public class Player extends ECSystem implements Controllable {
             };
         }
 
-        Raylib.DrawText("Objs: " + GameLoop.entityCount(), 15, 50, 24, Color.WHITE.getPointer());
+        Raylib.DrawText("Entities: " + GameLoop.entityCount(), 15, 50, 24, Color.WHITE.getPointer());
         Raylib.DrawText("Velocity: " + tangible.velocity, 15, 75, 24, Color.WHITE.getPointer());
         Raylib.DrawText("Speed: " + tangible.velocity.magnitude(), 15, 102, 24, Color.WHITE.getPointer());
         Raylib.DrawText("Bullets: " + BulletFactory.bullets.size(), 15, 124, 24, Color.WHITE.getPointer());

@@ -58,5 +58,12 @@ public class ExpAccumulator extends ECSystem {
         System.out.println("Level: " + effect.getLevel());
         return this;
     }
+
+    public int getXp() {
+        return xp;
+    }
     
+    public int getMaxXp() {
+        return maxXp;
+    }
 }

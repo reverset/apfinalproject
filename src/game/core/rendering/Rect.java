@@ -102,6 +102,10 @@ public class Rect implements Component {
     }
 
     public void render(Vec2 position) {
+        renderWithColor(position, color);
+    }
+
+    public void renderWithColor(Vec2 position, Color color) {
         Raylib.DrawRectangle(position.xInt(), position.yInt(), width, height, color.getPointer());
     }
 
