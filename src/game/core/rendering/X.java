@@ -41,7 +41,7 @@ public class X implements Component {
     }
 
     public void render() {
-        Raylib.DrawLineEx(topLeft.asCanonicalVector2(), bottomRight.asCanonicalVector2(), thickness, color.getPointer());
-        Raylib.DrawLineEx(topRight.asCanonicalVector2(), bottomLeft.asCanonicalVector2(), thickness, color.getPointer());
+        Raylib.DrawLineEx(topLeft.asCanonicalVector2(), bottomRight.allocateRaylibVector2(), thickness, color.getPointer());
+        Raylib.DrawLineEx(topRight.asCanonicalVector2(), bottomLeft.allocateRaylibVector2(), thickness, color.getPointer());
     }
 }

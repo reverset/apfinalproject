@@ -11,7 +11,7 @@ import game.core.rendering.XRenderer;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
-public class Diamond extends Powerup {
+public class Diamond extends Powerup { // Currently does not grant XP!
 
     public Diamond(Entity entity, Weapon2 weapon, Effect effect, int level) {
         super(entity, weapon, effect, level);
