@@ -11,9 +11,9 @@ import game.core.rendering.Rect;
 import game.ecs.ECSystem;
 import game.ecs.comps.Transform;
 
-public class BossBody extends ECSystem {
+public class HexagonTail extends ECSystem {
 
-    BossEnemy boss;
+    HexagonWorm boss;
 
     Transform trans;
     Supplier<Vec2> posSupplier;
@@ -22,24 +22,24 @@ public class BossBody extends ECSystem {
     Tangible tangible;
     Health health;
 
-    public BossBody(BossEnemy boss, Supplier<Vec2> posSupplier, Supplier<Vec2> velSupplier) {
+    public HexagonTail(HexagonWorm boss, Supplier<Vec2> posSupplier, Supplier<Vec2> velSupplier) {
         this.boss = boss;
         this.posSupplier = posSupplier;
         this.velSupplier = velSupplier;
     }
 
-    public static EntityOf<BossBody> makeEntity(BossEnemy boss, Supplier<Vec2> posSupplier, Supplier<Vec2> velSupplier) {
-        EntityOf<BossBody> entity = new EntityOf<>("boss body", BossBody.class);
+    public static EntityOf<HexagonTail> makeEntity(HexagonWorm boss, Supplier<Vec2> posSupplier, Supplier<Vec2> velSupplier) {
+        EntityOf<HexagonTail> entity = new EntityOf<>("boss body", HexagonTail.class);
 
         entity
-            .addComponent(new Poly(BossEnemy.SIDES, BossEnemy.RADIUS, Color.DARK_RED))
+            .addComponent(new Poly(HexagonWorm.SIDES, HexagonWorm.RADIUS, Color.DARK_RED))
             .addComponent(new Transform())
-            .addComponent(Rect.around(BossEnemy.RADIUS*2, Color.WHITE))
+            .addComponent(Rect.around(HexagonWorm.RADIUS*2, Color.WHITE))
             .addComponent(new Tangible())
             .addComponent(new Health(Integer.MAX_VALUE))
-            .register(new Physics(0, 0, new Vec2(-BossEnemy.RADIUS, -BossEnemy.RADIUS)))
+            .register(new Physics(0, 0, new Vec2(-HexagonWorm.RADIUS, -HexagonWorm.RADIUS)))
             .register(new PolyRenderer())
-            .register(new BossBody(boss, posSupplier, velSupplier))
+            .register(new HexagonTail(boss, posSupplier, velSupplier))
             .addTags(new Object[]{GameTags.ENEMY_TEAM});
         
         return entity;
@@ -52,7 +52,7 @@ public class BossBody extends ECSystem {
         health = require(Health.class);
 
         health.onDamage.listen(info -> {
-            boss.health.damageOrHeal(info.setExtras(new Object[]{BossBody.class}));
+            boss.health.damageOrHeal(info.setExtras(new Object[]{HexagonTail.class}));
         }, entity);
     }
 

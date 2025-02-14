@@ -51,6 +51,10 @@ public class Effect implements Component {
     }
 
     public DamageInfo computeDamageResistance(DamageInfo info) {
+        if (info.isHealing()) {
+            System.out.println("!!! > calculating healing in computeDamageResistance!!");
+        }
+
         DamageInfo inf = info;
         for (var scale : damageResponse) {
             inf = scale.compute(inf);

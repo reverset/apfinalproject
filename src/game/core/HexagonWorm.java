@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
+import game.GameTimeStopwatch;
 import game.MoreMath;
 import game.Shader;
 import game.ShaderUpdater;
@@ -20,7 +21,7 @@ import game.core.rendering.Rect;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
-public class BossEnemy extends Enemy {
+public class HexagonWorm extends Enemy {
     public enum State {
         CIRCLING,
         FAR_CIRCLING,
@@ -53,7 +54,7 @@ public class BossEnemy extends Enemy {
     
     private State state = State.FAR_CIRCLING;
     
-    public Stopwatch healingStopwatch = new Stopwatch();
+    public GameTimeStopwatch healingStopwatch = new GameTimeStopwatch();
     private Stopwatch stateChange = new Stopwatch();
     
     private Stopwatch meleeTimer = new Stopwatch();
@@ -66,8 +67,8 @@ public class BossEnemy extends Enemy {
 
         Effect effect = new Effect().setLevel(level);
         effect.addDamageRecievingResponseExtra(d -> {
-            boolean headshot = !d.hasExtra(BossBody.class);
-            return d.setDamageAndColor(headshot ? d.damage()*2 : d.damage(), headshot ? DamageColor.CRITICAL : DamageColor.NORMAL);            
+            boolean headshot = !d.hasExtra(HexagonTail.class);
+            return d.setDamageAndColor(headshot ? d.damage()*2 : d.damage(), headshot ? DamageColor.CRITICAL : DamageColor.NORMAL);
         });
 
         Supplier<Float> timeSupplier = () -> time()*10;
@@ -83,7 +84,7 @@ public class BossEnemy extends Enemy {
             .register(new HealthBar(new Vec2(-RADIUS, -100), entity.name, true))
             .register(new Physics(0, 0, new Vec2(-RADIUS/MoreMath.ROOT_TWO, -RADIUS/MoreMath.ROOT_TWO)))
             .register(new PolyRenderer())
-            .register(new BossEnemy())
+            .register(new HexagonWorm())
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
 
         return entity;
@@ -100,7 +101,7 @@ public class BossEnemy extends Enemy {
         for (int i = 1; i <= PARTS; i++) {
             final int j = i;
             Transform t = last.getComponent(Transform.class).orElseThrow();
-            EntityOf<BossBody> body = BossBody.makeEntity(this, () -> t.position, () -> tangible.velocity.normalize().multiplyEq(j*4));
+            EntityOf<HexagonTail> body = HexagonTail.makeEntity(this, () -> t.position, () -> tangible.velocity.normalize().multiplyEq(j*4));
             GameLoop.safeTrack(body);
             last = body;
             parts[i-1] = body;
@@ -112,6 +113,7 @@ public class BossEnemy extends Enemy {
         }
 
         weapon = new HexaBombLauncher(BASE_HEXABOMB_DAMAGE, BULLET_SPEED, Color.YELLOW, GameTags.ENEMY_TEAM_TAGS, HEXABOMB_COOLDOWN, Optional.empty());
+        healingStopwatch.bindTo(entity).start();
     }
 
     @Override

@@ -30,7 +30,7 @@ public class EnemySpawner extends ECSystem {
 
         return randomEntity(getOffScreenPos());
     }, 5, Duration.ofSeconds(1)),
-    new BossWave(() -> BossEnemy.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5))), this);
+    new BossWave(() -> HexagonWorm.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5))), this);
 
     // private Round round = new Round(List.of(new Wave(() -> {
     //     if (totalEnemiesThisWave >= 1) return null;

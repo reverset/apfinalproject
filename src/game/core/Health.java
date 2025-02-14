@@ -75,7 +75,7 @@ public class Health implements Component {
         if (info.isHarmful() && !invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return DamageInfo.ofNone();
         
         DamageInfo inf = info;
-        if (effect.isPresent()) inf = effect.get().computeDamageResistance(inf);
+        if (inf.isHarmful() && effect.isPresent()) inf = effect.get().computeDamageResistance(inf);
 
         int dmg = inf.damage();
         setHealthWithinBounds(health - dmg);
