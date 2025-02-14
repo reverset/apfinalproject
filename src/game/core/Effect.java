@@ -40,11 +40,11 @@ public class Effect implements Component {
     public DamageInfo computeDamage(DamageInfo info) {
         DamageInfo inf = info;
         for (var scale : damageScaling) {
-            inf = scale.compute(info);
+            inf = scale.compute(inf);
         }
 
         for (var power : powerups) {
-            inf = power.outgoingDamageMod(info);
+            inf = power.outgoingDamageMod(inf);
         }
 
         return inf;
@@ -53,11 +53,11 @@ public class Effect implements Component {
     public DamageInfo computeDamageResistance(DamageInfo info) {
         DamageInfo inf = info;
         for (var scale : damageResponse) {
-            inf = scale.compute(info);
+            inf = scale.compute(inf);
         }
 
         for (var power : powerups) {
-            inf = power.incomingDamageMod(info);
+            inf = power.incomingDamageMod(inf);
         }
 
         return inf;
