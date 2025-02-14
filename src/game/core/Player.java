@@ -134,6 +134,8 @@ public class Player extends ECSystem implements Controllable {
         onKillEnemy.listen(enemy -> {
             if (enemy.isBossEnemy()) {
                 xp.accumulate(100);
+            } else {
+                xp.accumulate(10);
             }
         }, entity);
     }

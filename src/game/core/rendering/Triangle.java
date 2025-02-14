@@ -34,6 +34,6 @@ public class Triangle implements Component {
     }
 
     public void render() {
-        Raylib.DrawTriangle(top.asCanonicalVector2(), left.asCanonicalVector2(), right.asCanonicalVector2(), color.getPointer());
+        Raylib.DrawTriangle(top.asCanonicalVector2(), left.allocateRaylibVector2(), right.allocateRaylibVector2(), color.getPointer());
     }
 }

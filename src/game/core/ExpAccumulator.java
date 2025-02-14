@@ -45,15 +45,16 @@ public class ExpAccumulator extends ECSystem {
     }
 
     public ExpAccumulator accumulate(int xp) {
-        System.out.println("XP Reward of: " + xp);
+        if (xp <= 0) return this;
         this.xp += xp;
-        if (xp > maxXp) {
-            int remaining = xp - maxXp;
+        if (this.xp >= maxXp) {
+            int remaining = this.xp - maxXp;
             this.xp = 0;
+            effect.levelUp();
             return accumulate(remaining);
         }
-        this.xp = 0;
-        effect.levelUp();
+        System.out.println("XP Reward of: " + xp);
+        System.out.println(this.xp + " / " + maxXp);
         System.out.println("Level: " + effect.getLevel());
         return this;
     }

@@ -50,6 +50,6 @@ public class Ray {
     }
 
     public void renderEx(float thickness, Color color) {
-        Raylib.DrawLineEx(position.asCanonicalVector2(), endPoint.asCanonicalVector2(), thickness, color.getPointer());
+        Raylib.DrawLineEx(position.asCanonicalVector2(), endPoint.allocateRaylibVector2(), thickness, color.getPointer());
     }
 }

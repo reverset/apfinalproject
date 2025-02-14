@@ -4,6 +4,8 @@ import com.raylib.Raylib;
 
 public class Vec2 {
 	private static Raylib.Vector2 canonVector;
+
+	private Raylib.Vector2 internal = null;
 	
 	// private final Raylib.Vector2 internal;
 	
@@ -411,5 +413,11 @@ public class Vec2 {
 		if (Vec2.canonVector == null) Vec2.canonVector = new Raylib.Vector2();
 		Vec2.canonVector.x(x).y(y);
 		return Vec2.canonVector;
+	}
+
+	public Raylib.Vector2 allocateRaylibVector2() {
+		if (internal == null) internal = new Raylib.Vector2();
+		internal.x(x).y(y);
+		return internal;
 	}
 }
