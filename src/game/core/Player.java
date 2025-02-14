@@ -120,9 +120,6 @@ public class Player extends ECSystem implements Controllable {
         entity.register(healthCriticalVignette);
 
         weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.AQUA, GameTags.PLAYER_TEAM_TAGS, BULLET_LIFETIME, 0.2f, Optional.of(effect));
-        effect.onLevelUp.listen((level) -> {
-            effect.addDamageScaling((info) -> info.absoluteDamageOrHeal() * level);
-        }, entity);
 
         weapon.onHit.listen(phy -> {
             var en = phy.entity.getSystem(Enemy.class);
