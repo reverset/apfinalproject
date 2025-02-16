@@ -17,20 +17,23 @@ public class EnemySpawner extends ECSystem {
     private final ArrayList<Entity> enemies = new ArrayList<>();
     private int totalEnemiesThisWave = 0;
 
-    private final Stopwatch levelIncrease = new Stopwatch();
-    
     private int maxLevel = 1;
     
     private Queue<EntityOf<Enemy>> spawnQueue = new LinkedList<>();
 
     private final Stopwatch stopwatch = new Stopwatch();
 
-    private Round round = new Round(List.of(new Wave(() -> {
+    private final Wave standardWave = new Wave(() -> {
         if (totalEnemiesThisWave > 5) return null;
 
         return randomEntity(getOffScreenPos());
-    }, 5, Duration.ofSeconds(1)),
-    new BossWave(() -> HexagonWorm.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5))), this);
+    }, 5, Duration.ofSeconds(1));
+
+    private Round round = new Round(List.of(standardWave.clone(),
+        new BossWave(() -> HexagonWorm.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5), 10),
+        standardWave.clone(),
+        new BossWave(() -> Cube.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5), 10)
+    ), this);
 
     // private Round round = new Round(List.of(new Wave(() -> {
     //     if (totalEnemiesThisWave >= 1) return null;
@@ -77,12 +80,12 @@ public class EnemySpawner extends ECSystem {
         return Vec2.screenCenter().screenToWorldEq().addEq(offset);
     }
 
+    public void increaseLevel(int amount) {
+        maxLevel += amount;
+    }
+
     @Override
     public void frame() {
-        if (levelIncrease.hasElapsedSecondsAdvance(5)) {
-            maxLevel += 1;
-        }
-        
         boolean waveChange = round.update();
         if (waveChange) {
             stopwatch.start();
@@ -106,6 +109,7 @@ public class EnemySpawner extends ECSystem {
     @Override
     public void setup() {
         stopwatch.start();
+
         round.getWave().start();
     }
 }

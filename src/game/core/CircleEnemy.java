@@ -47,7 +47,7 @@ public class CircleEnemy extends Enemy {
         EntityOf<Enemy> entity = new EntityOf<>("Circle", Enemy.class);
 
         Effect effect = new Effect().setLevel(level);
-        effect.addDamageScaling(d -> d.damage() + ((int) Math.ceil((level-1)*5)));
+        effect.addDamageScaling(d -> d.damage() + ((int) Math.ceil((level-1)*2)));
 
         entity
             .addComponent(new Shader("resources/circle.frag"))

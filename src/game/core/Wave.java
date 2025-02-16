@@ -39,4 +39,8 @@ public class Wave {
     public boolean isFinished() {
         return (totalEnemies < spawner.getSpawnedEnemyCountForWave()) && (spawner.getEnemies().size() == 0);
     }
+
+    public Wave clone() {
+        return new Wave(enemies, totalEnemies, spawnRate);
+    }
 }

@@ -71,6 +71,8 @@ public class HexagonWorm extends Enemy {
             return d.setDamageAndColor(headshot ? d.damage()*2 : d.damage(), headshot ? DamageColor.CRITICAL : DamageColor.NORMAL);
         });
 
+        effect.addDamageScaling(info -> info.damage() * (Math.max(1, effect.getLevel()/6)));
+
         Supplier<Float> timeSupplier = () -> time()*10;
         entity
             .addComponent(new Shader("resources/enemy.frag"))
@@ -79,7 +81,7 @@ public class HexagonWorm extends Enemy {
             .addComponent(new Rect((int) (RADIUS * MoreMath.ROOT_TWO), (int) (RADIUS * MoreMath.ROOT_TWO), Color.WHITE))
             .addComponent(effect)
             .addComponent(new Tangible())
-            .addComponent(new Health(BASE_HEALTH, effect).withInvincibilityDuration(0.1f))
+            .addComponent(new Health(BASE_HEALTH * (Math.ceil(effect.getLevel() / 2.0)), effect).withInvincibilityDuration(0.1f))
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new HealthBar(new Vec2(-RADIUS, -100), entity.name, true))
             .register(new Physics(0, 0, new Vec2(-RADIUS/MoreMath.ROOT_TWO, -RADIUS/MoreMath.ROOT_TWO)))
@@ -112,7 +114,7 @@ public class HexagonWorm extends Enemy {
             skyLasers.add(laser);
         }
 
-        weapon = new HexaBombLauncher(BASE_HEXABOMB_DAMAGE, BULLET_SPEED, Color.YELLOW, GameTags.ENEMY_TEAM_TAGS, HEXABOMB_COOLDOWN, Optional.empty());
+        weapon = new HexaBombLauncher(BASE_HEXABOMB_DAMAGE, BULLET_SPEED, Color.YELLOW, GameTags.ENEMY_TEAM_TAGS, HEXABOMB_COOLDOWN, Optional.of(effect));
         healingStopwatch.bindTo(entity).start();
     }
 

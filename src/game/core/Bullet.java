@@ -30,7 +30,7 @@ public class Bullet extends ECSystem {
     Rect rect;
     Object[] ignoreTags;
 
-    private Optional<Effect> effect;
+    Optional<Effect> effect;
 
     public Bullet(Entity owner, int damage, Optional<Effect> effect, Object[] ignoreTags) {
         this.owner = owner;
@@ -94,7 +94,7 @@ public class Bullet extends ECSystem {
         rect.color.a = (byte) (alphaCoeff*255);
         byte temp = rect.color.a;
         rect.color.a = (byte) (64*alphaCoeff);
-        Raylib.DrawLineEx(center.asCanonicalVector2(), center.minusEq(tangible.velocity.normalize().multiplyEq(20)).asCanonicalVector2(), 10f, rect.color.getPointer());
+        Raylib.DrawLineEx(center.asCanonicalVector2(), center.minusEq(tangible.velocity.normalize().multiplyEq(20)).allocateRaylibVector2(), 10f, rect.color.getPointer());
         rect.color.a = temp;
     }
 }

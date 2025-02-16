@@ -30,6 +30,8 @@ public class Player extends ECSystem implements Controllable {
     public static final int BASE_DAMAGE = 5;
     public static final int BULLET_SPEED = 800;
 
+    public static final int HEALTH_BONUS_LEVEL_AMOUNT = 50;
+
     public static final Duration BULLET_LIFETIME = Duration.ofSeconds(3);
     
     public Signal<Enemy> onKillEnemy = new Signal<>();    
@@ -145,6 +147,10 @@ public class Player extends ECSystem implements Controllable {
             .register(new LoadingBar(() -> expAccumulator.getXp(), expAccumulator.getMaxXp()));
         
         GameLoop.safeTrack(xpBar);
+
+        effect.onLevelUp.listen(n -> {
+            health.setMaxHealth(health.getMaxHealth() + HEALTH_BONUS_LEVEL_AMOUNT);
+        }, entity);
     }
 
     public Vec2 getCenter() {

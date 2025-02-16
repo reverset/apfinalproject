@@ -16,10 +16,12 @@ public class BossWave extends Wave {
     private Stopwatch stopwatch = new Stopwatch();
 
     private boolean finished = false;
+    private final int levelValue;
 
-    public BossWave(Supplier<EntityOf<Enemy>> enemies, Duration delay) {
+    public BossWave(Supplier<EntityOf<Enemy>> enemies, Duration delay, int levelValue) {
         super(enemies, 0, null);
         this.delay = delay;
+        this.levelValue = levelValue;
     }
 
     @Override
@@ -56,6 +58,10 @@ public class BossWave extends Wave {
     @Override
     public boolean isFinished() {
         return finished;
+    }
+
+    public int getLevelValue() {
+        return levelValue;
     }
     
 }

@@ -31,6 +31,10 @@ public class Health implements Component {
         this(maxHp, Optional.of(effect));
     }
 
+    public Health(double maxHp, Effect effect) {
+        this((int)maxHp, Optional.of(effect));
+    }
+
     public Health(int maxHp) {
         this(maxHp, Optional.empty());
     }

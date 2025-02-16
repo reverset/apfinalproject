@@ -7,11 +7,8 @@ import game.core.Weapon2;
 import game.ecs.Entity;
 
 public class HealthPowerup extends Powerup {
-    public static final int HEALTH_BONUS = 30;
+    public static final int HEALTH_BONUS = 100;
 
-    private int currentHealthBonus = 30;
-    private int initialHealth = 0;
-    
     private Health health;
 
     public HealthPowerup(Entity entity, Weapon2 weapon, Effect effect, int level) {
@@ -21,10 +18,9 @@ public class HealthPowerup extends Powerup {
     @Override
     public void setup() {
         health = require(Health.class);
-        initialHealth = health.getMaxHealth();
 
         boolean wasAtFull = health.getHealth() >= health.getMaxHealth();
-        health.setMaxHealth(initialHealth + currentHealthBonus);
+        health.setMaxHealth(health.getMaxHealth() + HEALTH_BONUS);
         if (wasAtFull) {
             health.setHealth(health.getMaxHealth());
         }
@@ -37,8 +33,7 @@ public class HealthPowerup extends Powerup {
 
     @Override
     public void levelUp() {
-        currentHealthBonus += HEALTH_BONUS;
-        health.setMaxHealth(initialHealth + currentHealthBonus);
+        health.setMaxHealth(health.getMaxHealth() + HEALTH_BONUS);
     }
 
     @Override

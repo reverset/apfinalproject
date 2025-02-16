@@ -3,10 +3,12 @@ package game.core;
 import java.util.List;
 
 public class Round {
+    public EnemySpawner spawner;
     private List<Wave> waves;
     private int currentWave = 0;
 
     public Round(List<Wave> waves, EnemySpawner spawner) {
+        this.spawner = spawner;
         this.waves = waves;
         for (Wave wave : waves) {
             wave.spawner = spawner;
@@ -33,6 +35,9 @@ public class Round {
             currentWave += 1;
             if (currentWave >= waves.size()) {
                 currentWave = 0;
+            }
+            if (wave instanceof BossWave bwave) {
+                spawner.increaseLevel(bwave.getLevelValue());
             }
         } else {
             wave.update();

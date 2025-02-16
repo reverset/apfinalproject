@@ -53,9 +53,9 @@ public class ExpAccumulator extends ECSystem {
             effect.levelUp();
             return accumulate(remaining);
         }
-        System.out.println("XP Reward of: " + xp);
-        System.out.println(this.xp + " / " + maxXp);
-        System.out.println("Level: " + effect.getLevel());
+        // System.out.println("XP Reward of: " + xp);
+        // System.out.println(this.xp + " / " + maxXp);
+        // System.out.println("Level: " + effect.getLevel());
         return this;
     }
 
