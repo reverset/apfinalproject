@@ -1,12 +1,15 @@
 package game;
 
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import com.raylib.Raylib;
 
 import game.ecs.ECSystem;
 import game.ecs.Entity;
 
-public class Tween<T> extends ECSystem { // TODO add option so tween only runs using GameTimeStopwatch
+public class Tween<T> extends ECSystem {
     @FunctionalInterface
     public static interface TweenFunction<T> {
         T supply(double normalPercentage);
@@ -19,6 +22,8 @@ public class Tween<T> extends ECSystem { // TODO add option so tween only runs u
     private TweenFunction<T> supplier;
     private double durationSeconds;
     private boolean shouldDestroy;
+
+    private DoubleSupplier timeSupp;
 
     public static TweenFunction<Double> lerp(double from, double to) {
         return percent -> MoreMath.lerp(from, to, percent);
@@ -66,11 +71,20 @@ public class Tween<T> extends ECSystem { // TODO add option so tween only runs u
         this(supplier, durationSeconds, true, updater);
     }
 
+    public Tween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater, DoubleSupplier timeSupp) {
+        this(supplier, durationSeconds, true, updater, timeSupp);
+    }
+
     public Tween(TweenFunction<T> supplier, double durationSeconds, boolean shouldDestroy, Consumer<T> updater) {
+        this(supplier, durationSeconds, shouldDestroy, updater, Raylib::GetTime);
+    }
+
+    public Tween(TweenFunction<T> supplier, double durationSeconds, boolean shouldDestroy, Consumer<T> updater, DoubleSupplier timeSupp) {
         this.supplier = supplier;
         this.durationSeconds = durationSeconds;
         this.updater = updater;
         this.shouldDestroy = shouldDestroy;
+        this.timeSupp = timeSupp;
     }
 
     public Tween<T> setDestroy(boolean destroy) {
@@ -79,7 +93,7 @@ public class Tween<T> extends ECSystem { // TODO add option so tween only runs u
     }
 
     public Tween<T> start() {
-        startTime = timeDouble();
+        startTime = timeSupp.getAsDouble();
         return this;
     }
 
@@ -117,8 +131,12 @@ public class Tween<T> extends ECSystem { // TODO add option so tween only runs u
     }
 
     public static <T> Entity makeEntity(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
+        return makeEntity(supplier, durationSeconds, updater, Raylib::GetTime);
+    }
+
+    public static <T> Entity makeEntity(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater, DoubleSupplier timeSupp) {
         return new Entity("tween")
-            .register(new Tween<T>(supplier, durationSeconds, updater));
+            .register(new Tween<T>(supplier, durationSeconds, updater, timeSupp));
     }
 
     @Override
@@ -130,7 +148,7 @@ public class Tween<T> extends ECSystem { // TODO add option so tween only runs u
     public void frame() {
         if (startTime == -1 || startTime == -2) return;
 
-        double elapsed = timeDouble() - startTime;
+        double elapsed = timeSupp.getAsDouble() - startTime;
         double percent = Math.min(elapsed / durationSeconds, 1.0);
 
         updater.accept( supplier.supply(percent) );

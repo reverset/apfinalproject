@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
 
 import com.raylib.Jaylib;
 import com.raylib.Raylib;
@@ -56,6 +57,8 @@ public class GameLoop {
 	private static final Vec2 mouseVec = new Vec2();
 
 	private static boolean paused = false;
+
+	private static double unpausedTime = 0;
 
 	public static void togglePause() {
 		paused = !paused;
@@ -115,9 +118,18 @@ public class GameLoop {
 	}
 
 	public static <T> Tween<T> makeTween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
+		return makeTween(supplier, durationSeconds, updater, Raylib::GetTime);
+	}
+
+	public static <T> Tween<T> makeTweenGameTime(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
+		return makeTween(supplier, durationSeconds, updater, GameLoop::getUnpausedTime);
+	}
+
+	public static <T> Tween<T> makeTween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater, DoubleSupplier timeSupp) {
 		Objects.requireNonNull(supplier);
 		Objects.requireNonNull(updater);
-		var tween = new Tween<>(supplier, durationSeconds, updater);
+		Objects.requireNonNull(timeSupp);
+		var tween = new Tween<>(supplier, durationSeconds, updater, timeSupp);
 		Entity entity = new Entity("tween")
 			.register(tween);
 		
@@ -354,7 +366,7 @@ public class GameLoop {
 	
 	private static void frameUpdate() {
         if (Raylib.IsKeyPressed(Raylib.KEY_P)) GameLoop.togglePause(); // for testing
-
+		if (!GameLoop.isPaused()) unpausedTime += Raylib.GetFrameTime();
 		forEachEntitySafe(Entity::frame);
 	}
 	
@@ -436,5 +448,9 @@ public class GameLoop {
 			Raylib.GetScreenWidth() / (float) SCREEN_WIDTH,
 			Raylib.GetScreenHeight() / (float) SCREEN_HEIGHT 
 		);
+	}
+
+	public static double getUnpausedTime() {
+		return unpausedTime;
 	}
 }

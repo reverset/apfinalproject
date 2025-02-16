@@ -87,7 +87,7 @@ public class LaserWeapon extends Weapon2 {
 
     public Tween<Float> chargeUp(Supplier<Vec2> position, Supplier<Vec2> direction, Entity entity, Consumer<Boolean> impending) {
         charging = true;
-        var tween = GameLoop.makeTween(Tween.lerp(0, 50), chargeUpSeconds, val -> { // CLEANUP WITH TWEEN ANIMATION TODO
+        var tween = GameLoop.makeTweenGameTime(Tween.lerp(0, 50), chargeUpSeconds, val -> { // CLEANUP WITH TWEEN ANIMATION TODO
             ray.position = position.get();
             ray.direction = direction.get();
             ray.updateRay();
