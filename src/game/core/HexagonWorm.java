@@ -55,7 +55,7 @@ public class HexagonWorm extends Enemy {
     private State state = State.FAR_CIRCLING;
     
     public GameTimeStopwatch healingStopwatch = new GameTimeStopwatch();
-    private Stopwatch stateChange = new Stopwatch();
+    private GameTimeStopwatch stateChange = new GameTimeStopwatch();
     
     private Stopwatch meleeTimer = new Stopwatch();
 
@@ -115,11 +115,13 @@ public class HexagonWorm extends Enemy {
         }
 
         weapon = new HexaBombLauncher(BASE_HEXABOMB_DAMAGE, BULLET_SPEED, Color.YELLOW, GameTags.ENEMY_TEAM_TAGS, HEXABOMB_COOLDOWN, Optional.of(effect));
-        healingStopwatch.bindTo(entity).start();
     }
-
+    
     @Override
     public void ready() {
+        stateChange.bindTo(entity).start();
+        healingStopwatch.bindTo(entity).start();
+
         player = GameLoop.findEntityByTag(GameTags.PLAYER);
         player.ifPresent(p -> {
             playerTransform = p.getComponent(Transform.class).orElseThrow();

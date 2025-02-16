@@ -56,7 +56,7 @@ public class Rect implements Component {
             && (position.y <= point.y && point.y <= position.y+height);
     }
 
-    public Optional<Vec2> checkRayHit(Vec2 position, Ray ray) { // TODO FIXME
+    public Optional<Vec2> checkRayHit(Vec2 position, Ray ray) { // TODO FIXME << I left this comment a while ago and I don't remember what is broken.
         internal.x(position.x).y(position.y);
 
         Vec2 bottomLeft = new Vec2(position.x, position.y+height);
@@ -65,19 +65,19 @@ public class Rect implements Component {
 
         Raylib.Vector2 point = new Raylib.Vector2();
 
-        if (Raylib.CheckCollisionLines(ray.position.asCanonicalVector2(), ray.endPoint.asCanonicalVector2(), position.asCanonicalVector2(), bottomLeft.asCanonicalVector2(), point)) {
+        if (Raylib.CheckCollisionLines(ray.position.asCanonicalVector2(), ray.endPoint.allocateRaylibVector2(), position.allocateRaylibVector2(), bottomLeft.allocateRaylibVector2(), point)) {
             return Optional.of(new Vec2(point));
         }
 
-        if (Raylib.CheckCollisionLines(ray.position.asCanonicalVector2(), ray.endPoint.asCanonicalVector2(), position.asCanonicalVector2(), topRight.asCanonicalVector2(), point)) {
+        if (Raylib.CheckCollisionLines(ray.position.asCanonicalVector2(), ray.endPoint.allocateRaylibVector2(), position.allocateRaylibVector2(), topRight.allocateRaylibVector2(), point)) {
             return Optional.of(new Vec2(point));
         }
 
-        if (Raylib.CheckCollisionLines(ray.position.asCanonicalVector2(), ray.endPoint.asCanonicalVector2(), topRight.asCanonicalVector2(), bottomRight.asCanonicalVector2(), point)) {
+        if (Raylib.CheckCollisionLines(ray.position.asCanonicalVector2(), ray.endPoint.allocateRaylibVector2(), topRight.allocateRaylibVector2(), bottomRight.allocateRaylibVector2(), point)) {
             return Optional.of(new Vec2(point));
         }
 
-        if (Raylib.CheckCollisionLines(ray.position.asCanonicalVector2(), ray.endPoint.asCanonicalVector2(), bottomLeft.asCanonicalVector2(), bottomRight.asCanonicalVector2(), point)) {
+        if (Raylib.CheckCollisionLines(ray.position.asCanonicalVector2(), ray.endPoint.allocateRaylibVector2(), bottomLeft.allocateRaylibVector2(), bottomRight.allocateRaylibVector2(), point)) {
             return Optional.of(new Vec2(point));
         }
 
