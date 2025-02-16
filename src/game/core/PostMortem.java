@@ -1,5 +1,6 @@
 package game.core;
 
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import game.ecs.ECSystem;
@@ -8,10 +9,10 @@ import game.ecs.Entity;
 public class PostMortem extends ECSystem {
     Health health;
     
-    Consumer<Entity> action;
+    private final ArrayList<Consumer<Entity>> actions = new ArrayList<>();
 
     public PostMortem(Consumer<Entity> action) {
-        this.action = action;
+        actions.add(action);
     }
 
     @Override
@@ -22,7 +23,14 @@ public class PostMortem extends ECSystem {
     @Override
     public void ready() {
         health.onDeath.listen(n -> {
-            action.accept(entity);
+            for (var act : actions) {
+                act.accept(entity);
+            }
         }, entity);
+    }
+
+    public PostMortem addWill(Consumer<Entity> action) {
+        actions.add(action);
+        return this;
     }
 }

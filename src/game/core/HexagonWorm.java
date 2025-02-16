@@ -45,6 +45,7 @@ public class HexagonWorm extends Enemy {
     public static final float HEALING_THRESHOLD = 0.5f;
     public static final float HEALING_COOLDOWN = 2f;
     public static final float MELEE_COOLDOWN = 1f;
+    public static final int XP_AWARD = 100;
     
     public static final int BASE_DAMAGE = 100;
     
@@ -128,6 +129,10 @@ public class HexagonWorm extends Enemy {
         });
 
         health.onDeath.listen(n -> {
+            player.ifPresent(en -> {
+                var p = en.getSystem(Player.class).orElseThrow();
+                p.getExpAccumulator().accumulate(XP_AWARD);
+            });
             GameLoop.safeDestroy(entity);
 
             for (int i = 0; i < parts.length; i++) {

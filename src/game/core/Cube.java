@@ -72,8 +72,8 @@ public class Cube extends Enemy {
             .register(new ShaderUpdater(
                 List.of(new Tuple<>("time", timeSupplier))))
             .register(new Physics(0, 0))
-            .register(new Cube())
             .register(new PostMortem(GameLoop::safeDestroy))
+            .register(new Cube())
             .addTags(GameTags.ENEMY_TEAM);
 
         return entity;
@@ -93,6 +93,11 @@ public class Cube extends Enemy {
         effect = require(Effect.class);
 
         shader = require(Shader.class);
+        var postMortem = requireSystem(PostMortem.class);
+        postMortem.addWill(i -> {
+            player
+                .ifPresent(p -> p.getExpAccumulator().accumulate(100));
+        });
         
         effect.addDamageRecievingResponse(info -> isShieldUp ? info.asHealing().damage() : info.damage());
 

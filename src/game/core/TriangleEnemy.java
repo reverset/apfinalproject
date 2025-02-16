@@ -83,6 +83,9 @@ public class TriangleEnemy extends Enemy {
     public void ready() {
         health.onDeath.listen(n -> {
             GameLoop.safeDestroy(entity);
+            player
+                .flatMap(en -> en.getSystem(Player.class))
+                .ifPresent(p -> p.getExpAccumulator().accumulate(10));
         }, entity);
     }
 

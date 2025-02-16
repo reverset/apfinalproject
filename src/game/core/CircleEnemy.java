@@ -102,6 +102,9 @@ public class CircleEnemy extends Enemy {
         health.onDeath.listen(n -> {
             deathWeapon.forceFire(trans.position, null, entity);
             GameLoop.safeDestroy(entity);
+            player
+                .flatMap(en -> en.getSystem(Player.class))
+                .ifPresent(p -> p.getExpAccumulator().accumulate(10));
         }, entity);
     }
 

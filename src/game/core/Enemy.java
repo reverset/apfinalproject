@@ -116,6 +116,9 @@ public class Enemy extends ECSystem {
             GameLoop.safeDestroy(entity);
             GameLoop.safeTrack(DestroyEffect.makeEntity(rect.dimensions(), trans.position.clone()));
             GameLoop.safeTrack(HealingOrb.makeEntity(trans.position, 10 + (5 * (effect.getLevel()-1))));
+            player
+                .flatMap(en -> en.getSystem(Player.class))
+                .ifPresent(p -> p.getExpAccumulator().accumulate(10));
         }, entity);
     }
 

@@ -33,6 +33,7 @@ public class Player extends ECSystem implements Controllable {
     public static final int HEALTH_BONUS_LEVEL_AMOUNT = 50;
 
     public static final Duration BULLET_LIFETIME = Duration.ofSeconds(3);
+    public static final Duration iDuration = Duration.ofMillis(200);
     
     public Signal<Enemy> onKillEnemy = new Signal<>();    
 
@@ -65,7 +66,7 @@ public class Player extends ECSystem implements Controllable {
         
         entity
             .addComponent(new Transform())
-            .addComponent(new Health(200, effect))
+            .addComponent(new Health(100, effect).withInvincibilityDuration(iDuration.toMillis() / 1_000f))
             .addComponent(new Rect(SIZE, SIZE, Color.GREEN))
             .addComponent(new Tangible())
             .addComponent(effect)
@@ -126,21 +127,6 @@ public class Player extends ECSystem implements Controllable {
 
         weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.AQUA, GameTags.PLAYER_TEAM_TAGS, BULLET_LIFETIME, 0.2f, Optional.of(effect));
 
-        weapon.onHit.listen(phy -> {
-            var en = phy.entity.getSystem(Enemy.class);
-            en.ifPresent(enemy -> {
-                if (enemy.health.isDead()) onKillEnemy.emit(enemy);
-            });
-        }, entity);
-
-        onKillEnemy.listen(enemy -> {
-            if (enemy.isBossEnemy()) {
-                expAccumulator.accumulate(100);
-            } else {
-                expAccumulator.accumulate(10);
-            }
-        }, entity);
-
         var xpBar = new Entity("xp bar")
             .addComponent(new Transform(new Vec2(0, Vec2.screen().y-10)))
             .addComponent(new Rect(Vec2.screen().xInt(), 10, Color.AQUA))
@@ -155,6 +141,14 @@ public class Player extends ECSystem implements Controllable {
 
     public Vec2 getCenter() {
         return rect.getCenter(trans.position);
+    }
+
+    public ExpAccumulator getExpAccumulator() {
+        return expAccumulator;
+    }
+
+    public Effect getEffect() {
+        return effect;
     }
 
     @Override
