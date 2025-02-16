@@ -11,10 +11,10 @@ import com.raylib.Raylib;
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
-import game.GameTimeStopwatch;
 import game.MoreMath;
 import game.Shader;
 import game.ShaderUpdater;
+import game.Stopwatch;
 import game.Tuple;
 import game.Tween;
 import game.Vec2;
@@ -37,7 +37,7 @@ public class Cube extends Enemy {
 
     private Optional<Player> player;
     private Optional<Transform> playerTransform;
-    private GameTimeStopwatch movementTimer = new GameTimeStopwatch();
+    private Stopwatch movementTimer = Stopwatch.ofGameTime();
     private Duration nextMoveTime = Duration.ofMillis(2_000);
     private Tween<Vec2> movementTween;
     private float playerDistance = 400;
@@ -49,8 +49,8 @@ public class Cube extends Enemy {
 
     private Weapon2 weapon = null;
 
-    private GameTimeStopwatch shieldEnableStopwatch = new GameTimeStopwatch();
-    private GameTimeStopwatch shieldDisableStopwatch = new GameTimeStopwatch();
+    private Stopwatch shieldEnableStopwatch = Stopwatch.ofGameTime();
+    private Stopwatch shieldDisableStopwatch = Stopwatch.ofGameTime();
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("THE CUBE", Enemy.class);
@@ -108,8 +108,7 @@ public class Cube extends Enemy {
         weapon = new SimpleWeapon(
             BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN_DURATION.toMillis()/1_000f, Optional.of(effect));
         
-        shieldEnableStopwatch.bindTo(entity).start();
-        shieldDisableStopwatch.bindTo(entity);
+        shieldEnableStopwatch.start();
     }
 
     @Override
@@ -163,7 +162,6 @@ public class Cube extends Enemy {
 
     private void movementTick(Transform plTrans) {
         if (player.isEmpty() || playerTransform.isEmpty()) return;
-        movementTimer.tick(infreqDelta()*1_000);
 
         var currentAngle = (getCenter().minus(plTrans.position)).getAngle();
         if (movementTimer.hasElapsedAdvance(nextMoveTime)) {

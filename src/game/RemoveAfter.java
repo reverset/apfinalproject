@@ -8,7 +8,7 @@ public class RemoveAfter extends ECSystem {
 
     public final Duration duration; 
 
-    private final GameTimeStopwatch timer = new GameTimeStopwatch();
+    private final Stopwatch timer = Stopwatch.ofGameTime();
 
     public RemoveAfter(Duration duration) {
         this.duration = duration;
@@ -19,9 +19,7 @@ public class RemoveAfter extends ECSystem {
     }
 
     @Override
-    public void setup() {
-        timer.bindTo(entity);
-    }
+    public void setup() {}
 
     @Override
     public void ready() {

@@ -49,7 +49,7 @@ public class GameLoop {
 
 	private static boolean shouldShutdown = false;
 
-	private static Stopwatch infrequentUpdateStopwatch = new Stopwatch();
+	private static Stopwatch infrequentUpdateStopwatch = Stopwatch.ofRealTime();
 
 	private static final PollingIterator<Runnable> deferIterator = new PollingIterator<>(deferments);
 
@@ -192,7 +192,7 @@ public class GameLoop {
 
 	public static void runAfter(Entity entity, Duration duration, Runnable action) {
 		Objects.requireNonNull(action);
-		Stopwatch stopwatch = new Stopwatch();
+		Stopwatch stopwatch = Stopwatch.ofRealTime();
 		var toSchedule = new ScheduledAction(entity, List.of(
 			() -> stopwatch.hasElapsed(duration),
 			() -> {

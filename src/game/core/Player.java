@@ -55,7 +55,7 @@ public class Player extends ECSystem implements Controllable {
     private Color warningColor = new Color(255, 0, 0, 0);
     private Rect warningRect = new Rect(800, 50, warningColor);
     private Text warningText = new Text("null", Vec2.screenCenter().addEq(0, -227), 54, Color.WHITE);
-    private Stopwatch warningStopwatch = new Stopwatch();
+    private Stopwatch warningStopwatch = Stopwatch.ofRealTime();
     private ExpAccumulator expAccumulator;
 
     public static Entity makeEntity() {

@@ -3,8 +3,8 @@ package game.core;
 
 import java.time.Duration;
 
-import game.GameTimeStopwatch;
 import game.RecoverableException;
+import game.Stopwatch;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
@@ -12,7 +12,7 @@ public class HealthRegenPowerup extends Powerup {
     private static final Duration HEALTH_RATE = Duration.ofMillis(3_000);
     private static final int BASE_HEALTH = 15;
     private Health health;
-    private GameTimeStopwatch stopwatch = new GameTimeStopwatch();
+    private Stopwatch stopwatch = Stopwatch.ofGameTime();
     private boolean initialized = false;
 
     public HealthRegenPowerup(Entity entity, Weapon2 weapon, Effect effect, int level) {
@@ -27,9 +27,6 @@ public class HealthRegenPowerup extends Powerup {
             initialized = true;
             stopwatch.start();
         }
-
-        float delta = infreqDelta();
-        stopwatch.tick(delta * 1_000.0f);
 
         if (stopwatch.hasElapsedAdvance(HealthRegenPowerup.HEALTH_RATE) && !health.isHealthSaturated()) {
             var position = entity

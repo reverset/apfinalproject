@@ -1,17 +1,29 @@
 package game;
 
 import java.time.Duration;
-
-import javax.rmi.ssl.SslRMIClientSocketFactory;
+import java.util.function.DoubleSupplier;
 
 import com.raylib.Raylib;
 
 
 public class Stopwatch {
     double startTime = -1;
+    DoubleSupplier timeSupp;
+
+    public Stopwatch(DoubleSupplier timeSupp) {
+        this.timeSupp = timeSupp;
+    }
+
+    public static Stopwatch ofRealTime() {
+        return new Stopwatch(Raylib::GetTime);
+    }
+
+    public static Stopwatch ofGameTime() {
+        return new Stopwatch(GameLoop::getUnpausedTime);
+    }
 
     public void start() {
-        if (startTime == -1) startTime = Raylib.GetTime();
+        if (startTime == -1) startTime = timeSupp.getAsDouble();
     }
 
     public void stop() {
@@ -31,11 +43,11 @@ public class Stopwatch {
     }
 
     public boolean hasElapsedSeconds(double seconds) {
-        return Raylib.GetTime() > startTime + seconds;
+        return timeSupp.getAsDouble() > startTime + seconds;
     }
 
     public void restart() {
-        startTime = Raylib.GetTime();
+        startTime = timeSupp.getAsDouble();
     }
 
     public boolean hasElapsedSecondsAdvance(double seconds) {
@@ -52,7 +64,7 @@ public class Stopwatch {
     }
 
     public long millisElapsed() {
-        return (long) ((Raylib.GetTime() - startTime)*1_000);
+        return (long) ((timeSupp.getAsDouble() - startTime)*1_000);
     }
 
     public boolean hasStarted() {
@@ -61,6 +73,6 @@ public class Stopwatch {
 
     @Override
     public String toString() {
-        return "Stopwatch(elapsed=" + (Raylib.GetTime() - startTime) + ")";
+        return "Stopwatch(elapsed=" + (timeSupp.getAsDouble() - startTime) + ")";
     }
 }

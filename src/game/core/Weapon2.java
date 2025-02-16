@@ -14,7 +14,7 @@ public abstract class Weapon2 { // old weapon system was terrible, this is attem
 
     float cooldown;
 
-    Stopwatch shootTimer = new Stopwatch();
+    Stopwatch shootTimer = Stopwatch.ofGameTime();
     Optional<Effect> effect;
     
     public Weapon2(float cooldown, Optional<Effect> effect) {

@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import game.Color;
 import game.GameLoop;
-import game.GameTimeStopwatch;
 import game.Stopwatch;
 import game.Vec2;
 import game.core.rendering.Poly;
@@ -26,7 +25,7 @@ public class HexaBomb extends Bullet {
     public static final float CHARGEUP = 1;
 
     Duration lifetime;
-    GameTimeStopwatch detonationStopwatch = new GameTimeStopwatch();
+    Stopwatch detonationStopwatch = Stopwatch.ofGameTime();
 
     NovaWeapon detonation;
 
@@ -72,7 +71,7 @@ public class HexaBomb extends Bullet {
     
     @Override
     public void ready() {
-        detonationStopwatch.bindTo(entity).start();
+        detonationStopwatch.start();
     }
 
     @Override

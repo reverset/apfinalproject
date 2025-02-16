@@ -16,7 +16,7 @@ public class Wave {
 
     private Duration spawnRate;
     
-    private Stopwatch timer = new Stopwatch();
+    private Stopwatch timer = Stopwatch.ofGameTime();
     private int totalEnemies;
     
     Supplier<EntityOf<Enemy>> enemies;

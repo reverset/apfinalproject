@@ -21,7 +21,7 @@ public class EnemySpawner extends ECSystem {
     
     private Queue<EntityOf<Enemy>> spawnQueue = new LinkedList<>();
 
-    private final Stopwatch stopwatch = new Stopwatch();
+    private final Stopwatch stopwatch = Stopwatch.ofGameTime();
 
     private final Wave standardWave = new Wave(() -> {
         if (totalEnemiesThisWave > 5) return null;

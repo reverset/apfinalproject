@@ -19,7 +19,7 @@ public class Health implements Component {
     private float invincibilityDuration = 0;
     private Optional<Effect> effect;
 
-    private final Stopwatch invincibilityStopwatch = new Stopwatch();
+    private final Stopwatch invincibilityStopwatch = Stopwatch.ofGameTime();
     
     public Health(int maxHp, Optional<Effect> effect) {
         maxHealth = maxHp;

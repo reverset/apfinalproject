@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
-import game.GameTimeStopwatch;
 import game.MoreMath;
 import game.Shader;
 import game.ShaderUpdater;
@@ -55,10 +54,10 @@ public class HexagonWorm extends Enemy {
     
     private State state = State.FAR_CIRCLING;
     
-    public GameTimeStopwatch healingStopwatch = new GameTimeStopwatch();
-    private GameTimeStopwatch stateChange = new GameTimeStopwatch();
+    public Stopwatch healingStopwatch = Stopwatch.ofGameTime();
+    private Stopwatch stateChange = Stopwatch.ofGameTime();
     
-    private Stopwatch meleeTimer = new Stopwatch();
+    private Stopwatch meleeTimer = Stopwatch.ofGameTime();
 
     private HexaBombLauncher weapon;
     private List<LaserWeapon> skyLasers = new ArrayList<>();
@@ -120,8 +119,8 @@ public class HexagonWorm extends Enemy {
     
     @Override
     public void ready() {
-        stateChange.bindTo(entity).start();
-        healingStopwatch.bindTo(entity).start();
+        stateChange.start();
+        healingStopwatch.start();
 
         player = GameLoop.findEntityByTag(GameTags.PLAYER);
         player.ifPresent(p -> {

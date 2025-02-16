@@ -13,7 +13,7 @@ public class BossWave extends Wave {
 
     private Duration delay;
     private boolean started = false;
-    private Stopwatch stopwatch = new Stopwatch();
+    private Stopwatch stopwatch = Stopwatch.ofGameTime();
 
     private boolean finished = false;
     private final int levelValue;

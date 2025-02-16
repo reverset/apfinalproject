@@ -38,7 +38,7 @@ public class Enemy extends ECSystem {
     public Transform trans;
     public Tangible tangible;
 
-    Stopwatch movementStopwatch = new Stopwatch();
+    Stopwatch movementStopwatch = Stopwatch.ofGameTime();
     
     Optional<Entity> player;
     Transform playerTransform;
