@@ -66,6 +66,11 @@ public class GameTimeStopwatch extends Stopwatch implements Binded {
     }
 
     @Override
+    public long millisElapsed() {
+        return (long) elapsedMillis;
+    }
+
+    @Override
     public void unbind(Entity e) {
         stop();
         GameLoop.defer(() -> {

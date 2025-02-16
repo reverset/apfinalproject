@@ -7,25 +7,31 @@ import game.ecs.ECSystem;
 public class RemoveAfter extends ECSystem {
 
     public final Duration duration; 
-    private long startTimeMillis = 0;
+
+    private final GameTimeStopwatch timer = new GameTimeStopwatch();
 
     public RemoveAfter(Duration duration) {
         this.duration = duration;
     }
 
     public long millisLeft() {
-        return (duration.toMillis() + startTimeMillis) - System.currentTimeMillis();
+        return timer.millisUntil(duration.toMillis());
     }
 
     @Override
     public void setup() {
-        startTimeMillis = System.currentTimeMillis();
+        timer.bindTo(entity);
+    }
+
+    @Override
+    public void ready() {
+        timer.start();
     }
 
 
     @Override
     public void frame() {
-        if (System.currentTimeMillis() > duration.toMillis() + startTimeMillis) {
+        if (timer.hasElapsed(duration)) {
             GameLoop.safeDestroy(entity);
         }
     }

@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 import game.ecs.ECSystem;
 import game.ecs.Entity;
 
-public class Tween<T> extends ECSystem {
+public class Tween<T> extends ECSystem { // TODO add option so tween only runs using GameTimeStopwatch
     @FunctionalInterface
     public static interface TweenFunction<T> {
         T supply(double normalPercentage);

@@ -353,6 +353,8 @@ public class GameLoop {
 	}
 	
 	private static void frameUpdate() {
+        if (Raylib.IsKeyPressed(Raylib.KEY_P)) GameLoop.togglePause(); // for testing
+
 		forEachEntitySafe(Entity::frame);
 	}
 	

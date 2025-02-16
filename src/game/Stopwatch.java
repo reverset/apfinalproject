@@ -46,6 +46,15 @@ public class Stopwatch {
         return false;
     }
 
+    public long millisUntil(long millis) {
+        long el = millisElapsed();
+        return millis - el;
+    }
+
+    public long millisElapsed() {
+        return (long) ((Raylib.GetTime() - startTime)*1_000);
+    }
+
     public boolean hasStarted() {
         return startTime != -1;
     }
