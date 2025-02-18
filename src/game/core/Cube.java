@@ -72,7 +72,9 @@ public class Cube extends Enemy {
             .register(new ShaderUpdater(
                 List.of(new Tuple<>("time", timeSupplier))))
             .register(new Physics(0, 0))
-            .register(new PostMortem(GameLoop::safeDestroy))
+            .register(new PostMortem(GameLoop::safeDestroy)
+                .addWill(e -> GameLoop.defer(RandomPowerup::showScreen))    
+            )
             .register(new Cube())
             .addTags(GameTags.ENEMY_TEAM);
 
