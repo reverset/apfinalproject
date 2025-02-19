@@ -4,6 +4,7 @@ import java.util.List;
 
 public class MoreMath {
     public static final float ROOT_TWO = (float) Math.sqrt(2);
+    public static final double TAU = Math.PI*2; // Not all Java versions have the Math.TAU constant.
 
     public static float clamp(float val, float min, float max) {
         float v = Math.max(val, min);
@@ -74,7 +75,7 @@ public class MoreMath {
     }
 
     public static float lerpAngle(float from, float to, float delta) {
-        return lerpWrap(from, to, (float) Math.TAU, delta);
+        return lerpWrap(from, to, (float) TAU, delta);
     }
 
     public static float lerpWrap(float from, float to, float max, float delta) {

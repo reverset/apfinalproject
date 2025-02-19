@@ -167,7 +167,7 @@ public class Cube extends Enemy {
 
         var currentAngle = (getCenter().minus(plTrans.position)).getAngle();
         if (movementTimer.hasElapsedAdvance(nextMoveTime)) {
-            var desiredAngle = (float) MoreMath.random(0, Math.TAU);
+            var desiredAngle = (float) MoreMath.random(0, MoreMath.TAU);
             
             if (movementTween != null) {
                 movementTween.stop();
