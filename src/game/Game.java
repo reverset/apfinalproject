@@ -1,25 +1,11 @@
 package game;
 
-import com.raylib.Raylib;
-
-import game.ecs.Entity;
-import game.ecs.comps.Transform;
 import game.core.Background;
-import game.core.CircleEnemy;
-import game.core.Diamond;
-import game.core.Enemy;
 import game.core.EnemySpawner;
-import game.core.Physics;
+import game.core.MainMenu;
 import game.core.Player;
 import game.core.RandomPowerup;
-import game.core.Tangible;
-import game.core.rendering.Circle;
-import game.core.rendering.Rect;
-import game.core.rendering.RectRender;
-import game.core.rendering.X;
-import game.core.rendering.XRenderer;
-import game.ecs.Component;
-import game.ecs.ECSystem;
+import game.ecs.comps.Transform;
 
 public class Game {
 	public static void main(String[] args) { // Everything might be a bit over engineered...
@@ -32,7 +18,8 @@ public class Game {
 
 		GameLoop.setPostProcessShader(post);
 
-		loadLevel();
+		// loadLevel();
+		MainMenu.clearAndLoad();
 
 		GameLoop.runBlocking();
 		// System.exit(0);

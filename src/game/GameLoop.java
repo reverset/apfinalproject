@@ -205,6 +205,15 @@ public class GameLoop {
 		GameLoop.schedule(toSchedule);
 	}
 
+	public static void clearAllEntitiesNow() {
+		ListIterator<Entity> iter = entities.listIterator();
+		while (iter.hasNext()) {
+			Entity entity = iter.next();
+			entity.destroy();
+			iter.remove();
+		}
+	}
+
 	public static void clearAllEntities() {
 		GameLoop.defer(() -> {
 			ListIterator<Entity> iter = entities.listIterator();
