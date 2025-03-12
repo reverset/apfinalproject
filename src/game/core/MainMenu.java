@@ -2,6 +2,7 @@ package game.core;
 
 import com.raylib.Raylib;
 
+import game.BetterButton;
 import game.Button;
 import game.Camera;
 import game.CameraSettings;
@@ -28,16 +29,22 @@ public class MainMenu {
 		GameLoop.track(GameLoop.getMainCameraEntity());
 		GameLoop.track(Background.makeEntity());
         
-        final var startButton = new Button(() -> {
+        final var startButton = new BetterButton(Color.BLUE, Color.WHITE, 8, 8);
+        startButton.onClick.listenOnce((n) -> {
             GameLoop.clearAllEntities();
             GameLoop.defer(() -> {
                 Game.loadLevel();
             });
         });
+        startButton
+            .setText("Start")
+            .setTextColor(Color.BLACK);
+
+
         GameLoop.track(new Entity("startButton")
             .addComponent(new Transform(Vec2.screenCenter()))
             .addComponent(new Rect(200, 50, Color.WHITE))
-            .register(new RectRender().setHudMode(true))
+            // .register(new RectRender().setHudMode(true))
             .register(startButton)
         );
         GameLoop.track(new Entity("title")

@@ -8,10 +8,10 @@ import com.raylib.Raylib;
 
 public class Button extends ECSystem {
 
-    Rect rect;
-    Transform trans;
+    protected Rect rect;
+    protected Transform trans;
 
-    private Runnable callback = () -> {};
+    protected Runnable callback = () -> {};
 
     public Button(Runnable callback) {
         this.callback = callback;
@@ -33,7 +33,7 @@ public class Button extends ECSystem {
         }
     }
 
-    public void onClick() {
+    private void onClick() {
         callback.run();
     }
     
