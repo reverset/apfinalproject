@@ -31,6 +31,10 @@ public class Text {
         return Raylib.MeasureText(text, fontSize);
     }
 
+    public Vec2 dimensions() {
+        return new Vec2(Raylib.MeasureTextEx(Raylib.GetFontDefault(), text, fontSize, 2));
+    }
+
     public Text center() {
         position.x -= measure()*0.5f;
         return this;

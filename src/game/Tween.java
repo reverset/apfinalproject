@@ -139,6 +139,10 @@ public class Tween<T> extends ECSystem {
             .register(new Tween<T>(supplier, durationSeconds, updater, timeSupp));
     }
 
+    public Tween<T> reversed() {
+        return new Tween<>(percent -> supplier.supply(1 - percent), durationSeconds, shouldDestroy, updater, timeSupp);
+    }
+
     @Override
     public void setup() {
         

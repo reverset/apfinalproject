@@ -3,7 +3,6 @@ package game.core;
 import com.raylib.Raylib;
 
 import game.BetterButton;
-import game.Button;
 import game.Camera;
 import game.CameraSettings;
 import game.Color;
@@ -12,7 +11,6 @@ import game.GameLoop;
 import game.Shader;
 import game.Vec2;
 import game.core.rendering.Rect;
-import game.core.rendering.RectRender;
 import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
@@ -29,7 +27,7 @@ public class MainMenu {
 		GameLoop.track(GameLoop.getMainCameraEntity());
 		GameLoop.track(Background.makeEntity());
         
-        final var startButton = new BetterButton(Color.BLUE, Color.WHITE, 8, 8);
+        final var startButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
         startButton.onClick.listenOnce((n) -> {
             GameLoop.clearAllEntities();
             GameLoop.defer(() -> {
@@ -38,7 +36,10 @@ public class MainMenu {
         });
         startButton
             .setText("Start")
-            .setTextColor(Color.BLACK);
+            .setFontSize(34)
+            .setOutlineThickness(4)
+            .setTextColor(Color.WHITE)
+            .centerize();
 
 
         GameLoop.track(new Entity("startButton")
