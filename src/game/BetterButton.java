@@ -35,7 +35,7 @@ public class BetterButton extends Button {
                 rect.height = val.yInt();
             }).setDestroy(false);
         });
-        unhoverAnimation = hoverAnimation.reversed();
+        unhoverAnimation = hoverAnimation.reversedEntity();
         
     }
 
@@ -70,11 +70,11 @@ public class BetterButton extends Button {
     @Override
     public void hudRender() {
         Vec2 mouse = GameLoop.getMouseScreenPosition();
-        if (rect.pointWithin(trans.position, mouse)) {
+        if (rect.pointWithin(trans.position, mouse) && !hoverAnimation.isFinished()) {
             if (unhoverAnimation.isRunning()) unhoverAnimation.stop();
             if (!hoverAnimation.isRunning()) hoverAnimation.start();
-        } else {
-            if (hoverAnimation.isRunning()) hoverAnimation.stop();
+        } else if (hoverAnimation.isRunning() || hoverAnimation.isFinished()) {
+            hoverAnimation.stop();
             if (!unhoverAnimation.isRunning()) unhoverAnimation.start();
         }
 

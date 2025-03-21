@@ -143,6 +143,15 @@ public class Tween<T> extends ECSystem {
         return new Tween<>(percent -> supplier.supply(1 - percent), durationSeconds, shouldDestroy, updater, timeSupp);
     }
 
+    public Tween<T> reversedEntity() {
+        Tween<T> tween = reversed();
+        Entity entity = new Entity("tween")
+            .register(tween);
+        GameLoop.safeTrack(entity);
+
+        return tween;
+    }
+
     @Override
     public void setup() {
         

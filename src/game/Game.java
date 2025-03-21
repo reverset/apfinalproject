@@ -1,5 +1,6 @@
 package game;
 
+import game.Tween.TweenFunction;
 import game.core.Background;
 import game.core.EnemySpawner;
 import game.core.MainMenu;
