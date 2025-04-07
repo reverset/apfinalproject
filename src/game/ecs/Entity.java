@@ -34,6 +34,11 @@ public class Entity {
 		this.name = name;
 	}
 
+	public Entity setPauseBehavior(boolean work) {
+		runWhilePaused = work;
+		return this;
+	}
+
 	public void hide() {
 		hidden = true;
 	}

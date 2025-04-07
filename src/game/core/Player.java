@@ -200,7 +200,7 @@ public class Player extends ECSystem implements Controllable {
     @Override
     public void frame() {
         Vec2 moveVector = controlledMoveVector();
-        
+        if (Raylib.IsKeyPressed(Raylib.KEY_ESCAPE)) PauseMenu.open();
         
         if (tangible.velocity.magnitude() > 300) {
             tangible.velocity.minusEq(tangible.velocity.normalize().multiplyEq(50));

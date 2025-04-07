@@ -253,6 +253,7 @@ public class GameLoop {
 		Raylib.SetConfigFlags(Raylib.FLAG_VSYNC_HINT | Raylib.FLAG_WINDOW_ALWAYS_RUN | Raylib.FLAG_WINDOW_RESIZABLE);
 		Raylib.SetTraceLogLevel(Raylib.LOG_WARNING);
 		Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
+		Raylib.SetExitKey(0);
 
 		renderTexture = Raylib.LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
 		Raylib.SetTextureFilter(renderTexture.texture(), Raylib.TEXTURE_FILTER_POINT);
@@ -374,7 +375,7 @@ public class GameLoop {
 	}
 	
 	private static void frameUpdate() {
-        if (Raylib.IsKeyPressed(Raylib.KEY_P)) GameLoop.togglePause(); // for testing
+        // if (Raylib.IsKeyPressed(Raylib.KEY_P)) GameLoop.togglePause(); // for testing
 		if (!GameLoop.isPaused()) unpausedTime += Raylib.GetFrameTime();
 		forEachEntitySafe(Entity::frame);
 	}
