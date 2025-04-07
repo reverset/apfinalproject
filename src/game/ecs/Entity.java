@@ -113,6 +113,7 @@ public class Entity {
 	}
 
 	public void hudRender() {
+		if (hidden) return;
 		systems.forEach(ECSystem::hudRender);
 	}
 

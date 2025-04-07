@@ -40,6 +40,7 @@ public class PauseMenu {
                 @Override
                 public void ready() {
                     pauseMenuEntities.add(makeExitButton(entity));
+                    pauseMenuEntities.add(makeMainMenuButton(entity));
 
                     pauseMenuEntities.forEach(p -> p.setPauseBehavior(true));
                     GameLoop.pause();
@@ -48,9 +49,32 @@ public class PauseMenu {
                 @Override
                 public void destroy() {
                     pauseMenuEntities.forEach(GameLoop::destroy);
+                    GameLoop.unpause();
                 }
 
             }).setPauseBehavior(true);
+    }
+
+    private static Entity makeMainMenuButton(Entity main) {
+        final var mainButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
+        mainButton.onClick.listenOnce(n -> {
+            GameLoop.safeDestroy(main);
+            GameLoop.defer(() -> {
+                MainMenu.clearAndLoad();
+            });
+        });
+
+        mainButton
+            .setText("Main Menu")
+            .setFontSize(34)
+            .setOutlineThickness(4)
+            .setTextColor(Color.WHITE)
+            .centerize();
+
+        return GameLoop.track(new Entity("mainMenuButton")
+            .addComponent(new Transform(Vec2.screenCenter().add(0, 100)))
+            .addComponent(new Rect(200, 50, Color.WHITE))
+            .register(mainButton));
     }
 
     private static Entity makeExitButton(Entity main) {

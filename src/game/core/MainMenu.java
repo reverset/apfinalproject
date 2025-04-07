@@ -1,5 +1,7 @@
 package game.core;
 
+import java.util.ArrayList;
+
 import com.raylib.Raylib;
 
 import game.BetterButton;
@@ -15,8 +17,11 @@ import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
-public class MainMenu {
+public class MainMenu { // not a fan of this implementation, but I didn't feel like writing a proper implementation for levels/scenes.
+    private static final ArrayList<Entity> menuItems = new ArrayList<>();
+
     public static void clearAndLoad() {
+        menuItems.clear();
         GameLoop.getPostProcessShader().ifPresent(Shader::reset);
         GameLoop.clearAllEntitiesNow();
         
@@ -26,47 +31,46 @@ public class MainMenu {
 
 		GameLoop.track(GameLoop.getMainCameraEntity());
 		GameLoop.track(Background.makeEntity());
+
         
-        final var startButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
-        startButton.onClick.listenOnce((n) -> {
+        makeButton("Play", 0, () -> {
             GameLoop.clearAllEntities();
             GameLoop.defer(() -> {
                 Game.loadLevel();
             });
         });
 
-        final var exitButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
-        exitButton.onClick.listenOnce(n -> {
+        makeButton("Exit", 200, () -> {
             GameLoop.quit();
         });
 
-        startButton
-            .setText("Start")
-            .setFontSize(34)
-            .setOutlineThickness(4)
-            .setTextColor(Color.WHITE)
-            .centerize();
+        makeButton("Credits", 100, () -> {
+            menuItems.forEach(Entity::hide);
+        });
 
-        exitButton
-            .setText("Exit")
+        makeTitle();
+    }
+
+    private static Entity makeButton(String text, float yOffset, Runnable action) {
+        final var button = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
+        button
+            .setText(text)
             .setFontSize(34)
             .setOutlineThickness(4)
             .setTextColor(Color.WHITE)
-            .centerize();
+            .centerize()
+            .onClick.listenOnce(n -> action.run());
         
-        GameLoop.track(new Entity("startButton")
-            .addComponent(new Transform(Vec2.screenCenter()))
+        final var e = GameLoop.track(new Entity(text+"::button")
+            .addComponent(new Transform(Vec2.screenCenter().add(0, yOffset)))
             .addComponent(new Rect(200, 50, Color.WHITE))
-            // .register(new RectRender().setHudMode(true))
-            .register(startButton)
-        );
+            .register(button));
+        menuItems.add(e);
+        return e;
+    }
 
-        GameLoop.track(new Entity("exitButton")
-            .addComponent(new Transform(Vec2.screenCenter().add(0, 200)))
-            .addComponent(new Rect(200, 50, Color.WHITE))
-            .register(exitButton));
-
-        GameLoop.track(new Entity("title")
+    private static Entity makeTitle() {
+        final var title = GameLoop.track(new Entity("title")
             .addComponent(new Transform(Vec2.screenCenter().minus(0, 200)))
             .register(new ECSystem() {
                 private Transform trans;
@@ -85,5 +89,7 @@ public class MainMenu {
                 }
             })
         );
+        menuItems.add(title);
+        return title;
     }
 }

@@ -27,6 +27,8 @@ public class Button extends ECSystem {
 
     @Override
     public void frame() {
+        if (entity.isHidden()) return;
+        
         Vec2 mousePos = GameLoop.getMouseScreenPosition();
         if (Raylib.IsMouseButtonPressed(0) && rect.pointWithin(trans.position, mousePos)) {
             onClick();
