@@ -34,6 +34,12 @@ public class MainMenu {
                 Game.loadLevel();
             });
         });
+
+        final var exitButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
+        exitButton.onClick.listenOnce(n -> {
+            GameLoop.quit();
+        });
+
         startButton
             .setText("Start")
             .setFontSize(34)
@@ -41,13 +47,25 @@ public class MainMenu {
             .setTextColor(Color.WHITE)
             .centerize();
 
-
+        exitButton
+            .setText("Exit")
+            .setFontSize(34)
+            .setOutlineThickness(4)
+            .setTextColor(Color.WHITE)
+            .centerize();
+        
         GameLoop.track(new Entity("startButton")
             .addComponent(new Transform(Vec2.screenCenter()))
             .addComponent(new Rect(200, 50, Color.WHITE))
             // .register(new RectRender().setHudMode(true))
             .register(startButton)
         );
+
+        GameLoop.track(new Entity("exitButton")
+            .addComponent(new Transform(Vec2.screenCenter().add(0, 200)))
+            .addComponent(new Rect(200, 50, Color.WHITE))
+            .register(exitButton));
+
         GameLoop.track(new Entity("title")
             .addComponent(new Transform(Vec2.screenCenter().minus(0, 200)))
             .register(new ECSystem() {
