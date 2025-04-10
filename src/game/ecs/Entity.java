@@ -14,6 +14,7 @@ import game.Signal;
 public class Entity {
 	public final Signal<Void> onReady = new Signal<>();
 	public final Signal<Void> onDestroy = new Signal<>();
+	public final Signal<Boolean> onVisibilityChange = new Signal<>();
 	public boolean runWhilePaused = false;
 
 	private final ArrayList<ECSystem> systems = new ArrayList<>();
@@ -41,10 +42,12 @@ public class Entity {
 
 	public void hide() {
 		hidden = true;
+		onVisibilityChange.emit(true);
 	}
 
 	public void show() {
 		hidden = false;
+		onVisibilityChange.emit(false);
 	}
 
 	public boolean isHidden() {

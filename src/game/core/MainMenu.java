@@ -11,6 +11,7 @@ import game.Color;
 import game.Game;
 import game.GameLoop;
 import game.Shader;
+import game.Text;
 import game.Vec2;
 import game.core.rendering.Rect;
 import game.ecs.ECSystem;
@@ -24,6 +25,15 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
         menuItems.clear();
         GameLoop.getPostProcessShader().ifPresent(Shader::reset);
         GameLoop.clearAllEntitiesNow();
+
+        final var creditsEntity = makeCreditsInfo();
+        creditsEntity.onVisibilityChange.listen(v -> {
+            if (v) {
+                menuItems.forEach(Entity::show);
+            }
+        });
+        creditsEntity.hide();
+        GameLoop.safeTrack(creditsEntity);
         
         GameLoop.setMainCamera(Camera.makeEntity(
 			new Transform(), new CameraSettings(Vec2.screenCenter(), 1)
@@ -46,6 +56,7 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
 
         makeButton("Credits", 100, () -> {
             menuItems.forEach(Entity::hide);
+            creditsEntity.show();
         });
 
         makeTitle();
@@ -91,5 +102,34 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
         );
         menuItems.add(title);
         return title;
+    }
+
+    private static Entity makeCreditsInfo() {
+        Entity e = new Entity("credits");
+        e.register(new ECSystem() {
+            private final Text text = new Text("N/A", new Vec2(), 54, Color.WHITE);
+
+            @Override
+            public void setup() {
+                text.text = "\n\n\t\tCredits\n\n\t\t" +
+                    "Programming \t\t\t\tSebastian\n\t\t" +
+                    "Game Design \t\t\t\tSebastian";
+            }
+
+            @Override
+            public void frame() {
+                if (!entity.isHidden()) {
+                    if (Raylib.IsKeyPressed(Raylib.KEY_ESCAPE)) {
+                        entity.hide();
+                    }
+                }
+            }
+
+            @Override
+            public void hudRender() {
+                text.renderWithNewlines();
+            }
+        });
+        return e;
     }
 }

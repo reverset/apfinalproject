@@ -13,6 +13,7 @@ public class Text {
         this.fontSize = fontSize;
         this.text = text;
         this.color = color;
+        this.text = this.text.replace("\t", "    ");
     }
 
     public void render() {
