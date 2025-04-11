@@ -213,7 +213,7 @@ public class Player extends ECSystem implements Controllable {
                             .addComponent(new Rect(200, 50, Color.WHITE))
                             .register(retryButton));
                         GameLoop.safeTrack(new Entity("mainMenuButtonDeathScreen")
-                            .addComponent(new Transform(new Vec2(0, -50)))
+                            .addComponent(new Transform(new Vec2(150, Vec2.screen().y-50)))
                             .addComponent(new Rect(200, 50, Color.WHITE))
                             .register(mainMenuButton));
                     }

@@ -105,7 +105,22 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
     }
 
     private static Entity makeCreditsInfo() {
-        Entity e = new Entity("credits");
+        final var backButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
+        backButton
+            .setText("Back")
+            .setFontSize(34)
+            .setOutlineThickness(4)
+            .setTextColor(Color.WHITE)
+            .centerize();
+            
+            Entity e = new Entity("credits");
+            e
+            .addComponent(new Transform(new Vec2(150, 50)))
+            .addComponent(new Rect(200, 50, Color.WHITE))
+            .register(backButton);
+
+        backButton.onClick.listen((n) -> e.hide());
+        
         e.register(new ECSystem() {
             private final Text text = new Text("N/A", new Vec2(), 54, Color.WHITE);
 
