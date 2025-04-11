@@ -70,7 +70,7 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
             .setOutlineThickness(4)
             .setTextColor(Color.WHITE)
             .centerize()
-            .onClick.listenOnce(n -> action.run());
+            .onClick.listen(n -> action.run());
         
         final var e = GameLoop.track(new Entity(text+"::button")
             .addComponent(new Transform(Vec2.screenCenter().add(0, yOffset)))
