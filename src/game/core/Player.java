@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.raylib.Raylib;
 
+import game.BetterButton;
 import game.Color;
 import game.Game;
 import game.GameLoop;
@@ -163,6 +164,7 @@ public class Player extends ECSystem implements Controllable {
 
         health.onDeath.listenOnce((v) -> {
             GameLoop.safeDestroy(entity);
+            // i should really just make a seperate class for this ...
             GameLoop.safeTrack(new Entity("Death Screen")
                 .register(new ECSystem() {
                     private Text text = new Text("DEFEAT", Vec2.screenCenter().addEq(0, -100), 54, Color.WHITE).center();
@@ -175,6 +177,45 @@ public class Player extends ECSystem implements Controllable {
                             text.fontSize = val.intValue();
                             text.position.x = originalX - text.measure()*0.35f;
                         }).start();
+                    }
+
+                    @Override
+                    public void ready() {
+                        final BetterButton retryButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
+                        retryButton
+                            .setText("Retry")
+                            .setTextColor(Color.WHITE)
+                            .setOutlineThickness(4)
+                            .setFontSize(34)
+                            .centerize();
+                        retryButton.onClick.listen((v) -> {
+                            GameLoop.clearAllEntities();
+                            GameLoop.defer(() -> {
+                                Game.loadLevel();
+                            });
+                        });
+
+                        final BetterButton mainMenuButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
+                        mainMenuButton
+                            .setText("Main Menu")
+                            .setTextColor(Color.WHITE)
+                            .setOutlineThickness(4)
+                            .setFontSize(34)
+                            .centerize();
+                        mainMenuButton.onClick.listen((v) -> {
+                            GameLoop.defer(() -> {
+                                MainMenu.clearAndLoad();
+                            });
+                        });
+
+                        GameLoop.safeTrack(new Entity("retryButton")
+                            .addComponent(new Transform(Vec2.screen().addEq(-200, -50)))
+                            .addComponent(new Rect(200, 50, Color.WHITE))
+                            .register(retryButton));
+                        GameLoop.safeTrack(new Entity("mainMenuButtonDeathScreen")
+                            .addComponent(new Transform(new Vec2(0, -50)))
+                            .addComponent(new Rect(200, 50, Color.WHITE))
+                            .register(mainMenuButton));
                     }
 
                     @Override
