@@ -233,16 +233,22 @@ public class GameLoop {
 			}
 			
 			while (true) { // this is ugly yes, but I did it so that the thread doesn't hold the lock on entities, so that I can update a progress bar.
-				synchronized (entities) {
-					if (iter.hasNext()) {
-						Entity entity = iter.next();
-						entity.destroy();
-						iter.remove();
-					} else break;
-				}
 				try {
+					synchronized (entities) {
+						if (iter.hasNext()) {
+							Entity entity = iter.next();
+							entity.destroy();
+							iter.remove();
+						} else break;
+					}
 					Thread.sleep(10);
-				} catch (Exception e) {}
+				} catch (Exception e) {
+					e.printStackTrace();
+					synchronized (entities) {
+						entities.clear();
+					}
+					break;
+				}
 			}
 		});
 		thread.setName("Entity Clearer");

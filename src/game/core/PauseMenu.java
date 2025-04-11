@@ -7,6 +7,7 @@ import com.raylib.Raylib;
 import game.BetterButton;
 import game.Color;
 import game.GameLoop;
+import game.Text;
 import game.Vec2;
 import game.core.rendering.Rect;
 import game.ecs.ECSystem;
@@ -23,9 +24,13 @@ public class PauseMenu {
         return new Entity("Pause Menu")
             .register(new ECSystem() {
                 private final ArrayList<Entity> pauseMenuEntities = new ArrayList<>();
+                private final Text text = new Text("PAUSED", Vec2.screenCenter(), 104, Color.WHITE);
 
                 @Override
-                public void setup() {}
+                public void setup() {
+                    text.position.x -= text.measure() / 2;
+                    text.position.y -= 50;
+                }
                 
                 @Override
                 public void frame() {
@@ -47,8 +52,15 @@ public class PauseMenu {
                 }
 
                 @Override
+                public void hudRender() {
+                    text.render();
+                }
+
+                @Override
                 public void destroy() {
-                    pauseMenuEntities.forEach(GameLoop::destroy);
+                    GameLoop.defer(() -> {
+                        pauseMenuEntities.forEach(GameLoop::destroy);
+                    });
                     GameLoop.unpause();
                 }
 
