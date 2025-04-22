@@ -1,11 +1,11 @@
 package game;
 
-import game.Tween.TweenFunction;
 import game.core.Background;
 import game.core.EnemySpawner;
 import game.core.MainMenu;
 import game.core.Player;
 import game.core.RandomPowerup;
+import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
 public class Game {

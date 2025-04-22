@@ -36,7 +36,7 @@ public class EntityOf<T extends ECSystem> extends Entity {
 
     public <K extends ECSystem> EntityOf<K> into(Class<K> clazz) {
         if (!clazz.isAssignableFrom(systemClass)) {
-            throw new RuntimeException("Failed to convert EntityOf<" + systemClass + "> to EntityOf<" + clazz + ">");
+            throw new RecoverableException("Failed to convert EntityOf<" + systemClass + "> to EntityOf<" + clazz + ">");
         }
         EntityOf<K> entity = new EntityOf<>(name, clazz);
 

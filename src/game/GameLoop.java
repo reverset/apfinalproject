@@ -3,6 +3,8 @@ package game;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Duration;
@@ -57,6 +59,8 @@ public class GameLoop {
 
 	private static final Vec2 worldMouseVec = new Vec2();
 	private static final Vec2 mouseVec = new Vec2();
+
+	private static int exceptions = 0;
 
 	private static boolean paused = false;
 
@@ -330,7 +334,7 @@ public class GameLoop {
 
 	public static void infrequentUpdate() {
 		if (infrequentUpdateStopwatch.hasElapsedSecondsAdvance(INFREQUENT_UPDATE_RATE)) {
-			forEachEntitySafe(Entity::infrequentUpdate);
+			forEachEntitySafe(Entity::infrequentUpdate, false);
 		}
 	}
 	
@@ -373,16 +377,18 @@ public class GameLoop {
 		return mouseVec.setEq(Raylib.GetMouseX(), Raylib.GetMouseY()).toVirtualScreenEq();
 	}
 
-	private static void forEachEntitySafe(Consumer<Entity> action) {
+	private static void forEachEntitySafe(Consumer<Entity> action, boolean ignorePause) {
 		ListIterator<Entity> iter = entities.listIterator();
 		while (iter.hasNext()) {
 			Entity en = iter.next();
-			if (!en.runWhilePaused && paused) continue;
+			if (!ignorePause && !en.runWhilePaused && paused) continue;
 			try {
 				action.accept(en);
 			} catch (RecoverableException e) {
 				e.printStackTrace();
+				System.err.println("Caused by entity '" + en.name + "'");
 				GameLoop.safeDestroy(en);
+				exceptions += 1;
 			}
 		}
 	}
@@ -390,7 +396,7 @@ public class GameLoop {
 	private static void frameUpdate() {
         // if (Raylib.IsKeyPressed(Raylib.KEY_P)) GameLoop.togglePause(); // for testing
 		if (!GameLoop.isPaused()) unpausedTime += Raylib.GetFrameTime();
-		forEachEntitySafe(Entity::frame);
+		forEachEntitySafe(Entity::frame, false);
 	}
 	
 	private static void renderUpdate() {
@@ -400,7 +406,8 @@ public class GameLoop {
 		
 		Raylib.BeginMode2D(mainCameraSystem.getPointer());
 		
-		getEntitiesIterator().forEachRemaining(Entity::render);
+		// getEntitiesIterator().forEachRemaining(Entity::render);
+		forEachEntitySafe(Entity::render, true);
 		
 		Raylib.EndMode2D();
 		
@@ -437,7 +444,17 @@ public class GameLoop {
 	}
 
 	private static void hudRender() {
-		getEntitiesIterator().forEachRemaining(Entity::hudRender);
+		forEachEntitySafe(Entity::hudRender, true);
+
+		if (exceptions > 0) {
+			renderError();
+		}
+	}
+
+	private static void renderError() {
+		Raylib.DrawRectangle(SCREEN_WIDTH - 200, 15, 200, 50, Color.RED.getPointerNoUpdate());
+		Raylib.DrawText("Check console.", SCREEN_WIDTH - 200, 15, 24, Color.WHITE.getPointerNoUpdate());
+		Raylib.DrawText("errors: #" + exceptions, SCREEN_WIDTH-200, 39, 24, Color.WHITE.getPointerNoUpdate());
 	}
 	
 	private static void manageCleanupQueue() {

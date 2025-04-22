@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import game.Binded;
 import game.Game;
 import game.GameLoop;
+import game.RecoverableException;
 import game.Signal;
 
 public class Entity {
@@ -33,6 +34,18 @@ public class Entity {
 
 	public Entity(String name) {
 		this.name = name;
+	}
+
+	public static Entity ofFalliable(String message) { // for testing.
+		return new Entity("fallible").register(new ECSystem() {
+			@Override
+			public void setup() {
+			}
+			@Override
+			public void frame() {
+				throw new RecoverableException(message);
+			}
+		});
 	}
 
 	public Entity setPauseBehavior(boolean work) {

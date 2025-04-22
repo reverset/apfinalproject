@@ -3,6 +3,7 @@ package game.core;
 import java.util.Optional;
 
 import game.GameLoop;
+import game.RecoverableException;
 import game.Signal;
 import game.Stopwatch;
 import game.ecs.Component;
@@ -63,12 +64,12 @@ public class Health implements Component {
     }
 
     public DamageInfo heal(DamageInfo info) {
-        if (info.isHarmful()) throw new IllegalArgumentException("Invoked heal() with a positive damageinfo.");
+        if (info.isHarmful()) throw new RecoverableException("Invoked heal() with a positive damageinfo.");
         return damageOrHeal(info);
     }
 
     public DamageInfo damage(DamageInfo info) {
-        if (info.isHealing()) throw new IllegalArgumentException("Invoked damage() with a negative damageinfo.");
+        if (info.isHealing()) throw new RecoverableException("Invoked damage() with a negative damageinfo.");
         return damageOrHeal(info);
     }
 

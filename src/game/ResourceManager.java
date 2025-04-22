@@ -37,15 +37,18 @@ public class ResourceManager {
     public <T extends Resource> T getOrLoad(String id, Class<T> res, Supplier<T> loader) {
         T r = get(id, res);
         boolean alreadyPresent = true;
+        long elapsed = 0;
         if (r == null) {
+            long start = System.currentTimeMillis();
             r = loader.get();
             load(id, r);
+            elapsed = System.currentTimeMillis() - start;
             alreadyPresent = false;
         }
         if (r == null) {
             System.out.println("Resource not found: " + id);
         } else if (!alreadyPresent) {
-            System.out.println("Loaded resource: " + id);
+            System.out.println("Loaded resource: " + id + " (" + elapsed + "ms)");
         }
         return r;
     }

@@ -46,7 +46,7 @@ public class Shader implements Component, Resource {
 
     public Shader setShaderValue(String name, float[] value) {
         if (value.length != 3) {
-            throw new IllegalArgumentException("value param must have 3 elements.");
+            throw new RecoverableException("value param must have 3 elements.");
         }
         int loc = getLocation(name);
 
@@ -103,7 +103,7 @@ public class Shader implements Component, Resource {
         if (loc == -1) {
             loc = Raylib.GetShaderLocation(internal, name);
             if (loc == -1) {
-                throw new RuntimeException("Shader has no field '" + name + "'.");
+                throw new RecoverableException("Shader has no field '" + name + "'.");
             }
             fieldMap.put(name, loc);
         }
