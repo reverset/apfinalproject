@@ -1,8 +1,6 @@
 package game;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -22,9 +20,11 @@ public class ResourceManager {
     public <T extends Resource> T get(String id, Class<T> res) {
         Resource r = resources.get(id);
         if (r == null) return null;
-        if (!r.getClass().isInstance(res)) {
+        if (!res.isAssignableFrom(r.getClass())) {
             System.out.println("ResourceManager error.");
             System.out.println("Incorrect class type given for id " + id);
+            System.out.println("Type=" + res);
+            System.out.println("Expected=" + r.getClass());
             return null;
         }
         return (T) r;
@@ -32,7 +32,13 @@ public class ResourceManager {
 
     public <T extends Resource> T getOrLoad(String id, Class<T> res, Supplier<T> loader) {
         T r = get(id, res);
-        if (r == null) r = loader.get();
+        if (r == null) {
+            r = loader.get();
+            load(id, r);
+        }
+        if (r == null) {
+            System.out.println("Resource not found: " + id);
+        }
         return r;
     }
 

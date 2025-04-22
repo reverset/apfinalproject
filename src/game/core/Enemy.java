@@ -65,7 +65,7 @@ public class Enemy extends ECSystem {
         effect.addDamageScaling(d -> effect.getLevel()*d.damage());
 
         entity
-            .addComponent(new Shader("resources/enemy.frag"))
+            .addComponent(Shader.fromCacheOrLoad("resources/enemy.frag"))
             .addComponent(new Transform(position))
             .addComponent(rect)
             .addComponent(new Tangible())

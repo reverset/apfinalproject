@@ -50,7 +50,7 @@ public class CircleEnemy extends Enemy {
         effect.addDamageScaling(d -> d.damage() + ((int) Math.ceil((level-1)*2)));
 
         entity
-            .addComponent(new Shader("resources/circle.frag"))
+            .addComponent(Shader.fromCacheOrLoad("resources/circle.frag"))
             .addComponent(new Circle(RADIUS, Color.RED))
             .addComponent(new Transform(position))
             .addComponent(new Tangible())

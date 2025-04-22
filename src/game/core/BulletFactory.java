@@ -59,7 +59,7 @@ public class BulletFactory {
         Supplier<Float> timeSupplier = GameLoop::getTime;
         entity
             .addComponent(new Transform(pos))
-            .addComponent(new Shader("resources/hexabomb.frag")) // update shader to use color given.
+            .addComponent(Shader.fromCacheOrLoad("resources/hexabomb.frag")) // update shader to use color given.
             .addComponent(() -> {
                 var tangible = new Tangible();
                 tangible.velocity = velocity;

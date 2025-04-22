@@ -75,7 +75,7 @@ public class HexagonWorm extends Enemy {
 
         Supplier<Float> timeSupplier = () -> time()*10;
         entity
-            .addComponent(new Shader("resources/enemy.frag"))
+            .addComponent(Shader.fromCacheOrLoad("resources/enemy.frag"))
             .addComponent(new Poly(6, RADIUS, Color.RED))
             .addComponent(new Transform(position))
             .addComponent(new Rect((int) (RADIUS * MoreMath.ROOT_TWO), (int) (RADIUS * MoreMath.ROOT_TWO), Color.WHITE))

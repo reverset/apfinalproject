@@ -57,7 +57,7 @@ public class Cube extends Enemy {
 
         Effect effect = new Effect().setLevel(level);
         Supplier<Float> timeSupplier = () -> time();
-        Shader shader = new Shader("resources/cube.frag");
+        Shader shader = Shader.fromCacheOrLoad("resources/cube.frag");
 
         shader.setShaderValue("resolution", new Vec2(TEXTURE_WIDTH, TEXTURE_HEIGHT));
         

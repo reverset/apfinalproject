@@ -139,6 +139,7 @@ public class Shader implements Component, Resource {
     @Override
     public void deinit() {
         Raylib.UnloadShader(internal);
+        internal = null;
     }
 
     @Override
