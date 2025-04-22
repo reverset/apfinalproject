@@ -356,6 +356,7 @@ public class GameLoop {
 			Raylib.EndDrawing();
 
 		}
+		resourceManager.unloadAll();
 
 		System.gc();
 		manageCleanupQueue();
