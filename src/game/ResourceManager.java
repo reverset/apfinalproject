@@ -7,6 +7,10 @@ import java.util.function.Supplier;
 public class ResourceManager {
     private final Map<String, Resource> resources = new HashMap<>();
 
+    public int countLoadedResources() {
+        return resources.size();
+    }
+
     public ResourceManager load(String id, Resource resource) {
         if (resources.containsKey(id)) {
             resources.remove(id).deinit();
@@ -32,12 +36,16 @@ public class ResourceManager {
 
     public <T extends Resource> T getOrLoad(String id, Class<T> res, Supplier<T> loader) {
         T r = get(id, res);
+        boolean alreadyPresent = true;
         if (r == null) {
             r = loader.get();
             load(id, r);
+            alreadyPresent = false;
         }
         if (r == null) {
             System.out.println("Resource not found: " + id);
+        } else if (!alreadyPresent) {
+            System.out.println("Loaded resource: " + id);
         }
         return r;
     }

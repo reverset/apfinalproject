@@ -314,6 +314,7 @@ public class Player extends ECSystem implements Controllable {
         Raylib.DrawText("Velocity: " + tangible.velocity, 15, 75, 24, Color.WHITE.getPointer());
         Raylib.DrawText("Speed: " + tangible.velocity.magnitude(), 15, 102, 24, Color.WHITE.getPointer());
         Raylib.DrawText("Bullets: " + BulletFactory.bullets.size(), 15, 124, 24, Color.WHITE.getPointer());
+        Raylib.DrawText("Resources: " + GameLoop.getResourceManager().countLoadedResources(), 15, 148, 24, Color.WHITE.getPointer());
     }
 
     public void warningNotif(String message) {
