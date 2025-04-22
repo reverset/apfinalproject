@@ -26,6 +26,10 @@ public abstract class Powerup extends ECSystem {
         return level < getMaxLevel();
     }
 
+    public String getSmallHUDInfo() {
+        return "";
+    }
+
     @Override
     public void setup() {
         effect.registerPowerup(this);

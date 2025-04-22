@@ -152,8 +152,14 @@ public class Player extends ECSystem implements Controllable {
         return effect;
     }
 
+    public Health getHealth() {
+        return health;
+    }
+
     @Override
     public void ready() {
+        GameLoop.safeTrack(HUD.makeEntity(this));
+
         health.onDamage.listen(v -> {
             healthPulseAnimation.start();
 

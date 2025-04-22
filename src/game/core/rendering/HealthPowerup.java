@@ -17,6 +17,7 @@ public class HealthPowerup extends Powerup {
 
     @Override
     public void setup() {
+        super.setup();
         health = require(Health.class);
 
         boolean wasAtFull = health.getHealth() >= health.getMaxHealth();
@@ -44,6 +45,11 @@ public class HealthPowerup extends Powerup {
     @Override
     public String getDescription() {
         return "+" + HEALTH_BONUS + " Max Health";
+    }
+
+    @Override
+    public String getSmallHUDInfo() {
+        return "+" + HEALTH_BONUS*level + "hp";
     }
     
 }

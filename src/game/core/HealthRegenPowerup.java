@@ -19,6 +19,10 @@ public class HealthRegenPowerup extends Powerup {
         super(entity, weapon, effect, level);
     }
 
+    public int calculateDesiredHealth() {
+        return level * HealthRegenPowerup.BASE_HEALTH;
+    }
+
     @Override
     public void infrequentUpdate() {
         if (entity == null) return;
@@ -33,7 +37,7 @@ public class HealthRegenPowerup extends Powerup {
                 .getComponent(Transform.class)
                 .map(trans -> trans.position.clone());
 
-            var info = new DamageInfo(-(level * HealthRegenPowerup.BASE_HEALTH), entity, null)
+            var info = new DamageInfo(-calculateDesiredHealth(), entity, null)
                 .setPosition(position);
             // health.heal(level * HealthRegenPowerup.BASE_HEALTH);
             health.heal(info);
@@ -59,5 +63,10 @@ public class HealthRegenPowerup extends Powerup {
     @Override
     public String getDescription() {
         return "Passively regenerate \nhealth over time.";
+    }
+
+    @Override
+    public String getSmallHUDInfo() {
+        return "+" + calculateDesiredHealth() + "hp" + "/" + HEALTH_RATE.toSeconds() + "sec";
     }
 }

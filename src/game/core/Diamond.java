@@ -47,6 +47,10 @@ public class Diamond extends Powerup { // Currently does not grant XP!
         return super.outgoingDamageMod(info);
     }
 
+    public int getWholePercentChance() {
+        return (int) (0.1*level*100);
+    }
+
     @Override
     public int getMaxLevel() {
         return 5;
@@ -65,6 +69,11 @@ public class Diamond extends Powerup { // Currently does not grant XP!
     @Override
     public String getDescription() {
         return "Chance to reapply damage.";
+    }
+
+    @Override
+    public String getSmallHUDInfo() {
+        return getWholePercentChance() + "%";
     }
     
 }
