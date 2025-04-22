@@ -268,7 +268,7 @@ public class Vec2 {
 	}
 
 	public Vec2 clampMagnitude(float mag) {
-		return clone().clampMagnitude(mag)
+		return clone().clampMagnitude(mag);
 	}
 	
 
