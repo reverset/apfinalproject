@@ -261,15 +261,14 @@ public class Vec2 {
 	}
 
 	public Vec2 clampMagnitudeEq(float mag) {
-		return magnitude() <= mag
+		float m = magnitude();
+		return m <= mag
 			? this
-			: normalizeEq().multiplyEq(mag);
+			: multiplyEq(mag / m);
 	}
 
 	public Vec2 clampMagnitude(float mag) {
-		return magnitude() <= mag
-			? this
-			: clone().normalizeEq().multiplyEq(mag);
+		return clone().clampMagnitude(mag)
 	}
 	
 
