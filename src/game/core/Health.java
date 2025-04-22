@@ -6,6 +6,7 @@ import game.GameLoop;
 import game.Signal;
 import game.Stopwatch;
 import game.ecs.Component;
+import game.ecs.Entity;
 
 public class Health implements Component {
     private int health;
@@ -15,6 +16,7 @@ public class Health implements Component {
     public final Signal<DamageInfo> onDamage = new Signal<>();
     public final Signal<DamageInfo> onHeal = new Signal<>();
     public final Signal<Void> onDeath = new Signal<>();
+    public final Signal<Entity> onDeathByAttacker = new Signal<>();
 
     private float invincibilityDuration = 0;
     private Optional<Effect> effect;

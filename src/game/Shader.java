@@ -9,21 +9,39 @@ import org.bytedeco.javacpp.IntPointer;
 
 import com.raylib.Jaylib;
 
-public class Shader implements Component {
+public class Shader implements Component, Resource {
     public static final int UNIFORM_FLOAT = 0;
     public static final int UNIFORM_VEC2 = 1;
     public static final int UNIFORM_VEC3 = 2;
     public static final int UNIFORM_VEC4 = 3;
     public static final int UNIFORM_INT = 4;
 
-    private final Raylib.Shader internal;  
+    private Raylib.Shader internal;  
+    private final String path;
 
     private final HashMap<String, Integer> fieldMap = new HashMap<>();
     private Runnable resetFunction = () -> {};
+
+    private static final String VERTEX_SHADER = "resources/default.vert";
     
     public Shader(String path) {
-        internal = Jaylib.LoadShader("resources/default.vert", path);
+        this.path = path;
+        internal = Jaylib.LoadShader(VERTEX_SHADER, path);
         Janitor.register(this, () -> Raylib.UnloadShader(internal));
+    }
+
+    // unused parameter used to overload constructor.
+    private Shader(String path, boolean unmanaged) {
+        this.path = path;
+        internal = null;
+    }
+
+    public static Shader newUnmanaged(String path) {
+        return new Shader(path, true);
+    }
+
+    public static Shader fromCacheOrLoad(String path) {
+        return GameLoop.getResourceManager().getOrLoad(path, Shader.class, () -> Shader.newUnmanaged(path));
     }
 
     public Shader setShaderValue(String name, float[] value) {
@@ -111,5 +129,25 @@ public class Shader implements Component {
 
     public Raylib.Shader getPointer() {
         return internal;
+    }
+
+    @Override
+    public void init() {
+        internal = Raylib.LoadShader(VERTEX_SHADER, path);
+    }
+
+    @Override
+    public void deinit() {
+        Raylib.UnloadShader(internal);
+    }
+
+    @Override
+    public String getResourcePath() {
+        return path;
+    }
+
+    @Override
+    public boolean isLoaded() {
+        return internal != null && Raylib.IsShaderReady(internal);
     }
 }

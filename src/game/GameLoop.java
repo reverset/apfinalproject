@@ -53,12 +53,18 @@ public class GameLoop {
 
 	private static final PollingIterator<Runnable> deferIterator = new PollingIterator<>(deferments);
 
+	private static final ResourceManager resourceManager = new ResourceManager();
+
 	private static final Vec2 worldMouseVec = new Vec2();
 	private static final Vec2 mouseVec = new Vec2();
 
 	private static boolean paused = false;
 
 	private static double unpausedTime = 0;
+
+	public static ResourceManager getResourceManager() {
+		return resourceManager;
+	}
 
 	public static void togglePause() {
 		paused = !paused;
