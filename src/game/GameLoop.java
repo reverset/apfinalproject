@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.DirectoryStream;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -65,6 +66,9 @@ public class GameLoop {
 	private static boolean paused = false;
 
 	private static double unpausedTime = 0;
+
+	private static StandardOutputStream console;
+	private static boolean consoleEnabled = false;
 
 	public static ResourceManager getResourceManager() {
 		return resourceManager;
@@ -236,11 +240,19 @@ public class GameLoop {
 	}
 
 	public static void init() {
+		console = new StandardOutputStream(System.out, System.err);
+		System.setOut(new PrintStream(console));
+		System.setErr(new PrintStream(new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				console.writeError(b);
+			}
+		}));
+
 		Raylib.SetConfigFlags(Raylib.FLAG_VSYNC_HINT | Raylib.FLAG_WINDOW_ALWAYS_RUN | Raylib.FLAG_WINDOW_RESIZABLE);
 		Raylib.SetTraceLogLevel(Raylib.LOG_WARNING);
 		Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
 		Raylib.SetExitKey(0);
-
 		renderTexture = Raylib.LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
 		Raylib.SetTextureFilter(renderTexture.texture(), Raylib.TEXTURE_FILTER_POINT);
 
@@ -252,6 +264,16 @@ public class GameLoop {
 			.y((Raylib.GetScreenHeight() - (SCREEN_HEIGHT * scale))*0.5f)
 			.width(SCREEN_WIDTH * scale)
 			.height(SCREEN_HEIGHT * scale);
+		compileAllShaders();
+	}
+
+	private static void compileAllShaders() {
+		File resourcesFile = new File("./resources/");
+		for (final String f : resourcesFile.list()) {
+			if (f.endsWith(".frag")) {
+				Shader.fromCacheOrLoad("./resources/" + f);
+			}
+		}
 	}
 	
 	public static void quit() {
@@ -325,7 +347,7 @@ public class GameLoop {
 			resourceManager.unload(res);
 			resourcesCleared += 1;
 			long elapsed = System.currentTimeMillis() - start;
-			System.out.println("Unloaded resource '" + res.getResourcePath() + "'' (" + elapsed + "ms)");
+			System.out.println("Unloaded resource '" + res.getResourcePath() + "' (" + elapsed + "ms)");
 
 			long percentage = Math.round((resourcesCleared/(double)totalResources)*100);
 			Raylib.DrawText("Closing game ... (This may take some time) " + percentage + "%", 15, 15, 24, Color.WHITE.getPointer());
@@ -368,6 +390,7 @@ public class GameLoop {
 	private static void frameUpdate() {
         // if (Raylib.IsKeyPressed(Raylib.KEY_P)) GameLoop.togglePause(); // for testing
 		if (!GameLoop.isPaused()) unpausedTime += Raylib.GetFrameTime();
+		if (Raylib.IsKeyPressed(Raylib.KEY_GRAVE)) consoleEnabled = !consoleEnabled;
 		forEachEntitySafe(Entity::frame, false);
 	}
 	
@@ -417,9 +440,40 @@ public class GameLoop {
 
 	private static void hudRender() {
 		forEachEntitySafe(Entity::hudRender, true);
+		
+		if (consoleEnabled) consoleRender();
 
 		if (exceptions > 0) {
 			renderError();
+		}
+	}
+
+	private static void consoleRender() {
+		final int consoleX = SCREEN_WIDTH - 700;
+		Raylib.DrawRectangle(consoleX, 100, SCREEN_WIDTH, SCREEN_HEIGHT, new Color(0, 0, 0, 200).getPointerNoUpdate());
+
+		final int fontSize = 24;
+		final int stringLengthLimit = 50;
+		int y = 100;
+		for (String line : console.getLines()) {
+			String[] stringParts = new String[line.length() / stringLengthLimit + 1];
+			if (line.length() < stringLengthLimit) {
+				stringParts[0] = line;
+			} else { // this is horrendous i know.
+				for (int i = 0; line.length() / stringLengthLimit > 0; i++) {
+					stringParts[i] = line.substring(0, stringLengthLimit);
+					line = line.substring(stringLengthLimit);
+				}
+				if (line.length() < stringLengthLimit) {
+					stringParts[stringParts.length-1] = line;
+				}
+			}
+
+
+			for (String part : stringParts) {
+				Raylib.DrawText(part, consoleX, y, fontSize, Color.WHITE.getPointerNoUpdate());
+				y += fontSize;
+			}
 		}
 	}
 
