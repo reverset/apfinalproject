@@ -235,36 +235,6 @@ public class GameLoop {
 		});
 	}
 
-	public static void clearAllEntitiesAsync() {
-		Thread thread = new Thread(() -> {
-			ListIterator<Entity> iter = null;
-			synchronized (entities) {
-				iter = entities.listIterator();
-			}
-			
-			while (true) { // this is ugly yes, but I did it so that the thread doesn't hold the lock on entities, so that I can update a progress bar.
-				try {
-					synchronized (entities) {
-						if (iter.hasNext()) {
-							Entity entity = iter.next();
-							entity.destroy();
-							iter.remove();
-						} else break;
-					}
-					Thread.sleep(10);
-				} catch (Exception e) {
-					e.printStackTrace();
-					synchronized (entities) {
-						entities.clear();
-					}
-					break;
-				}
-			}
-		});
-		thread.setName("Entity Clearer");
-		thread.start();
-	}
-	
 	public static void init() {
 		Raylib.SetConfigFlags(Raylib.FLAG_VSYNC_HINT | Raylib.FLAG_WINDOW_ALWAYS_RUN | Raylib.FLAG_WINDOW_RESIZABLE);
 		Raylib.SetTraceLogLevel(Raylib.LOG_WARNING);
@@ -341,26 +311,28 @@ public class GameLoop {
 	public static void deinit() {
 		onShutdown.emit(Duration.ofMillis((long) (Raylib.GetTime()*1_000)));
 
-		int entitiesToClear = entities.size();
-		int entitiesLeft = entitiesToClear;
-		clearAllEntitiesAsync();
-		while (true) {
-			synchronized (entities) {
-				int size = entities.size();
-				entitiesLeft = entitiesToClear-size;
-				if (size <= 0) break;
-			}
+		final int totalResources = resourceManager.countLoadedResources();
+		int resourcesCleared = 0;
 
+		final Iterator<Resource> iter = resourceManager.getResourceIterator();
+
+		while (iter.hasNext()) {
 			Raylib.BeginDrawing();
 			Raylib.ClearBackground(Color.BLACK.getPointer());
 			
-			long percentage = Math.round((entitiesLeft/(double)entitiesToClear)*100);
+			long start = System.currentTimeMillis();
+			Resource res = iter.next();
+			resourceManager.unload(res);
+			resourcesCleared += 1;
+			long elapsed = System.currentTimeMillis() - start;
+			System.out.println("Unloaded resource '" + res.getResourcePath() + "'' (" + elapsed + "ms)");
+
+			long percentage = Math.round((resourcesCleared/(double)totalResources)*100);
 			Raylib.DrawText("Closing game ... (This may take some time) " + percentage + "%", 15, 15, 24, Color.WHITE.getPointer());
 
 			Raylib.EndDrawing();
 
 		}
-		resourceManager.unloadAll();
 
 		System.gc();
 		manageCleanupQueue();

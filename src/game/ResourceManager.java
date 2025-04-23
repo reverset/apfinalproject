@@ -1,6 +1,7 @@
 package game;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -11,13 +12,33 @@ public class ResourceManager {
         return resources.size();
     }
 
+    public Iterator<Resource> getResourceIterator() {
+        return resources.values().iterator();
+    }
+
     public ResourceManager load(String id, Resource resource) {
         if (resources.containsKey(id)) {
             resources.remove(id).deinit();
         }
-        resource.init();
+        if (!resource.isLoaded()) resource.init();
         resources.put(id, resource);
         return this;
+    }
+
+    public void unload(String id) {
+        if (!resources.containsKey(id)) {
+            System.err.println("Resource does not exist. Id=" + id);
+            return;
+        }
+
+        Resource res = resources.remove(id);
+        if (res.isLoaded()) res.deinit();
+    }
+
+    public void unload(Resource res) {
+        resources.values().stream().filter(r -> r == res).findAny().ifPresent(r -> {
+            if (r.isLoaded()) r.deinit();
+        });
     }
 
     @SuppressWarnings("unchecked")
