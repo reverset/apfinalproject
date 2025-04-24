@@ -268,10 +268,10 @@ public class GameLoop {
 	}
 
 	private static void compileAllShaders() {
-		File resourcesFile = new File("./resources/");
+		File resourcesFile = new File("resources/");
 		for (final String f : resourcesFile.list()) {
 			if (f.endsWith(".frag")) {
-				Shader.fromCacheOrLoad("./resources/" + f);
+				Shader.fromCacheOrLoad("resources/" + f);
 			}
 		}
 	}
