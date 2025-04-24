@@ -220,6 +220,14 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
         makeSettingsToggleButton("Post Processing", 0, GameLoop.isPostProcessEnabled(), 
             () -> GameLoop.enablePostProcessShader(), 
             () -> GameLoop.disablePostProcessShader());
+        
+        makeSettingsToggleButton("Dynamic Zoom", 100, Settings.dynamicZoom, 
+            () -> Settings.dynamicZoom = true, 
+            () -> Settings.dynamicZoom = false);
+
+        makeSettingsToggleButton("Camera Shake", 200, Settings.cameraShake, 
+            () -> Settings.cameraShake = true, 
+            () -> Settings.cameraShake = false);
 
         return entity;
     }

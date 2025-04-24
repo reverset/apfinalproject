@@ -165,6 +165,11 @@ public class Player extends ECSystem implements Controllable {
 
             if ((health.isCritical() || v.damage() >= health.getMaxHealth()*0.1f) && !healthCriticalVignette.isRunning()) {
                 healthCriticalVignette.start();
+                if (Settings.cameraShake) GameLoop.getMainCamera().shake(10);
+            }
+
+            if (health.isCritical()) {
+                animatedWarningNotif("LOW HEALTH", 1);
             }
         }, entity);
 
@@ -249,11 +254,8 @@ public class Player extends ECSystem implements Controllable {
         Vec2 moveVector = controlledMoveVector();
         if (Raylib.IsKeyPressed(Raylib.KEY_ESCAPE)) PauseMenu.open();
         
-        if (tangible.velocity.magnitude() > 300) {
-            tangible.velocity.minusEq(tangible.velocity.normalize().multiplyEq(50));
-        }
-            
         physics.applyForce(moveVector.multiplyEq(2000));
+        tangible.velocity.clampMagnitudeEq(400);
 
         
         // Friction
@@ -262,6 +264,10 @@ public class Player extends ECSystem implements Controllable {
         // tangible.velocity.clampEq(Vec2.one().multiply(100));
 
         GameLoop.getMainCamera().trans.position.lerpEq(trans.position, 2*delta());
+        if (Settings.dynamicZoom) {
+            float zoom = GameLoop.getMainCamera().settings.zoom;
+            GameLoop.getMainCamera().settings.zoom = MoreMath.lerp(zoom, 1 - (tangible.velocity.magnitude() / 400) * 0.1f, delta());
+        }
     }
 
     private void tryFireWeapon() {

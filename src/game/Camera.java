@@ -19,6 +19,8 @@ public class Camera extends ECSystem {
     public Transform trans;
     public CameraSettings settings;
 
+    private float shakeIntensity = 0;
+
     public Camera() {
         internal = new Raylib.Camera2D();
         Janitor.register(this, internal::close);
@@ -37,7 +39,22 @@ public class Camera extends ECSystem {
     }
 
     private void updateCamera() {
-        internal.target(trans.position.asCanonicalVector2()).offset(settings.offset.asCanonicalVector2()).zoom(settings.zoom).rotation(trans.rotation);
+        Raylib.Vector2 desiredPos = trans.position.asCanonicalVector2();
+        if (shakeIntensity != 0) {
+            float xRandom = (float) MoreMath.random(-1, 1);
+            float yRandom = (float) MoreMath.random(-1, 1);
+            desiredPos
+                .x(desiredPos.x()+shakeIntensity*xRandom)
+                .y(desiredPos.y()+shakeIntensity*yRandom);
+
+            shakeIntensity -= delta()*10;
+            shakeIntensity = Math.max(shakeIntensity, 0);
+        }
+        internal.target(desiredPos).offset(settings.offset.asCanonicalVector2()).zoom(settings.zoom).rotation(trans.rotation);
+    }
+
+    public void shake(float intensity) {
+        shakeIntensity += intensity;
     }
 
     public Raylib.Camera2D getPointer() {
