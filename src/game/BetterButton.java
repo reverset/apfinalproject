@@ -39,6 +39,11 @@ public class BetterButton extends Button {
         
     }
 
+    public BetterButton setColor(Color color) {
+        this.color = color;
+        return this;
+    }
+
     public BetterButton setOutlineThickness(int thickness) {
         outlineThickness = thickness;
         return this;

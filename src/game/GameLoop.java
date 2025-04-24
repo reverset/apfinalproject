@@ -49,6 +49,7 @@ public class GameLoop {
 	private static Raylib.Rectangle scaledScreenRect;
 
 	private static Shader postProcesShader = null;
+	private static boolean postProcessShaderEnabled = true;
 
 	private static boolean shouldShutdown = false;
 
@@ -115,7 +116,15 @@ public class GameLoop {
 	}
 
 	public static void disablePostProcessShader() {
-		postProcesShader = null;
+		postProcessShaderEnabled = false;
+	}
+
+	public static void enablePostProcessShader() {
+		postProcessShaderEnabled = true;
+	}
+
+	public static boolean isPostProcessEnabled() {
+		return postProcessShaderEnabled;
 	}
 
 	public static void setMainCamera(Entity entity) {
@@ -248,7 +257,7 @@ public class GameLoop {
 				console.writeError(b);
 			}
 		}));
-
+		
 		Raylib.SetConfigFlags(Raylib.FLAG_VSYNC_HINT | Raylib.FLAG_WINDOW_ALWAYS_RUN | Raylib.FLAG_WINDOW_RESIZABLE);
 		Raylib.SetTraceLogLevel(Raylib.LOG_WARNING);
 		Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
@@ -414,7 +423,11 @@ public class GameLoop {
 		Raylib.BeginDrawing();
 		Raylib.ClearBackground(Jaylib.BLACK);
 		
-		if (postProcesShader != null) postProcesShader.activate();
+		boolean shaderEnabled = false;
+		if (postProcesShader != null && postProcessShaderEnabled) {
+			postProcesShader.activate();
+			shaderEnabled = true;
+		}
 		
 		float scale = getScreenTextureScale();
 
@@ -434,7 +447,7 @@ public class GameLoop {
 		);
 
 
-		if (postProcesShader != null) postProcesShader.deactivate();
+		if (shaderEnabled && postProcesShader != null) postProcesShader.deactivate();
 		Raylib.EndDrawing();
 	}
 

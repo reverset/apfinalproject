@@ -12,6 +12,7 @@ import game.Game;
 import game.GameLoop;
 import game.Shader;
 import game.Text;
+import game.ToggleButton;
 import game.Vec2;
 import game.core.rendering.Rect;
 import game.ecs.ECSystem;
@@ -20,9 +21,11 @@ import game.ecs.comps.Transform;
 
 public class MainMenu { // not a fan of this implementation, but I didn't feel like writing a proper implementation for levels/scenes.
     private static final ArrayList<Entity> menuItems = new ArrayList<>();
+    private static final ArrayList<Entity> settingsItems = new ArrayList<>();
 
     public static void clearAndLoad() {
         menuItems.clear();
+        settingsItems.clear();
         GameLoop.getPostProcessShader().ifPresent(Shader::reset);
         GameLoop.clearAllEntitiesNow();
 
@@ -34,6 +37,10 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
         });
         creditsEntity.hide();
         GameLoop.safeTrack(creditsEntity);
+
+        final var settingsEntity = makeSettingsMenu();
+        settingsEntity.hide();
+        GameLoop.safeTrack(settingsEntity);
         
         GameLoop.setMainCamera(Camera.makeEntity(
 			new Transform(), new CameraSettings(Vec2.screenCenter(), 1)
@@ -50,14 +57,20 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
             });
         });
 
-        makeButton("Exit", 200, () -> {
-            GameLoop.quit();
-        });
-
         makeButton("Credits", 100, () -> {
             menuItems.forEach(Entity::hide);
             creditsEntity.show();
         });
+
+        makeButton("Settings", 200, () -> {
+            menuItems.forEach(Entity::hide);
+            settingsEntity.show();
+        });
+
+        makeButton("Exit", 300, () -> {
+            GameLoop.quit();
+        });
+
 
         makeTitle();
     }
@@ -77,6 +90,45 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
             .addComponent(new Rect(200, 50, Color.WHITE))
             .register(button));
         menuItems.add(e);
+        return e;
+    }
+
+    private static Entity makeButton2(String text, Vec2 pos, Runnable action) {
+        final var button = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
+        button
+            .setText(text)
+            .setFontSize(34)
+            .setOutlineThickness(4)
+            .setTextColor(Color.WHITE)
+            .centerize()
+            .onClick.listen(n -> action.run());
+        
+        final var e = GameLoop.track(new Entity(text+"::button2")
+            .addComponent(new Transform(pos))
+            .addComponent(new Rect(200, 50, Color.WHITE))
+            .register(button));
+
+        return e;
+    }
+
+    private static Entity makeSettingsToggleButton(String text, float yOffset, boolean defaultState, Runnable onEnable, Runnable onDisable) {
+        final var button = new ToggleButton(defaultState, Color.WHITE, 8, 8);
+        button
+            .setText(text)
+            .setFontSize(34)
+            .setOutlineThickness(4)
+            .setTextColor(Color.WHITE)
+            .centerize();
+        
+        button.onEnabled.listen(n -> onEnable.run());
+        button.onDisable.listen(n -> onDisable.run());
+        
+        final var e = GameLoop.track(new Entity(text+"::settingsToggleButton")
+            .addComponent(new Transform(Vec2.screenCenter().add(0, yOffset)))
+            .addComponent(new Rect(400, 50, Color.WHITE))
+            .register(button));
+
+        settingsItems.add(e);
         return e;
     }
 
@@ -113,8 +165,8 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
             .setTextColor(Color.WHITE)
             .centerize();
             
-            Entity e = new Entity("credits");
-            e
+        Entity e = new Entity("credits");
+        e
             .addComponent(new Transform(new Vec2(150, 50)))
             .addComponent(new Rect(200, 50, Color.WHITE))
             .register(backButton);
@@ -146,5 +198,29 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
             }
         });
         return e;
+    }
+
+    private static Entity makeSettingsMenu() {
+        Entity entity = new Entity("settings");
+
+        entity.onVisibilityChange.listen(v -> {
+            if (v) {
+                settingsItems.forEach(Entity::hide);
+            } else {
+                settingsItems.forEach(Entity::show);
+            }
+        });
+
+        Entity backButton = makeButton2("Back", new Vec2(150, 50), () -> {
+            entity.hide();
+            menuItems.forEach(Entity::show);
+        });
+        settingsItems.add(backButton);
+
+        makeSettingsToggleButton("Post Processing", 0, GameLoop.isPostProcessEnabled(), 
+            () -> GameLoop.enablePostProcessShader(), 
+            () -> GameLoop.disablePostProcessShader());
+
+        return entity;
     }
 }
