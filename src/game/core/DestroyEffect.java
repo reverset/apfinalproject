@@ -1,25 +1,26 @@
 package game.core;
 
+import com.raylib.Raylib;
+
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
-import game.RemoveAfter;
 import game.Tween;
 import game.Vec2;
 import game.ecs.ECSystem;
 import game.ecs.comps.Transform;
 
-import java.time.Duration;
-
-import com.raylib.Raylib;
-
 public class DestroyEffect extends ECSystem {
     public static EntityOf<DestroyEffect> makeEntity(Vec2 dimensions, Vec2 position) {
+        return makeEntity(dimensions, position, 0.5);
+    }
+
+    public static EntityOf<DestroyEffect> makeEntity(Vec2 dimensions, Vec2 position, double desiredDuration) {
         EntityOf<DestroyEffect> entity = new EntityOf<>("Destroy Effect", DestroyEffect.class);
         
         entity
             .addComponent(new Transform(position))
-            .register(new DestroyEffect(dimensions));
+            .register(new DestroyEffect(dimensions, desiredDuration));
 
         return entity;
     }
@@ -35,8 +36,15 @@ public class DestroyEffect extends ECSystem {
     private Vec2 firstHalfVelocity;
     private Vec2 secondHalfVelocity;
 
+    private double desiredDuration;
+
     public DestroyEffect(Vec2 dimensions) {
+        this(dimensions, 0.5);
+    }
+
+    public DestroyEffect(Vec2 dimensions, double desiredDuration) {
         this.dimensions = dimensions;
+        this.desiredDuration = desiredDuration;
     }
 
     @Override
@@ -53,7 +61,7 @@ public class DestroyEffect extends ECSystem {
     @Override
     public void ready() {
         GameLoop.defer(() -> {
-            var tween = new Tween<>(Tween.lerp(255, 0), 0.5, val -> {
+            var tween = new Tween<>(Tween.lerp(255, 0), desiredDuration, val -> {
                 desiredColor.a = val.byteValue();
             });
             entity.register(tween);

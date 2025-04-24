@@ -260,7 +260,7 @@ public class GameLoop {
 		
 		Raylib.SetConfigFlags(Raylib.FLAG_VSYNC_HINT | Raylib.FLAG_WINDOW_ALWAYS_RUN | Raylib.FLAG_WINDOW_RESIZABLE);
 		Raylib.SetTraceLogLevel(Raylib.LOG_WARNING);
-		Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
+		Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Shapes in Space");
 		Raylib.SetExitKey(0);
 		renderTexture = Raylib.LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
 		Raylib.SetTextureFilter(renderTexture.texture(), Raylib.TEXTURE_FILTER_POINT);

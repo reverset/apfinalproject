@@ -168,83 +168,95 @@ public class Player extends ECSystem implements Controllable {
                 if (Settings.cameraShake) GameLoop.getMainCamera().shake(10);
             }
 
-            if (health.isCritical()) {
+            if (health.isCritical() && !warningNotifVisible) {
                 animatedWarningNotif("LOW HEALTH", 1);
             }
         }, entity);
 
         health.onDeath.listenOnce((v) -> {
             GameLoop.safeDestroy(entity);
-            // i should really just make a seperate class for this ...
-            GameLoop.safeTrack(new Entity("Death Screen")
-                .register(new ECSystem() {
-                    private Text text = new Text("DEFEAT", Vec2.screenCenter().addEq(0, -100), 54, Color.WHITE).center();
-                    private float originalX = text.position.x;
-                    private Tween<Float> textTween;
+            GameLoop.safeTrack(DestroyEffect.makeEntity(rect.dimensions(), trans.position.clone(), 2));
 
-                    @Override
-                    public void setup() {
-                        textTween = GameLoop.makeTween(Tween.lerp(400, 200), 0.2f, val -> {
-                            text.fontSize = val.intValue();
-                            text.position.x = originalX - text.measure()*0.35f;
-                        }).start();
-                    }
+            GameLoop.makeTween(Tween.lerp(GameLoop.getMainCamera().trans.position, getCenter()), 2, val -> {
+                GameLoop.getMainCamera().trans.position = val;
+            }).start();
+            GameLoop.makeTween(Tween.lerp(GameLoop.getMainCamera().settings.zoom, 2), 2, val -> {
+                GameLoop.getMainCamera().settings.zoom = val;
+            }).start();
 
-                    @Override
-                    public void ready() {
-                        final BetterButton retryButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
-                        retryButton
-                            .setText("Retry")
-                            .setTextColor(Color.WHITE)
-                            .setOutlineThickness(4)
-                            .setFontSize(34)
-                            .centerize();
-                        retryButton.onClick.listen((v) -> {
-                            GameLoop.clearAllEntities();
-                            GameLoop.defer(() -> {
-                                Game.loadLevel();
-                            });
-                        });
-
-                        final BetterButton mainMenuButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
-                        mainMenuButton
-                            .setText("Main Menu")
-                            .setTextColor(Color.WHITE)
-                            .setOutlineThickness(4)
-                            .setFontSize(34)
-                            .centerize();
-                        mainMenuButton.onClick.listen((v) -> {
-                            GameLoop.defer(() -> {
-                                MainMenu.clearAndLoad();
-                            });
-                        });
-
-                        GameLoop.safeTrack(new Entity("retryButton")
-                            .addComponent(new Transform(Vec2.screen().addEq(-200, -50)))
-                            .addComponent(new Rect(200, 50, Color.WHITE))
-                            .register(retryButton));
-                        GameLoop.safeTrack(new Entity("mainMenuButtonDeathScreen")
-                            .addComponent(new Transform(new Vec2(150, Vec2.screen().y-50)))
-                            .addComponent(new Rect(200, 50, Color.WHITE))
-                            .register(mainMenuButton));
-                    }
-
-                    @Override
-                    public void frame() {
-                        if (Raylib.IsKeyPressed(Raylib.KEY_ENTER)) {
-                            GameLoop.clearAllEntities();
-                            GameLoop.defer(() -> {
-                                Game.loadLevel();
-                            });
+            GameLoop.runAfter(null, Duration.ofSeconds(2), () -> {
+                // i should really just make a seperate class for this ...
+                GameLoop.safeTrack(new Entity("Death Screen")
+                    .register(new ECSystem() {
+                        private Text text = new Text("DEFEAT", Vec2.screenCenter().addEq(0, -100), 54, Color.WHITE).center();
+                        private float originalX = text.position.x;
+                        private Tween<Float> textTween;
+    
+                        @Override
+                        public void setup() {
+                            textTween = GameLoop.makeTween(Tween.lerp(400, 200), 0.2f, val -> {
+                                text.fontSize = val.intValue();
+                                text.position.x = originalX - text.measure()*0.35f;
+                            }).start();
                         }
-                    }
-
-                    @Override
-                    public void hudRender() {
-                        text.render();
-                    }
-                    
-                }));
+    
+                        @Override
+                        public void ready() {
+                            final BetterButton retryButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
+                            retryButton
+                                .setText("Retry")
+                                .setTextColor(Color.WHITE)
+                                .setOutlineThickness(4)
+                                .setFontSize(34)
+                                .centerize();
+                            retryButton.onClick.listen((v) -> {
+                                GameLoop.clearAllEntities();
+                                GameLoop.defer(() -> {
+                                    Game.loadLevel();
+                                });
+                            });
+    
+                            final BetterButton mainMenuButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
+                            mainMenuButton
+                                .setText("Main Menu")
+                                .setTextColor(Color.WHITE)
+                                .setOutlineThickness(4)
+                                .setFontSize(34)
+                                .centerize();
+                            mainMenuButton.onClick.listen((v) -> {
+                                GameLoop.defer(() -> {
+                                    MainMenu.clearAndLoad();
+                                });
+                            });
+    
+                            GameLoop.safeTrack(new Entity("retryButton")
+                                .addComponent(new Transform(Vec2.screen().addEq(-200, -50)))
+                                .addComponent(new Rect(200, 50, Color.WHITE))
+                                .register(retryButton));
+                            GameLoop.safeTrack(new Entity("mainMenuButtonDeathScreen")
+                                .addComponent(new Transform(new Vec2(150, Vec2.screen().y-50)))
+                                .addComponent(new Rect(200, 50, Color.WHITE))
+                                .register(mainMenuButton));
+                        }
+    
+                        @Override
+                        public void frame() {
+                            if (Raylib.IsKeyPressed(Raylib.KEY_ENTER)) {
+                                GameLoop.clearAllEntities();
+                                GameLoop.defer(() -> {
+                                    Game.loadLevel();
+                                });
+                            }
+                        }
+    
+                        @Override
+                        public void hudRender() {
+                            text.render();
+                        }
+                        
+                    }));
+                
+            });
         });
     }
 
