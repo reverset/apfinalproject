@@ -12,6 +12,8 @@ import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
 public class Diamond extends Powerup { // Currently does not grant XP!
+    private static final Duration DELAY = Duration.ofMillis(50);
+
 
     public Diamond(Entity entity, Weapon2 weapon, Effect effect, int level) {
         super(entity, weapon, effect, level);
@@ -23,7 +25,7 @@ public class Diamond extends Powerup { // Currently does not grant XP!
         vict.getComponent(Health.class).ifPresent(health -> {
             Transform victTrans = vict.getComponent(Transform.class).orElseThrow();
 
-            GameLoop.runAfter(entity, Duration.ofMillis(500), () -> {
+            GameLoop.runAfter(entity, DELAY, () -> {
                 if (health.isAlive()) {
                     if (Math.random() > 0.1*level) return;
 

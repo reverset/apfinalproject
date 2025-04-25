@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import com.raylib.Jaylib;
 import com.raylib.Raylib;
+import com.raylib.Raylib.rlRenderBatch;
 
 import game.Color;
 import game.EntityOf;
@@ -73,7 +74,7 @@ public class Cube extends Enemy {
                 List.of(new Tuple<>("time", timeSupplier))))
             .register(new Physics(0, 0))
             .register(new PostMortem(GameLoop::safeDestroy)
-                .addWill(e -> GameLoop.defer(RandomPowerup::showScreen))    
+                .addWill(e -> GameLoop.defer(RandomPowerup::showScreen))
             )
             .register(new Cube())
             .addTags(GameTags.ENEMY_TEAM);
@@ -99,7 +100,7 @@ public class Cube extends Enemy {
         postMortem.addWill(i -> {
             player
                 .ifPresent(p -> p.getExpAccumulator().accumulate(100));
-        });
+        }).addWill(e -> Raylib.UnloadRenderTexture(renderTexture));
         
         effect.addDamageRecievingResponse(info -> isShieldUp ? info.asHealing().damage() : info.damage());
 
@@ -147,14 +148,12 @@ public class Cube extends Enemy {
     private void shieldTick() {
         if (!isShieldUp) {
             if (shieldEnableStopwatch.hasElapsedAdvance(Duration.ofSeconds(5))) {
-                System.out.println("CUBE >> Shield up!");
                 isShieldUp = true;
                 shieldDisableStopwatch.start();
                 shieldEnableStopwatch.stop();
             }
         } else {
             if (shieldDisableStopwatch.hasElapsedAdvance(Duration.ofSeconds(2))) {
-                System.out.println("CUBE >> Shield Down!");
                 isShieldUp = false;
                 shieldDisableStopwatch.stop();
                 shieldEnableStopwatch.start();
@@ -174,7 +173,7 @@ public class Cube extends Enemy {
                 movementTween = null;
             }
             
-            movementTween = GameLoop.makeTween(
+            movementTween = GameLoop.makeTweenGameTime(
                     Tween.circleLerp(currentAngle, desiredAngle, playerDistance, () -> plTrans.position), 1.2f, val -> {
                         trans.position = fromCenter(val);
             });
