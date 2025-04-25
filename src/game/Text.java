@@ -2,6 +2,10 @@ package game;
 
 import com.raylib.Raylib;
 
+import game.ecs.ECSystem;
+import game.ecs.Entity;
+import game.ecs.comps.Transform;
+
 public class Text {
     public Vec2 position;
     public int fontSize;
@@ -14,6 +18,41 @@ public class Text {
         this.text = text;
         this.color = color;
         this.text = this.text.replace("\t", "    ");
+    }
+
+    public static Entity makeEntity(Text text) {
+        return new Entity("entity::" + text.text)
+            .register(new ECSystem() {
+                private Text internal = null;
+
+                @Override
+                public void setup() {
+                    internal = text;
+                }
+                
+                @Override
+                public void hudRender() {
+                    internal.renderWithNewlines();
+                }
+            });
+    }
+
+    public static Entity makeEntity(String text, Vec2 position, int fontSize, Color color) {
+        return new Entity("entity::"+text)
+            .register(new ECSystem() {
+                private Text internal = null;
+
+                @Override
+                public void setup() {
+                    internal = new Text(text, position, fontSize, color);
+                }
+                
+                @Override
+                public void hudRender() {
+                    internal.renderWithNewlines();
+                }
+            }
+        );
     }
 
     public void render() {

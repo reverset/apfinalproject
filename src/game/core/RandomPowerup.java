@@ -18,6 +18,9 @@ import game.ecs.comps.Transform;
 
 public class RandomPowerup {
     public static void showScreen() {
+        Text text = new Text("SELECT A POWERUP", Vec2.screenCenter().addEq(0, -200), 54, Color.WHITE).center();
+        GameLoop.track(Text.makeEntity(text).addTags("powerupselect"));
+
         GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), new Diamond(null, null, null, 0)));
         GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthPowerup(null, null, null, 0)));
         GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(-400, 0), new HealthRegenPowerup(null, null, null, 0)));
