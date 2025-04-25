@@ -381,6 +381,10 @@ public class Vec2 {
 		return (float) Math.atan2(y, x);
 	}
 
+	public float getAngleDegrees() {
+		return (float) Math.toDegrees(getAngle());
+	}
+
 	public static Vec2 fromAngle(float angle) {
 		return new Vec2((float) Math.cos(angle), (float) Math.sin(angle));
 	}

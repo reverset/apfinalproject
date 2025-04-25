@@ -53,6 +53,8 @@ public class Cube extends Enemy {
     private Stopwatch shieldEnableStopwatch = Stopwatch.ofGameTime();
     private Stopwatch shieldDisableStopwatch = Stopwatch.ofGameTime();
 
+    private Stopwatch seekingSquareSpawnTimer = Stopwatch.ofGameTime();
+
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("THE CUBE", Enemy.class);
 
@@ -123,6 +125,7 @@ public class Cube extends Enemy {
     public void infrequentUpdate() {
         playerTransform.ifPresent(plTrans -> {
             attackTick(plTrans);
+            alternativeAttackTick();
             movementTick(plTrans);
             shieldTick();
         });
@@ -139,6 +142,12 @@ public class Cube extends Enemy {
             Raylib.DrawTexture(renderTexture.texture(), 0, 0, Color.WHITE.getPointerNoUpdate());
             Raylib.EndTextureMode();
         });
+    }
+
+    private void alternativeAttackTick() {
+        if (!seekingSquareSpawnTimer.hasElapsedAdvance(Duration.ofMillis(3_000))) return;
+
+        GameLoop.safeTrack(SeekingSquare.makeEntity(getCenter(), effect.getLevel()));
     }
 
     private void attackTick(Transform plTrans) {
