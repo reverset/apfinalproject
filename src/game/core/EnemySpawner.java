@@ -29,17 +29,17 @@ public class EnemySpawner extends ECSystem {
         return randomEntity(getOffScreenPos());
     }, 5, Duration.ofSeconds(1));
 
-    private Round round = new Round(List.of(standardWave.clone(),
-        new BossWave(() -> HexagonWorm.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5), 10),
-        standardWave.clone(),
-        new BossWave(() -> Cube.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5), 10)
-    ), this);
+    // private Round round = new Round(List.of(standardWave.clone(),
+    //     new BossWave(() -> HexagonWorm.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5), 10),
+    //     standardWave.clone(),
+    //     new BossWave(() -> Cube.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5), 10)
+    // ), this);
 
-    // private Round round = new Round(List.of(new Wave(() -> {
-    //     if (totalEnemiesThisWave >= 1) return null;
+    private Round round = new Round(List.of(new Wave(() -> {
+        if (totalEnemiesThisWave >= 1) return null;
 
-    //     return Cube.makeEntity(Vec2.ZERO.screenToWorld(), maxLevel);
-    // }, 1, Duration.ofSeconds(1))), this);
+        return Cube.makeEntity(Vec2.ZERO.screenToWorld(), maxLevel);
+    }, 1, Duration.ofSeconds(1))), this);
 
     public static Entity makeEntity() {
         return new Entity("EnemySpawner")

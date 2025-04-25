@@ -70,7 +70,7 @@ void main() {
     }
     
     float shade = 0.9 - 2*totalDist / maxDist;
-    vec3 finalColor = vec3(shade * cubeColorCoeffs.x, shade * 0.4, shade * 0.4);
+    vec3 finalColor = vec3(shade * cubeColorCoeffs.x, shade * cubeColorCoeffs.y, shade * cubeColorCoeffs.z);
     
     color = vec4(finalColor, hit ? 1.0 : 0.0);
 }

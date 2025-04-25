@@ -43,8 +43,8 @@ public class Cube extends Enemy {
     private Tween<Vec2> movementTween;
     private float playerDistance = 400;
 
-    private float[] standardCubeColorCoeffs = new float[]{1.0f, 0.4f, 0.4f};
-    private float[] shieldCubeColorCoeffs = new float[]{0.0f, 1.0f, 1.0f};
+    private float[] standardCubeColorCoeffs = new float[]{1.0f, 0.2f, 0.2f};
+    private float[] shieldCubeColorCoeffs = new float[]{0.0f, 0.4f, 1.0f};
 
     private boolean isShieldUp = false;
 
