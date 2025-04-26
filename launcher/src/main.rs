@@ -2,7 +2,8 @@
 
 use std::{fs::File, io::Read, process::Command};
 
-const GAME_JAR_HASH: u64 = 10436466817374203798;
+const GAME_JAR_HASH: &str = env!("GAME_HASH");
+
 const JAVAW_HASH: u64 = 11076107172332908793;
 
 const GAME_JAR_PATH: &str = "game.jar";
@@ -19,7 +20,7 @@ fn check_game_jar() -> bool {
     let _ = file.read_to_end(&mut buffer);    
 
     let result = seahash::hash(&buffer);
-    GAME_JAR_HASH == result
+    GAME_JAR_HASH == result.to_string()
 }
 
 fn check_javaw() -> bool {
