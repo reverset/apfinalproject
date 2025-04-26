@@ -12,8 +12,9 @@ import game.ecs.comps.Transform;
 
 public class SeekingSquare extends Enemy {
     private Optional<Player> playerComp = Optional.empty();
+    private static final int BASE_HEALTH = 10;
 
-    public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
+    public static EntityOf<Enemy> makeEntity(Vec2 position, Vec2 velocity, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("Seeking Square", Enemy.class);
 
         final int width = 50;
@@ -22,8 +23,8 @@ public class SeekingSquare extends Enemy {
         entity
             .addComponent(new Rect(width, height, Color.RED))
             .addComponent(new Transform(position))
-            .addComponent(new Health(10))
-            .addComponent(new Tangible())
+            .addComponent(new Health(BASE_HEALTH))
+            .addComponent(new Tangible(velocity))
             .addComponent(new Effect().setLevel(level))
             .register(new Physics(0, 0, new Vec2(-width/2, -height/2)))
             .register(new RectRender().centerize())
@@ -37,7 +38,9 @@ public class SeekingSquare extends Enemy {
 
     @Override
     public void setup() {
-        super.setup();
+        basicSetup();
+        health.setMaxHealthAndHealth(BASE_HEALTH + (BASE_HEALTH / 2 * (effect.getLevel() - 1)));
+        effect.addDamageScaling(d -> d.damage() * effect.getLevel());
     }
 
     @Override

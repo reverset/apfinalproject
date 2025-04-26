@@ -125,7 +125,6 @@ public class Cube extends Enemy {
     public void infrequentUpdate() {
         playerTransform.ifPresent(plTrans -> {
             attackTick(plTrans);
-            alternativeAttackTick();
             movementTick(plTrans);
             shieldTick();
         });
@@ -144,14 +143,12 @@ public class Cube extends Enemy {
         });
     }
 
-    private void alternativeAttackTick() {
-        if (!seekingSquareSpawnTimer.hasElapsedAdvance(Duration.ofMillis(3_000))) return;
-
-        GameLoop.safeTrack(SeekingSquare.makeEntity(getCenter(), effect.getLevel()));
+    private void altAttack() {
+        GameLoop.safeTrack(SeekingSquare.makeEntity(getCenter(), Vec2.randomUnit().multiplyEq(1_000), effect.getLevel()));
     }
 
     private void attackTick(Transform plTrans) {
-        if (weapon.canFire()) weapon.fire(getCenter(), getCenter().directionTo(plTrans.position), entity);
+        if (!isShieldUp && weapon.canFire()) weapon.fire(getCenter(), getCenter().directionTo(plTrans.position), entity);
     }
 
     private void shieldTick() {
@@ -160,6 +157,10 @@ public class Cube extends Enemy {
                 isShieldUp = true;
                 shieldDisableStopwatch.start();
                 shieldEnableStopwatch.stop();
+
+                for (int i = 0; i < 3; i++) {
+                    altAttack();
+                }
             }
         } else {
             if (shieldDisableStopwatch.hasElapsedAdvance(Duration.ofSeconds(2))) {

@@ -32,6 +32,7 @@ public class Player extends ECSystem implements Controllable {
     public static final int BULLET_SPEED = 800;
 
     public static final int HEALTH_BONUS_LEVEL_AMOUNT = 50;
+    public static final int BASE_HEALTH = 100;
 
     public static final Duration BULLET_LIFETIME = Duration.ofSeconds(3);
     public static final Duration iDuration = Duration.ofMillis(200);
@@ -67,7 +68,7 @@ public class Player extends ECSystem implements Controllable {
         
         entity
             .addComponent(new Transform())
-            .addComponent(new Health(100, effect).withInvincibilityDuration(iDuration.toMillis() / 1_000f))
+            .addComponent(new Health(BASE_HEALTH, effect).withInvincibilityDuration(iDuration.toMillis() / 1_000f))
             .addComponent(new Rect(SIZE, SIZE, Color.GREEN))
             .addComponent(new Tangible())
             .addComponent(effect)
@@ -99,6 +100,8 @@ public class Player extends ECSystem implements Controllable {
         final int INITIAL_FONT_SIZE = 54;
         final double HEALTH_PULSE_LENGTH = 0.1;
         final double HEALTH_DEFLATE_LENGTH = 2;
+
+        health.setMaxHealthAndHealth(BASE_HEALTH + (HEALTH_BONUS_LEVEL_AMOUNT * (effect.getLevel() - 1)));
 
         healthPulseAnimation = new TweenAnimation(List.of(
             new Tween<>(Tween.lerp(INITIAL_FONT_SIZE, INITIAL_FONT_SIZE * 1.5), HEALTH_PULSE_LENGTH, v -> {

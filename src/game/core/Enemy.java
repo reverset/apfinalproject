@@ -9,6 +9,7 @@ import game.Color;
 import game.DespawnDistance;
 import game.EntityOf;
 import game.GameLoop;
+import game.RecoverableException;
 import game.Shader;
 import game.ShaderUpdater;
 import game.Stopwatch;
@@ -85,24 +86,25 @@ public class Enemy extends ECSystem {
     }
 
 
-    @Override
-    public void setup() {
+    protected void basicSetup() {
         trans = require(Transform.class);
         tangible = require(Tangible.class);
         rect = require(Rect.class);
         health = require(Health.class);
         effect = require(Effect.class);
 
+        player = GameLoop.findEntityByTag(GameTags.PLAYER);
+        playerTransform = player
+            .flatMap(p -> p.getComponent(Transform.class))
+            .orElse(null);
+    }
+
+    @Override
+    public void setup() {
+        basicSetup();
+
         int level = effect.getLevel();
         health.setMaxHealthAndHealth(BASE_HEALTH+((level-1)*5));
-        
-        player = GameLoop.findEntityByTag(GameTags.PLAYER);
-        player.ifPresent((p) -> {
-            playerTransform = p.getComponent(Transform.class).orElseThrow();
-            GameLoop.defer(() -> {
-                entity.register(new DespawnDistance(playerTransform, DESPAWN_DISTANCE));
-            });
-        });
         
         timeOffset = (Math.random()+0.5) * 2;
         movementStopwatch.start();
