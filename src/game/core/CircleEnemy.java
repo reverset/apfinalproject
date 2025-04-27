@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import game.Color;
-import game.DespawnDistance;
 import game.EntityOf;
 import game.GameLoop;
 import game.Shader;
@@ -88,9 +87,6 @@ public class CircleEnemy extends Enemy {
         player = GameLoop.findEntityByTag(GameTags.PLAYER);
         player.ifPresent(p -> {
             playerTransform = p.getComponent(Transform.class).orElseThrow();
-            GameLoop.defer(() -> {
-                entity.register(new DespawnDistance(playerTransform, DESPAWN_DISTANCE));
-            });
         });
 
         weapon = new NovaWeapon(BASE_DAMAGE, DEGREE_PER_BULLET, BULLET_SPEED, Color.PINK, GameTags.ENEMY_TEAM_TAGS, WEAPON_COOLDOWN, BULLET_LIFETIME, Optional.of(effect));

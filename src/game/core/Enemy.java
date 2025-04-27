@@ -6,10 +6,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import game.Color;
-import game.DespawnDistance;
 import game.EntityOf;
 import game.GameLoop;
-import game.RecoverableException;
 import game.Shader;
 import game.ShaderUpdater;
 import game.Stopwatch;
@@ -25,7 +23,6 @@ import game.ecs.comps.Transform;
 public class Enemy extends ECSystem {
     public static final float SPEED = 200;
     public static final int SIZE = 50;
-    public static final float DESPAWN_DISTANCE = 5_000;
 
     public static final int BASE_DAMAGE = 5;
     public static final int BASE_HEALTH = 20;
@@ -52,7 +49,7 @@ public class Enemy extends ECSystem {
 
     private SimpleWeapon weapon;
 
-    double timeOffset = 0;
+    private double timeOffset = 0;
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         Rect rect = new Rect(SIZE, SIZE, Color.RED);
@@ -128,8 +125,11 @@ public class Enemy extends ECSystem {
     public void frame() {
         if (playerTransform == null) return;
 
+        float distance = playerTransform.position.distance(trans.position);
         if (movementStopwatch.hasElapsedSecondsAdvance(timeOffset)) {
-            desiredDirection = trans.position.directionTo(playerTransform.position).multiplyEq(SPEED);
+            float desiredSpeed = SPEED;
+            if (distance > 500) desiredSpeed *= 2;
+            desiredDirection = trans.position.directionTo(playerTransform.position).multiplyEq(desiredSpeed);
         }
 
         if (weapon.canFire() && BulletFactory.bullets.size() < 60) weapon.fire(rect.getCenter(trans.position), trans.position.directionTo(playerTransform.position), entity);
@@ -137,7 +137,7 @@ public class Enemy extends ECSystem {
         if (desiredDirection == null) return;
 
         
-        tangible.velocity.moveTowardsEq(desiredDirection, 100f*delta());
+        tangible.velocity.moveTowardsEq(desiredDirection, 1_000f*delta());
 
     }
     
