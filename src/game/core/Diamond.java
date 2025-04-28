@@ -75,7 +75,7 @@ public class Diamond extends Powerup { // Currently does not grant XP!
 
     @Override
     public String getSmallHUDInfo() {
-        return getWholePercentChance() + "%";
+        return getWholePercentChance() + "% chance";
     }
     
 }

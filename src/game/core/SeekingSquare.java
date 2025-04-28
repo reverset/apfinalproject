@@ -13,6 +13,7 @@ import game.ecs.comps.Transform;
 public class SeekingSquare extends Enemy {
     private Optional<Player> playerComp = Optional.empty();
     private static final int BASE_HEALTH = 10;
+    private static final int BASE_DAMAGE = 50;
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, Vec2 velocity, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("Seeking Square", Enemy.class);
@@ -55,7 +56,7 @@ public class SeekingSquare extends Enemy {
                 other.entity
                     .getComponent(Health.class)
                     .ifPresent(health -> {
-                        health.damage(new DamageInfo(50, entity, null));
+                        health.damage(new DamageInfo(BASE_DAMAGE, other.entity, null).setAttacker(entity));
                 });
                 GameLoop.safeDestroy(entity);
             }
