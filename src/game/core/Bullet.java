@@ -56,7 +56,7 @@ public class Bullet extends ECSystem {
     }
 
     public DamageInfo computeDamage(Entity victim) {
-        DamageInfo info = new DamageInfo(damage, victim, null, trans.position.clone());
+        DamageInfo info = new DamageInfo(damage, victim, null, trans.position.clone()).setAttacker(owner);
         return effect.isPresent()
             ? effect.get().computeDamage(info)
             : info;

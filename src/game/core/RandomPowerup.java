@@ -6,6 +6,7 @@ import java.util.Optional;
 import game.Button;
 import game.Color;
 import game.GameLoop;
+import game.HealthSyphon;
 import game.Text;
 import game.Tween;
 import game.Vec2;
@@ -22,7 +23,8 @@ public class RandomPowerup {
         GameLoop.track(Text.makeEntity(text).addTags("powerupselect"));
 
         GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), new Diamond(null, null, null, 0)));
-        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthPowerup(null, null, null, 0)));
+        // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthPowerup(null, null, null, 0)));
+        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthSyphon(null, null, null, 0)));
         GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(-400, 0), new HealthRegenPowerup(null, null, null, 0)));
     }
 
