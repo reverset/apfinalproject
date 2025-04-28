@@ -64,7 +64,7 @@ public class DamageOverTime extends Powerup {
 
     @Override
     public String getName() {
-        return "Damage Over Time";
+        return "Decay";
     }
 
     @Override
