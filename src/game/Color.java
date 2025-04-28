@@ -97,6 +97,11 @@ public class Color {
 		return this;
 	}
 
+	public Color setAlpha(int alpha) {
+		a = (byte)alpha;
+		return this;
+	}
+
 	@Override
 	public String toString() {
 		return "Color(" + r + ", " + g + ", " + b + ", " + a + ")";

@@ -43,15 +43,16 @@ public class EnemySpawner extends ECSystem {
 
     public static Entity makeEntity() {
         return new Entity("EnemySpawner")
-            .register(new EnemySpawner());
+            .register(new EnemySpawner())
+            .addTags("enemySpawner");
     }
 
     public int getSpawnedEnemyCountForWave() {
         return totalEnemiesThisWave;
     }
 
-    public ArrayList<Entity> getEnemies() {
-        return enemies;
+    public List<Entity> getEnemies() {
+        return List.copyOf(enemies);
     }
 
     public Queue<EntityOf<Enemy>> getSpawnQueue() {

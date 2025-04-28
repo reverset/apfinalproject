@@ -25,8 +25,8 @@ public class RandomPowerup {
 
         GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), new Diamond(null, null, null, 0)));
         // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthPowerup(null, null, null, 0)));
-        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new DamageOverTime(null, null, null, 0)));
-        // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthSyphon(null, null, null, 0)));
+        // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new DamageOverTime(null, null, null, 0)));
+        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthSyphon(null, null, null, 0)));
         GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(-400, 0), new HealthRegenPowerup(null, null, null, 0)));
     }
 
@@ -80,6 +80,7 @@ public class RandomPowerup {
                         powerup.effect = effect;
                         powerup.level = 1;
                         player.register(powerup);
+                        powerup.ready();
                     }
                     
                 });
