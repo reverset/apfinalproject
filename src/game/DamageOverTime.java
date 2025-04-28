@@ -18,9 +18,9 @@ public class DamageOverTime extends Powerup {
 
     public DamageOverTime(Entity entity, Weapon2 weapon, Effect effect, int level) {
         super(entity, weapon, effect, level);
+        setPriority(-1);
     }
 
-    // TODO: add ordering, this should always happen after all other Powerups.
     @Override
     public DamageInfo incomingDamageMod(DamageInfo info) {
         if (info.isHealing()) return info;
@@ -80,5 +80,4 @@ public class DamageOverTime extends Powerup {
     private double getPercent() {
         return Math.pow(0.5, level);
     }
-    
 }

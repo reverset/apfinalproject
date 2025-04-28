@@ -9,6 +9,11 @@ public abstract class Powerup extends ECSystem {
     protected Effect effect;
     protected int level;
 
+    // private int incomingDamageModPriority = 0;
+    // private int outgoingDamageModPriority = 0;
+
+    private int priority = 0;
+
     public Powerup(Entity entity, Weapon2 weapon, Effect effect, int level) {
         this.entity = entity;
         this.weapon = weapon;
@@ -21,6 +26,30 @@ public abstract class Powerup extends ECSystem {
 
     public abstract String getName();
     public abstract String getDescription();
+
+    // public void setIncomingDamagePriority(int value) {
+    //     incomingDamageModPriority = value;
+    // }
+
+    // public void setOutgoingDamagePriority(int value) {
+    //     outgoingDamageModPriority = value;
+    // }
+
+    // public int getIncomingDamagePriority() {
+    //     return incomingDamageModPriority;
+    // }
+
+    // public void getOutgoingDamagePriority() {
+    //     return outgoingDamageModPriority;
+    // }
+
+    public void setPriority(int value) {
+        priority = value;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
 
     public boolean canLevelUp() {
         return level < getMaxLevel();

@@ -134,11 +134,19 @@ public class Effect implements Component {
 
     public Effect registerPowerup(Powerup powerup) {
         powerups.add(powerup);
+        sortPowerups();
         return this;
     }
 
     public Effect unregisterPowerup(Powerup powerup) {
         powerups.remove(powerup);
+        sortPowerups();
         return this;
+    }
+
+    private void sortPowerups() {
+        powerups.sort((a, b) -> {
+            return Integer.compare(b.getPriority(), a.getPriority());
+        });
     }
 }
