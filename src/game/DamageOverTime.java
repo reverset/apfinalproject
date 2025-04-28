@@ -54,7 +54,7 @@ public class DamageOverTime extends Powerup {
 
     @Override
     public int getMaxLevel() {
-        return 10;
+        return 3;
     }
 
     @Override

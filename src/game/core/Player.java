@@ -8,6 +8,7 @@ import com.raylib.Raylib;
 
 import game.BetterButton;
 import game.Color;
+import game.DamageOverTime;
 import game.Game;
 import game.GameLoop;
 import game.LoadingBar;
@@ -42,6 +43,8 @@ public class Player extends ECSystem implements Controllable {
     private final Text healthText = new Text("N/A", new Vec2(15, Vec2.screen().y-64), 54, new Color(255, 255, 255, 255));
     private final Text maxHealthText = new Text("N/A", new Vec2(120, Vec2.screen().y-64+(34/2)), 34, Color.ORANGE);
     private final Text levelText = new Text("0", new Vec2(Vec2.screen().x-100, Vec2.screen().y-50), 34, Color.ORANGE);
+
+    private boolean allowLowHealthNotification = true;
 
     private Tangible tangible;
     private Physics physics;
@@ -80,6 +83,7 @@ public class Player extends ECSystem implements Controllable {
             .register(new Player())
             .register(new Controller<>(Player.class))
             // .register(new Diamond(entity, null, effect, 1))
+            // .register(new DamageOverTime(entity, null, effect, 3))
             .addTags(GameTags.PLAYER, GameTags.PLAYER_TEAM);
 
         return entity;
@@ -113,13 +117,15 @@ public class Player extends ECSystem implements Controllable {
                 healthText.position.y = Vec2.screen().y - 10 - healthText.fontSize;
         })));
 
+        int to = 2;
+        int from = 0;
         healthCriticalVignette = new TweenAnimation(List.of(
-            new Tween<>(Tween.lerp(0, 1), 0.1f, val -> {
+            new Tween<>(Tween.lerp(from, to), 0.1f, val -> {
                 GameLoop.getPostProcessShader().ifPresent(shader -> {
                     shader.setShaderValue("vignetteStrength", val.floatValue());
                 });
             }),
-            new Tween<>(Tween.lerp(1, 0), 0.5f, val -> {
+            new Tween<>(Tween.lerp(to, from), 1.5f, val -> {
                 GameLoop.getPostProcessShader().ifPresent(shader -> {
                     shader.setShaderValue("vignetteStrength", val.floatValue());
                 });
@@ -168,12 +174,16 @@ public class Player extends ECSystem implements Controllable {
 
             if ((health.isCritical() || v.damage() >= health.getMaxHealth()*0.1f) && !healthCriticalVignette.isRunning()) {
                 healthCriticalVignette.start();
-                if (Settings.cameraShake) GameLoop.getMainCamera().shake(10);
+                if (Settings.cameraShake) GameLoop.getMainCamera().shake(5);
             }
 
-            if (health.isCritical() && !warningNotifVisible) {
+            if (health.isCritical() && !warningNotifVisible && allowLowHealthNotification) {
                 animatedWarningNotif("LOW HEALTH", 1);
+                allowLowHealthNotification = false;
             }
+
+            if (!health.isCritical()) allowLowHealthNotification = true;
+
         }, entity);
 
         health.onDeath.listenOnce((v) -> {
