@@ -77,8 +77,8 @@ public class Player extends ECSystem implements Controllable {
             .addComponent(effect)
             // .addComponent(new Shader("resources/pastelcycle.frag"))
             // .register(new ShaderUpdater(List.of(ShaderUpdater.timeUpdater())))
-            .register(new RectRender())
-            .register(new Physics(0, 0))
+            .register(new RectRender().centerize())
+            .register(new Physics(0, 0, new Vec2(-SIZE/2, -SIZE/2)))
             .register(new ExpAccumulator(100))
             .register(new Player())
             .register(new Controller<>(Player.class))
@@ -149,10 +149,6 @@ public class Player extends ECSystem implements Controllable {
         }, entity);
     }
 
-    public Vec2 getCenter() {
-        return rect.getCenter(trans.position);
-    }
-
     public ExpAccumulator getExpAccumulator() {
         return expAccumulator;
     }
@@ -190,7 +186,7 @@ public class Player extends ECSystem implements Controllable {
             GameLoop.safeDestroy(entity);
             GameLoop.safeTrack(DestroyEffect.makeEntity(rect.dimensions(), trans.position.clone(), 2));
 
-            GameLoop.makeTween(Tween.lerp(GameLoop.getMainCamera().trans.position, getCenter()), 2, val -> {
+            GameLoop.makeTween(Tween.lerp(GameLoop.getMainCamera().trans.position, trans.position), 2, val -> {
                 GameLoop.getMainCamera().trans.position = val;
             }).start();
             GameLoop.makeTween(Tween.lerp(GameLoop.getMainCamera().settings.zoom, 2), 2, val -> {

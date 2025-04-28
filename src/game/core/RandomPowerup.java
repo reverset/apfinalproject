@@ -1,7 +1,10 @@
 package game.core;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import game.Button;
 import game.Color;
@@ -23,11 +26,26 @@ public class RandomPowerup {
         Text text = new Text("SELECT A POWERUP", Vec2.screenCenter().addEq(0, -200), 54, Color.WHITE).center();
         GameLoop.track(Text.makeEntity(text).addTags("powerupselect"));
 
-        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), new Diamond(null, null, null, 0)));
-        // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthPowerup(null, null, null, 0)));
-        // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new DamageOverTime(null, null, null, 0)));
-        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthSyphon(null, null, null, 0)));
-        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(-400, 0), new HealthRegenPowerup(null, null, null, 0)));
+        final var powerups = List.<Supplier<Powerup>>of(
+            () -> new Diamond(null, null, null, 0),
+            () -> new HealthSyphon(null, null, null, 0),
+            () -> new HealthRegenPowerup(null, null, null, 0),
+            () -> new DamageOverTime(null, null, null, 0)
+        );
+
+        ArrayList<Powerup> select = new ArrayList<>();
+        for (final var pow : powerups) {
+            select.add(pow.get());
+        }
+
+        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), select.remove((int) (Math.random()*select.size()))));
+        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), select.remove((int) (Math.random()*select.size()))));
+        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(-400, 0), select.remove((int) (Math.random()*select.size()))));
+
+
+        // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), new Diamond(null, null, null, 0)));
+        // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthSyphon(null, null, null, 0)));
+        // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(-400, 0), new HealthRegenPowerup(null, null, null, 0)));
     }
 
     public static Entity makeButton(Vec2 pos, Powerup powerup) {

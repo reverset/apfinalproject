@@ -16,6 +16,7 @@ public class HealingOrb extends ECSystem {
     public static final float RADIUS = 10;
 
     Optional<Player> player = Optional.empty();
+    Optional<Transform> playerTrans;
     
     Transform trans;
     Tangible tangible;
@@ -49,6 +50,7 @@ public class HealingOrb extends ECSystem {
         
         GameLoop.findEntityByTag(GameTags.PLAYER).ifPresent(e -> {
             player = e.getSystem(Player.class);
+            playerTrans = e.getComponent(Transform.class);
         });;
     }
 
@@ -68,8 +70,8 @@ public class HealingOrb extends ECSystem {
 
     @Override
     public void infrequentUpdate() {
-        if (player.isEmpty()) return;
+        if (player.isEmpty() || playerTrans.isEmpty()) return;
 
-        tangible.velocity.moveTowardsEq(trans.position.directionTo(player.get().getCenter()).multiplyEq(1000), 1000*infreqDelta());
+        tangible.velocity.moveTowardsEq(trans.position.directionTo(playerTrans.get().position).multiplyEq(1000), 1000*infreqDelta());
     }
 }

@@ -67,7 +67,7 @@ public class SeekingSquare extends Enemy {
     public void infrequentUpdate() {
         if (playerTransform == null || player.isEmpty()) return;
 
-        tangible.velocity.moveTowardsEq(trans.position.directionTo(playerComp.get().getCenter()).multiplyEq(1000), 1000*infreqDelta());
+        tangible.velocity.moveTowardsEq(trans.position.directionTo(playerTransform.position).multiplyEq(1000), 1000*infreqDelta());
     }
 
     @Override
