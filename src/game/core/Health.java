@@ -48,7 +48,7 @@ public class Health implements Component {
     }
 
     public DamageInfo damageOrHeal(DamageInfo info) {
-        return damageOrHeal(info, true);
+        return damageOrHeal(info, true, false);
     }
 
     public boolean isDead() {
@@ -73,13 +73,18 @@ public class Health implements Component {
         return damageOrHeal(info);
     }
 
+    public DamageInfo damageBypassInvincibility(DamageInfo info) {
+        if (info.isHealing()) throw new RecoverableException("Invoked damage() with a negative damageinfo.");
+        return damageOrHeal(info, true, true);
+    }
+
     /**
      * This method is used for dealing damage AND healing. The only differentiation is from
      * whether or not the damage is positive or negative.
     **/
-    public DamageInfo damageOrHeal(DamageInfo info, boolean showNumbers) {
+    public DamageInfo damageOrHeal(DamageInfo info, boolean showNumbers, boolean bypassInvincibility) {
         if (isDead()) return DamageInfo.ofNone();
-        if (info.isHarmful() && !invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return DamageInfo.ofNone();
+        if (info.isHarmful() && !bypassInvincibility && !invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return DamageInfo.ofNone();
         
         DamageInfo inf = info;
         if (inf.isHarmful() && effect.isPresent()) inf = effect.get().computeDamageResistance(inf);

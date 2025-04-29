@@ -44,7 +44,7 @@ public class DamageOverTime extends Powerup {
                             .setDamageAndColor(chunks, DamageColor.SPECIAL)
                             .setPosition(pos)
                             .setExtras(new Object[]{"D.O.T"});
-                        health.damage(dmg);
+                        health.damageBypassInvincibility(dmg);
                     });
                 });
             });
@@ -78,6 +78,6 @@ public class DamageOverTime extends Powerup {
     }
 
     private double getPercent() {
-        return Math.pow(0.5, level);
+        return Math.pow(0.5, level+1);
     }
 }

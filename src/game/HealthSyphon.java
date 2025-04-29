@@ -4,9 +4,9 @@ import java.time.Duration;
 
 import com.raylib.Raylib;
 
+import game.core.Cube;
 import game.core.DamageInfo;
 import game.core.Effect;
-import game.core.EnemySpawner;
 import game.core.GameTags;
 import game.core.Health;
 import game.core.Physics;
@@ -23,7 +23,7 @@ public class HealthSyphon extends Powerup {
 
     private final static Duration STEAL_INTERVAL = Duration.ofMillis(200); 
 
-    private final static int LIMIT = 4;
+    private final static int LIMIT = 2;
 
     private Stopwatch stealStopwatch = Stopwatch.ofGameTime();
 
@@ -79,11 +79,14 @@ public class HealthSyphon extends Powerup {
         for (final var obj : Physics.testCircle(trans.position, range, 0)) {
             if (count[0] >= LIMIT) break;
             if (!obj.entity.hasTag(GameTags.ENEMY_TEAM)) continue;
+
+            final var maybeCube = obj.entity.getSystem(Cube.class);
+            if (maybeCube.isPresent() && maybeCube.get().isShieldActive()) continue;
             
             obj.entity.getComponent(Health.class).ifPresent(h -> {
                 obj.entity.getComponent(Transform.class).ifPresent(et -> {
                     DamageInfo info = new DamageInfo(getHealthSteal(), obj.entity, weapon, et.position.clone()).setAttacker(entity);
-                    h.damage(info);
+                    h.damageBypassInvincibility(info);
                     health.heal(info.asHealing().setPosition(trans.position.clone()));
                     count[0] += 1;
                 });

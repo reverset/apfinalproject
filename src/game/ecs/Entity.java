@@ -54,6 +54,10 @@ public class Entity {
 		return this;
 	}
 
+	public boolean isVisible() {
+		return !hidden;
+	}
+
 	public void hide() {
 		hidden = true;
 		onVisibilityChange.emit(true);

@@ -91,7 +91,7 @@ public class Cube extends Enemy {
 
     @Override
     public void setup() {
-        super.setup();
+        super.basicSetup();
         trans = require(Transform.class);
         tangible = require(Tangible.class);
         health = require(Health.class);
@@ -194,6 +194,10 @@ public class Cube extends Enemy {
             trans.position = plTrans.position.add(Vec2.fromAngle(currentAngle).multiplyEq(playerDistance));
         }
 
+    }
+
+    public boolean isShieldActive() {
+        return isShieldUp;
     }
 
     @Override

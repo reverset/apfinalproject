@@ -15,9 +15,14 @@ import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
 public class PauseMenu {
+    private static Entity pauseMenu = null;
+
     public static void open() {
-        final var e = makeEntity();
-        GameLoop.safeTrack(e);
+        if (pauseMenu == null) pauseMenu = makeEntity();
+        if (!GameLoop.isPresent(pauseMenu)) GameLoop.safeTrack(pauseMenu);
+
+        GameLoop.defer(() -> pauseMenu.show());
+        GameLoop.pause();
     }
 
     public static Entity makeEntity() {
@@ -30,13 +35,19 @@ public class PauseMenu {
                 public void setup() {
                     text.position.x -= text.measure() / 2;
                     text.position.y -= 50;
+
+                    entity.onVisibilityChange.listen(v -> {
+                        if (v) pauseMenuEntities.forEach(e -> e.hide());
+                        else pauseMenuEntities.forEach(e -> e.show());
+                    });
                 }
                 
                 @Override
                 public void frame() {
-                    if (Raylib.IsKeyPressed(Raylib.KEY_ESCAPE)) {
+                    if (Raylib.IsKeyPressed(Raylib.KEY_ESCAPE) && entity.isVisible()) {
                         GameLoop.defer(() -> {
-                            GameLoop.destroy(entity);
+                            // GameLoop.destroy(entity);
+                            entity.hide();
                             GameLoop.unpause();
                         });
                     }
@@ -48,7 +59,7 @@ public class PauseMenu {
                     pauseMenuEntities.add(makeMainMenuButton(entity));
 
                     pauseMenuEntities.forEach(p -> p.setPauseBehavior(true));
-                    GameLoop.pause();
+                    // GameLoop.pause();
                 }
 
                 @Override
@@ -58,10 +69,8 @@ public class PauseMenu {
 
                 @Override
                 public void destroy() {
-                    GameLoop.defer(() -> {
-                        pauseMenuEntities.forEach(GameLoop::destroy);
-                    });
-                    GameLoop.unpause();
+                    pauseMenuEntities.forEach(GameLoop::safeDestroy);
+                    GameLoop.defer(() -> GameLoop.unpause());
                 }
 
             }).setPauseBehavior(true);
@@ -92,9 +101,9 @@ public class PauseMenu {
     private static Entity makeExitButton(Entity main) {
         final var exitButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
         exitButton.onClick.listenOnce(n -> {
-            GameLoop.safeDestroy(main);
+            // GameLoop.safeDestroy(main);
             GameLoop.defer(() -> {
-                GameLoop.unpause();
+                // GameLoop.unpause();
                 GameLoop.quit();
             });
         });
