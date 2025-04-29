@@ -20,7 +20,7 @@ public class HealthSyphon extends Powerup {
     private EnemySpawner spawner;
     private Health health;
 
-    private final static Duration STEAL_INTERVAL = Duration.ofMillis(3_000); 
+    private final static Duration STEAL_INTERVAL = Duration.ofMillis(250); 
 
     private Stopwatch stealStopwatch = Stopwatch.ofGameTime();
 
@@ -45,7 +45,7 @@ public class HealthSyphon extends Powerup {
 
     @Override
     public int getMaxLevel() {
-        return 3;
+        return 10;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class HealthSyphon extends Powerup {
     }
 
     private int getHealthSteal() {
-        return 15 * level;
+        return level;
     }
     
 }
