@@ -2,6 +2,7 @@ package game.core;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -52,7 +53,7 @@ public class EnemySpawner extends ECSystem {
     }
 
     public List<Entity> getEnemies() {
-        return List.copyOf(enemies);
+        return Collections.unmodifiableList(enemies);
     }
 
     public Queue<EntityOf<Enemy>> getSpawnQueue() {

@@ -6,6 +6,7 @@ import game.Vec2;
 import game.core.Ray;
 import game.ecs.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.raylib.Raylib;
@@ -82,6 +83,10 @@ public class Rect implements Component {
         }
 
         return Optional.empty();
+    }
+
+    public List<Vec2> getCorners(Vec2 position) {
+        return List.of(position.clone(), position.add(width, 0), position.add(0, height), position.add(width, height));
     }
 
     public Vec2 dimensions() {

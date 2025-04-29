@@ -1,6 +1,7 @@
 package game.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +53,19 @@ public class Physics extends ECSystem {
 
     public Physics(int layer, int layerMask, Vec2 hitBoxOffset) {
         this(Kind.DYNAMIC, layer, layerMask, hitBoxOffset);    
+    }
+
+    public static List<Physics> testCircle(Vec2 pos, float radius, int layerMask) {
+        ArrayList<Physics> res = new ArrayList<>();
+        for (var obj : physicsObjects.get(layerMask)) {
+            for (final var corner : obj.collisionRect.getCorners(obj.trans.position)) {
+                if (pos.distance(corner) <= radius) {
+                    res.add(obj);
+                    break;
+                }
+            }
+        }
+        return Collections.unmodifiableList(res);
     }
 
     public static Optional<Ray.RayResult> testRay(Ray ray) {

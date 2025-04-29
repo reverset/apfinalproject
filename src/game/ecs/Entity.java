@@ -11,6 +11,7 @@ import game.Game;
 import game.GameLoop;
 import game.RecoverableException;
 import game.Signal;
+import game.Tuple;
 
 public class Entity {
 	public final Signal<Void> onReady = new Signal<>();

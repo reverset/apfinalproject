@@ -40,7 +40,7 @@ public class SeekingSquare extends Enemy {
     @Override
     public void setup() {
         basicSetup();
-        health.setMaxHealthAndHealth(BASE_HEALTH + (BASE_HEALTH / 2 * (effect.getLevel() - 1)));
+        health.setMaxHealthAndHealth(BASE_HEALTH + (BASE_HEALTH / 4 * (effect.getLevel() - 1)));
         effect.addDamageScaling(d -> d.damage() * effect.getLevel());
     }
 

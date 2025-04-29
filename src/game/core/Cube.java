@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 
 import com.raylib.Jaylib;
 import com.raylib.Raylib;
-import com.raylib.Raylib.rlRenderBatch;
 
 import game.Color;
 import game.EntityOf;
@@ -53,7 +52,7 @@ public class Cube extends Enemy {
     private Stopwatch shieldEnableStopwatch = Stopwatch.ofGameTime();
     private Stopwatch shieldDisableStopwatch = Stopwatch.ofGameTime();
 
-    private Stopwatch seekingSquareSpawnTimer = Stopwatch.ofGameTime();
+    // private Stopwatch seekingSquareSpawnTimer = Stopwatch.ofGameTime();
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("THE CUBE", Enemy.class);
@@ -74,7 +73,7 @@ public class Cube extends Enemy {
             .register(new HealthBar(new Vec2(), entity.name, true))
             .register(new ShaderUpdater(
                 List.of(new Tuple<>("time", timeSupplier))))
-            .register(new Physics(0, 0))
+            .register(new Physics(0, 0, new Vec2(-TEXTURE_WIDTH/2, -TEXTURE_HEIGHT/2)))
             .register(new PostMortem(GameLoop::safeDestroy)
                 .addWill(e -> GameLoop.defer(RandomPowerup::showScreen))
             )
@@ -92,6 +91,7 @@ public class Cube extends Enemy {
 
     @Override
     public void setup() {
+        super.setup();
         trans = require(Transform.class);
         tangible = require(Tangible.class);
         health = require(Health.class);
@@ -102,7 +102,7 @@ public class Cube extends Enemy {
         postMortem.addWill(i -> {
             player
                 .ifPresent(p -> p.getExpAccumulator().accumulate(100));
-        }).addWill(e -> Raylib.UnloadRenderTexture(renderTexture));
+        }).addWill(e -> GameLoop.defer(() -> Raylib.UnloadRenderTexture(renderTexture)));
         
         effect.addDamageRecievingResponse(info -> isShieldUp ? info.asHealing().damage() : info.damage());
 
@@ -144,11 +144,11 @@ public class Cube extends Enemy {
     }
 
     private void altAttack() {
-        GameLoop.safeTrack(SeekingSquare.makeEntity(getCenter(), Vec2.randomUnit().multiplyEq(1_000), effect.getLevel()));
+        GameLoop.safeTrack(SeekingSquare.makeEntity(trans.position.clone(), Vec2.randomUnit().multiplyEq(1_000), effect.getLevel()));
     }
 
     private void attackTick(Transform plTrans) {
-        if (!isShieldUp && weapon.canFire()) weapon.fire(getCenter(), getCenter().directionTo(plTrans.position), entity);
+        if (!isShieldUp && weapon.canFire()) weapon.fire(trans.position.clone(), trans.position.directionTo(plTrans.position), entity);
     }
 
     private void shieldTick() {
@@ -174,7 +174,7 @@ public class Cube extends Enemy {
     private void movementTick(Transform plTrans) {
         if (player.isEmpty() || playerTransform.isEmpty()) return;
 
-        var currentAngle = (getCenter().minus(plTrans.position)).getAngle();
+        var currentAngle = (trans.position.minus(plTrans.position)).getAngle();
         if (movementTimer.hasElapsedAdvance(nextMoveTime)) {
             var desiredAngle = (float) MoreMath.random(0, MoreMath.TAU);
             
@@ -185,31 +185,23 @@ public class Cube extends Enemy {
             
             movementTween = GameLoop.makeTweenGameTime(
                     Tween.circleLerp(currentAngle, desiredAngle, playerDistance, () -> plTrans.position), 1.2f, val -> {
-                        trans.position = fromCenter(val);
+                        trans.position = val;
             });
             movementTween
                 .setDestroy(false)
                 .start();
         } else {
-            trans.position = fromCenter(plTrans.position.add(Vec2.fromAngle(currentAngle).multiplyEq(playerDistance)));
+            trans.position = plTrans.position.add(Vec2.fromAngle(currentAngle).multiplyEq(playerDistance));
         }
 
     }
 
     @Override
     public void render() {
-        Raylib.DrawTexture(renderTexture.texture(), trans.position.xInt(), trans.position.yInt(), Color.WHITE.getPointerNoUpdate());
+        Raylib.DrawTexture(renderTexture.texture(), trans.position.xInt() - rect.width/2, trans.position.yInt() - rect.height/2, Color.WHITE.getPointerNoUpdate());
         
         // Raylib.DrawCircle(trans.position.xInt(), trans.position.yInt(), 10, Color.WHITE.getPointerNoUpdate());
         // Raylib.DrawCircle(getCenter().xInt(), getCenter().yInt(), 10, Color.WHITE.getPointerNoUpdate());
-    }
-
-    public Vec2 getCenter() {
-        return trans.position.add(TEXTURE_WIDTH/2f, TEXTURE_HEIGHT/2f);
-    }
-
-    public Vec2 fromCenter(Vec2 offset) {
-        return offset.minus(TEXTURE_WIDTH/2f, TEXTURE_HEIGHT/2f);
     }
 
     @Override

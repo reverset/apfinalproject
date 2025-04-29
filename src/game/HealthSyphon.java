@@ -7,7 +7,9 @@ import com.raylib.Raylib;
 import game.core.DamageInfo;
 import game.core.Effect;
 import game.core.EnemySpawner;
+import game.core.GameTags;
 import game.core.Health;
+import game.core.Physics;
 import game.core.Powerup;
 import game.core.Weapon2;
 import game.ecs.Entity;
@@ -17,10 +19,11 @@ public class HealthSyphon extends Powerup {
     private Transform trans;
     private Color color = new Color(0, 255, 0, 200);
     private float range = 300;
-    private EnemySpawner spawner;
     private Health health;
 
-    private final static Duration STEAL_INTERVAL = Duration.ofMillis(250); 
+    private final static Duration STEAL_INTERVAL = Duration.ofMillis(200); 
+
+    private final static int LIMIT = 4;
 
     private Stopwatch stealStopwatch = Stopwatch.ofGameTime();
 
@@ -38,9 +41,6 @@ public class HealthSyphon extends Powerup {
     @Override
     public void ready() {
         super.ready();
-        spawner = GameLoop.findEntityByTag("enemySpawner")
-            .flatMap(e -> e.getSystem(EnemySpawner.class))
-            .orElseThrow(() -> new RecoverableException("no enemy spawner for health syphon."));
     }
 
     @Override
@@ -74,18 +74,33 @@ public class HealthSyphon extends Powerup {
         super.infrequentUpdate();
 
         if (!stealStopwatch.hasElapsedAdvance(STEAL_INTERVAL)) return;
-
-        for (final var enemy : spawner.getEnemies()) {
-            enemy.getComponent(Transform.class).ifPresent(et -> {
-                if (et.position.distance(trans.position) <= range) {
-                    enemy.getComponent(Health.class).ifPresent(h -> {
-                        DamageInfo info = new DamageInfo(getHealthSteal(), enemy, weapon, et.position.clone()).setAttacker(entity);
-                        h.damage(info);
-                        health.heal(info.asHealing().setPosition(trans.position.clone()));
-                    });
-                }
+        
+        int[] count = {0}; // must be an array so that the closure below can modify it.
+        for (final var obj : Physics.testCircle(trans.position, range, 0)) {
+            if (count[0] >= LIMIT) break;
+            if (!obj.entity.hasTag(GameTags.ENEMY_TEAM)) continue;
+            
+            obj.entity.getComponent(Health.class).ifPresent(h -> {
+                obj.entity.getComponent(Transform.class).ifPresent(et -> {
+                    DamageInfo info = new DamageInfo(getHealthSteal(), obj.entity, weapon, et.position.clone()).setAttacker(entity);
+                    h.damage(info);
+                    health.heal(info.asHealing().setPosition(trans.position.clone()));
+                    count[0] += 1;
+                });
             });
         }
+
+        // for (final var enemy : GameLoop.findEntitiesByTag(GameTags.ENEMY_TEAM)) {
+        //     enemy.getComponent(Transform.class).ifPresent(et -> {
+        //         if (et.position.distance(trans.position) <= range) {
+        //             enemy.getComponent(Health.class).ifPresent(h -> {
+        //                 DamageInfo info = new DamageInfo(getHealthSteal(), enemy, weapon, et.position.clone()).setAttacker(entity);
+        //                 h.damage(info);
+        //                 health.heal(info.asHealing().setPosition(trans.position.clone()));
+        //             });
+        //         }
+        //     });
+        // }
     }
 
     @Override
@@ -94,7 +109,7 @@ public class HealthSyphon extends Powerup {
     }
 
     private int getHealthSteal() {
-        return level;
+        return level * 2;
     }
     
 }

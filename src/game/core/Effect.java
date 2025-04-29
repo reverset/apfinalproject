@@ -1,6 +1,7 @@
 package game.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -34,7 +35,7 @@ public class Effect implements Component {
     }
 
     public List<Powerup> getPowerups() {
-        return List.copyOf(powerups);
+        return Collections.unmodifiableList(powerups);
     }
 
     public Effect setLevel(int l) {
