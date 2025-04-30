@@ -14,7 +14,6 @@ import game.HealthSyphon;
 import game.Text;
 import game.Tween;
 import game.Vec2;
-import game.core.rendering.HealthPowerup;
 import game.core.rendering.Rect;
 import game.core.rendering.RectRender;
 import game.ecs.ECSystem;
@@ -30,7 +29,8 @@ public class RandomPowerup {
             () -> new Diamond(null, null, null, 0),
             () -> new HealthSyphon(null, null, null, 0),
             () -> new HealthRegenPowerup(null, null, null, 0),
-            () -> new DamageOverTime(null, null, null, 0)
+            () -> new DamageOverTime(null, null, null, 0),
+            () -> new SquiggyPowerup(null, null, null, 0)
         );
 
         ArrayList<Powerup> select = new ArrayList<>();

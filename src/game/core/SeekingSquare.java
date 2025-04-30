@@ -27,7 +27,7 @@ public class SeekingSquare extends Enemy {
             .addComponent(new Health(BASE_HEALTH))
             .addComponent(new Tangible(velocity))
             .addComponent(new Effect().setLevel(level))
-            .register(new Physics(0, 0, new Vec2(-width/2, -height/2)))
+            .register(new Physics(1, 0, new Vec2(-width/2, -height/2)))
             .register(new RectRender().centerize())
             .register(new HealthBar(new Vec2(-width, -height), entity.name))
             .register(new SeekingSquare())
