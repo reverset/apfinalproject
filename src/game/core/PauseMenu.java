@@ -70,7 +70,7 @@ public class PauseMenu {
                 @Override
                 public void destroy() {
                     pauseMenuEntities.forEach(GameLoop::safeDestroy);
-                    GameLoop.defer(() -> GameLoop.unpause());
+                    // GameLoop.defer(() -> GameLoop.unpause());
                 }
 
             }).setPauseBehavior(true);

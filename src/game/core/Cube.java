@@ -24,7 +24,7 @@ import game.ecs.comps.Transform;
 public class Cube extends Enemy {
     public static final int BASE_HEALTH = 1_000;
     public static final int BASE_DAMAGE = 20;
-    public static final int BULLET_SPEED = 2_000;
+    public static final int BULLET_SPEED = 1_500;
     public static final Duration BULLET_LIFETIME = Duration.ofSeconds(5);
     public static final Duration BURST_COOLDOWN = Duration.ofSeconds(2);
     public static final Duration BULLET_COOLDOWN_DURATION = Duration.ofMillis(200);
@@ -111,7 +111,7 @@ public class Cube extends Enemy {
         playerTransform = playerEntity.flatMap(entity -> entity.getComponent(Transform.class));
 
         weapon = new SimpleWeapon(
-            BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN_DURATION.toMillis()/1_000f, Optional.of(effect));
+            BASE_DAMAGE, BULLET_SPEED, Color.RED, GameTags.ENEMY_TEAM_TAGS, BULLET_LIFETIME, BULLET_COOLDOWN_DURATION.toMillis()/1_000f, Optional.of(effect));
         
         shieldEnableStopwatch.start();
     }

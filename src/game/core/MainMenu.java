@@ -24,6 +24,7 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
     private static final ArrayList<Entity> settingsItems = new ArrayList<>();
 
     public static void clearAndLoad() {
+        GameLoop.unpause();
         menuItems.clear();
         settingsItems.clear();
         GameLoop.getPostProcessShader().ifPresent(Shader::reset);

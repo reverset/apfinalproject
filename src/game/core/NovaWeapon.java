@@ -35,7 +35,7 @@ public class NovaWeapon extends Weapon2 {
         for (float rad = 0; rad < Math.PI*2; rad += radianPerBullet) {
             Vec2 dir = Vec2.fromAngle(rad);
 
-            EntityOf<Bullet> bullet = BulletFactory.bullet(baseDmgPerPellet, effect, position.clone(), dir.multiplyEq(bulletSpeed), color, owner, ignoreTags, lifetime);
+            EntityOf<Bullet> bullet = BulletFactory.bullet(baseDmgPerPellet, effect, position.clone(), dir.multiplyEq(bulletSpeed), color, owner, ignoreTags, lifetime, this);
             GameLoop.safeTrack(bullet);
         }
     }

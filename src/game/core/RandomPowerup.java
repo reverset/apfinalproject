@@ -22,6 +22,7 @@ import game.ecs.comps.Transform;
 
 public class RandomPowerup {
     public static void showScreen() {
+        GameLoop.pause();
         Text text = new Text("SELECT A POWERUP", Vec2.screenCenter().addEq(0, -200), 54, Color.WHITE).center();
         GameLoop.track(Text.makeEntity(text).addTags("powerupselect"));
 
@@ -69,7 +70,6 @@ public class RandomPowerup {
 
                 @Override
                 public void setup() {
-                    GameLoop.pause();
                     GameLoop.makeTween(Tween.overEase(-200, desiredPos.y, 1), 1, val -> {
                         trans.position.y = val;
                     }).runWhilePaused(true).start().onFinish.listenOnce(n -> {

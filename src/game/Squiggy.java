@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
+import game.core.Cube;
+import game.core.DamageColor;
 import game.core.Effect;
 import game.core.Enemy;
 import game.core.GameTags;
@@ -18,6 +20,7 @@ import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
+// todo: if player dies, squiggy will keep the game going in the defeat screen.
 public class Squiggy extends ECSystem {
     public enum State {
         FOLLOWING,
@@ -38,7 +41,6 @@ public class Squiggy extends ECSystem {
     private Tangible tangible;
 
     private Stopwatch movementStopwatch = Stopwatch.ofGameTime();
-    private Stopwatch shootStopwatch = Stopwatch.ofGameTime();
 
     private State state = State.FOLLOWING;
     private Optional<Enemy> target = Optional.empty();
@@ -85,7 +87,8 @@ public class Squiggy extends ECSystem {
 
         Effect effect = require(Effect.class);
 
-        weapon = new SimpleWeapon(BASE_DAMAGE, 400, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, Duration.ofSeconds(1), 1, Optional.of(effect));
+        weapon = new SimpleWeapon(BASE_DAMAGE, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, Duration.ofSeconds(1), 0.5f, Optional.of(effect));
+        weapon.setHitMarkerColor(DamageColor.SPECIAL);
     }
 
     public void setLevel(int level) {
@@ -122,12 +125,17 @@ public class Squiggy extends ECSystem {
                 for (final var pt : potentialTargets) {
                     Optional<Enemy> oEnemy = pt.entity.getSystem(Enemy.class);
                     if (oEnemy.isPresent()) {
+                        if (oEnemy.get() instanceof Cube) { // skip the Cube if it's shield is up.
+                            if (((Cube)oEnemy.get()).isShieldActive()) continue;
+                        }
                         setAttacking(oEnemy.get());
                         break;
                     }
                 }
             } else {
                 if (target.get().health.isDead()) {
+                    setFollowing();
+                } else if (target.get() instanceof Cube && ((Cube)target.get()).isShieldActive()) { // skip the Cube if it's shield is up.
                     setFollowing();
                 } else {
                     desiredPosition = target.get().trans.position.clone();
@@ -162,7 +170,7 @@ public class Squiggy extends ECSystem {
     }
 
     private void attackingProcess() {
-
+        weapon.fire(trans.position.clone(), trans.position.directionTo(target.get().trans.position), entity);
     }
     
 }

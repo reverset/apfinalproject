@@ -27,16 +27,19 @@ public class Bullet extends ECSystem {
 
     public Signal<Physics> onHit = new Signal<>();
 
-    Rect rect;
-    Object[] ignoreTags;
+    protected Rect rect;
+    protected Object[] ignoreTags;
 
-    Optional<Effect> effect;
+    protected Optional<Effect> effect;
 
-    public Bullet(Entity owner, int damage, Optional<Effect> effect, Object[] ignoreTags) {
+    private Weapon2 weapon;
+
+    public Bullet(Entity owner, int damage, Optional<Effect> effect, Object[] ignoreTags, Weapon2 weapon) {
         this.owner = owner;
         this.damage = damage;
         this.ignoreTags = ignoreTags;
         this.effect = effect;
+        this.weapon = weapon;
     }
 
     @Override
@@ -45,7 +48,7 @@ public class Bullet extends ECSystem {
         trans = require(Transform.class);
         rect = require(Rect.class);
         removeAfter = requireSystem(RemoveAfter.class);
-
+        
         rect.color = rect.color.cloneIfImmutable();
 
         entity.addTags(GameTags.BULLET);
@@ -56,7 +59,7 @@ public class Bullet extends ECSystem {
     }
 
     public DamageInfo computeDamage(Entity victim) {
-        DamageInfo info = new DamageInfo(damage, victim, null, trans.position.clone()).setAttacker(owner);
+        DamageInfo info = new DamageInfo(damage, victim, null, trans.position.clone()).setColor(weapon.getHitMakerColor()).setAttacker(owner);
         return effect.isPresent()
             ? effect.get().computeDamage(info)
             : info;

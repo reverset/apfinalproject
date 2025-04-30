@@ -152,10 +152,11 @@ public class HexagonWorm extends Enemy {
                 
                 if (!meleeTimer.hasElapsedSecondsAdvance(MELEE_COOLDOWN)) return;
                 
-                Health otherHealth = other.entity.getComponent(Health.class).orElseThrow(); // should probably use more concrete checks
+                other.entity.getComponent(Health.class).ifPresent(otherHealth -> {
+                    int dmg = (int) (otherHealth.getMaxHealth()*0.1f);
+                    otherHealth.damageOrHeal(new DamageInfo(dmg, other.entity, null, trans.position.clone(), DamageColor.MELEE));
+                });
                 
-                int dmg = (int) (otherHealth.getMaxHealth()*0.1f);
-                otherHealth.damageOrHeal(new DamageInfo(dmg, other.entity, null, trans.position.clone(), DamageColor.MELEE));
                 
                 if (otherTrans.isPresent()) {
                     Vec2 knockback = trans.position.directionTo(otherTrans.get().position).multiplyEq(1_000);

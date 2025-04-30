@@ -30,7 +30,7 @@ public class BulletFactory {
 
     public static final ArrayList<EntityOf<Bullet>> bullets = new ArrayList<>(400);
 
-    public static EntityOf<Bullet> bullet(int damage, Optional<Effect> effect, Vec2 pos, Vec2 velocity, Color color, Entity owner, Object[] ignoreTags, Duration lifetime) {
+    public static EntityOf<Bullet> bullet(int damage, Optional<Effect> effect, Vec2 pos, Vec2 velocity, Color color, Entity owner, Object[] ignoreTags, Duration lifetime, Weapon2 weapon) {
         EntityOf<Bullet> entity = new EntityOf<>("Bullet", Bullet.class);
 
         entity
@@ -45,7 +45,7 @@ public class BulletFactory {
             .register(new RectRender())
             .register(new RemoveAfter(lifetime))
             .register(new ViewCuller(Vec2.screen().x+STANDARD_BULLET_SIZE))
-            .register(new Bullet(owner, damage, effect, ignoreTags));
+            .register(new Bullet(owner, damage, effect, ignoreTags, weapon));
         
         entity.onReady.listenOnce(v -> bullets.add(entity));
         entity.onDestroy.listenOnce(v -> bullets.remove(entity));
@@ -53,7 +53,7 @@ public class BulletFactory {
         return entity;
     }
 
-    public static EntityOf<HexaBomb> hexaBomb(int damagePerPellet, Optional<Effect> effect, Vec2 pos, Vec2 velocity, Color color, Entity owner, Object[] ignoreTags, Duration lifetime) {
+    public static EntityOf<HexaBomb> hexaBomb(int damagePerPellet, Optional<Effect> effect, Vec2 pos, Vec2 velocity, Color color, Entity owner, Object[] ignoreTags, Duration lifetime, Weapon2 weapon) {
         EntityOf<HexaBomb> entity = new EntityOf<>("hexabomb", HexaBomb.class);
 
         Supplier<Float> timeSupplier = GameLoop::getTime;
@@ -70,7 +70,7 @@ public class BulletFactory {
             .register(new ShaderUpdater(List.of(new Tuple<>("time", timeSupplier))))
             .register(new PolyRenderer())
             .register(new Physics(1, 0))
-            .register(new HexaBomb(lifetime, effect, owner, damagePerPellet, ignoreTags, color));
+            .register(new HexaBomb(lifetime, effect, owner, damagePerPellet, ignoreTags, color, weapon));
 
         return entity;
     }

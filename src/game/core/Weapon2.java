@@ -3,6 +3,7 @@ package game.core;
 import java.util.Objects;
 import java.util.Optional;
 
+import game.Color;
 import game.Signal;
 import game.Stopwatch;
 import game.Vec2;
@@ -16,13 +17,24 @@ public abstract class Weapon2 { // old weapon system was terrible, this is attem
 
     Stopwatch shootTimer = Stopwatch.ofGameTime();
     Optional<Effect> effect;
+
+    private Color hitMarkerColor = Color.WHITE;
     
     public Weapon2(float cooldown, Optional<Effect> effect) {
         this.cooldown = cooldown;
         this.effect = effect;
     }
 
+    
     abstract void forceFire(Vec2 position, Vec2 direction, Entity owner);
+    
+    public Color getHitMakerColor() {
+        return hitMarkerColor;
+    }
+
+    public void setHitMarkerColor(Color color) {
+        hitMarkerColor = Objects.requireNonNull(color);
+    }
 
     public void fire(Vec2 position, Vec2 direction, Entity owner) {
         if (shootTimer.hasElapsedSecondsAdvance(cooldown)) {

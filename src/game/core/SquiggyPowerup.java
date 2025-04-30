@@ -42,7 +42,10 @@ public class SquiggyPowerup extends Powerup {
 
     @Override
     public String getSmallHUDInfo() {
-        return squiggy.getMainSystem().getState().toString();
+        return squiggy.getMainSystem().getState().toString() + (squiggy.getMainSystem().getState() == Squiggy.State.ATTACKING 
+            ? " " + squiggy.getMainSystem().getTarget().get().entity.name.toUpperCase()
+            : ""
+            );
     }
     
 }
