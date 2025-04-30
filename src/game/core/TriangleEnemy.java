@@ -114,7 +114,7 @@ public class TriangleEnemy extends Enemy {
         if (freezeRotation) return;
         if (playerTransform == null || playerTangible == null) return;
 
-        Vec2 pos = playerTransform.position.add(SIZE*0.5f, SIZE*0.5f).addEq(playerTangible.velocity.divide(2));
+        Vec2 pos = playerTransform.position.add(playerTangible.velocity.divide(2));
         Vec2 dir = trans.position.directionTo(pos);
         trans.rotation = (float) -Math.toDegrees(dir.getAngle()) - 90; // why does raylib use degrees :(
     }
