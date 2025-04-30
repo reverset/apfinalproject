@@ -31,9 +31,10 @@ public class Physics extends ECSystem {
     private Tangible tangible;
     private Kind kind;
 
-
     private int layer;
     private int layerMask;
+
+    private float impulseResistance = 0;
     
     public Physics(Kind kind, int layer, int layerMask, Vec2 hitBoxOffset) {
         this.kind = kind;
@@ -133,8 +134,12 @@ public class Physics extends ECSystem {
         }
     }
 
+    public void setImpulseResistance(float resistance) {
+        impulseResistance = resistance;
+    }
+
     public void impulse(Vec2 force) {
-        tangible.velocity.addEq(force);
+        tangible.velocity.addEq(force.moveTowards(Vec2.ZERO, impulseResistance));
     }
 
     public void applyForce(Vec2 force) {

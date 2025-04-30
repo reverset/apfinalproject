@@ -16,7 +16,7 @@ public class SquiggyPowerup extends Powerup {
     @Override
     public void ready() {
         super.ready();
-        squiggy = GameLoop.safeTrack(Squiggy.makeEntity(entity));
+        squiggy = GameLoop.safeTrack(Squiggy.makeEntity(entity, level));
     }
 
     @Override
@@ -38,6 +38,11 @@ public class SquiggyPowerup extends Powerup {
     @Override
     public String getDescription() {
         return "A helpful companion.";
+    }
+
+    @Override
+    public String getSmallHUDInfo() {
+        return squiggy.getMainSystem().getState().toString();
     }
     
 }

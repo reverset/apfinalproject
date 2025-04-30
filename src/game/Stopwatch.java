@@ -7,8 +7,8 @@ import com.raylib.Raylib;
 
 
 public class Stopwatch {
-    double startTime = -1;
-    DoubleSupplier timeSupp;
+    private double startTime = -1;
+    private DoubleSupplier timeSupp;
 
     public Stopwatch(DoubleSupplier timeSupp) {
         this.timeSupp = timeSupp;
