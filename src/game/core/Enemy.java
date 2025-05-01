@@ -132,7 +132,7 @@ public class Enemy extends ECSystem {
             desiredDirection = trans.position.directionTo(playerTransform.position).multiplyEq(desiredSpeed);
         }
 
-        if (weapon.canFire() && BulletFactory.bullets.size() < 60) weapon.fire(rect.getCenter(trans.position), trans.position.directionTo(playerTransform.position), entity);
+        if (weapon.canFire() && BulletFactory.bullets.size() < 60) weapon.fire(trans.position, trans.position.directionTo(playerTransform.position), entity);
 
         if (desiredDirection == null) return;
 

@@ -193,6 +193,10 @@ public class Player extends ECSystem implements Controllable {
                 GameLoop.getMainCamera().settings.zoom = val;
             }).start();
 
+            GameLoop.makeTween(Tween.lerp(0.5f, 0), 2, val -> {
+                GameLoop.timeScale = val;
+            }).start().onFinish.listenOnce(n -> GameLoop.pause());
+
             GameLoop.runAfter(null, Duration.ofSeconds(2), () -> {
                 // i should really just make a seperate class for this ...
                 GameLoop.safeTrack(new Entity("Death Screen")
@@ -207,6 +211,8 @@ public class Player extends ECSystem implements Controllable {
                                 text.fontSize = val.intValue();
                                 text.position.x = originalX - text.measure()*0.35f;
                             }).start();
+                            textTween.entity.setPauseBehavior(true);
+                            entity.setPauseBehavior(true);
                         }
     
                         @Override
@@ -219,6 +225,7 @@ public class Player extends ECSystem implements Controllable {
                                 .setFontSize(34)
                                 .centerize();
                             retryButton.onClick.listen((v) -> {
+                                GameLoop.timeScale = 1;
                                 GameLoop.clearAllEntities();
                                 GameLoop.defer(() -> {
                                     Game.loadLevel();
@@ -233,6 +240,7 @@ public class Player extends ECSystem implements Controllable {
                                 .setFontSize(34)
                                 .centerize();
                             mainMenuButton.onClick.listen((v) -> {
+                                GameLoop.timeScale = 1;
                                 GameLoop.defer(() -> {
                                     MainMenu.clearAndLoad();
                                 });
@@ -241,10 +249,12 @@ public class Player extends ECSystem implements Controllable {
                             GameLoop.safeTrack(new Entity("retryButton")
                                 .addComponent(new Transform(Vec2.screen().addEq(-200, -50)))
                                 .addComponent(new Rect(200, 50, Color.WHITE))
+                                .setPauseBehavior(true)
                                 .register(retryButton));
                             GameLoop.safeTrack(new Entity("mainMenuButtonDeathScreen")
                                 .addComponent(new Transform(new Vec2(150, Vec2.screen().y-50)))
                                 .addComponent(new Rect(200, 50, Color.WHITE))
+                                .setPauseBehavior(true)
                                 .register(mainMenuButton));
                         }
     
