@@ -181,7 +181,8 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
             public void setup() {
                 text.text = "\n\n\t\tCredits\n\n\t\t" +
                     "Programming \t\t\t\tSebastian\n\t\t" +
-                    "Game Design \t\t\t\tSebastian";
+                    "Game Design \t\t\t\tSebastian\n\t\t" +
+                    "Squiggy Art\t\t\t\t\tLeah";
             }
 
             @Override
@@ -209,6 +210,20 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
                 settingsItems.forEach(Entity::hide);
             } else {
                 settingsItems.forEach(Entity::show);
+            }
+        });
+
+        entity.register(new ECSystem() {
+            @Override
+            public void setup() {}
+            @Override
+            public void frame() {
+                if (!entity.isHidden()) {
+                    if (Raylib.IsKeyPressed(Raylib.KEY_ESCAPE)) {
+                        entity.hide();
+                        menuItems.forEach(Entity::show);
+                    }
+                }
             }
         });
 

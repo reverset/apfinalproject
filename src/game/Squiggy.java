@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
+import game.core.ArcWeapon;
 import game.core.Cube;
 import game.core.DamageColor;
 import game.core.Effect;
@@ -16,6 +17,7 @@ import game.core.Tangible;
 import game.core.Weapon2;
 import game.core.rendering.Rect;
 import game.core.rendering.RectRender;
+import game.core.rendering.TextureRenderer;
 import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
@@ -30,7 +32,7 @@ public class Squiggy extends ECSystem {
     private final float MAX_SPEED = 500;
     private final float ATTACK_RADIUS = 300;
 
-    private final int BASE_DAMAGE = 30;
+    private final int BASE_DAMAGE = 10;
 
     private Player player;
     private Transform playerTransform;
@@ -46,6 +48,7 @@ public class Squiggy extends ECSystem {
     private Optional<Enemy> target = Optional.empty();
 
     private Weapon2 weapon = null;
+    private Effect effect = null;
 
     public static EntityOf<Squiggy> makeEntity(Entity player, int level) {
         EntityOf<Squiggy> e = new EntityOf<>("Squiggy", Squiggy.class);
@@ -55,7 +58,8 @@ public class Squiggy extends ECSystem {
             .addComponent(new Rect(30, 30, Color.WHITE))
             .addComponent(new Tangible())
             .addComponent(new Effect().setLevel(level))
-            .register(new RectRender().centerize()) // temp
+            // .register(new RectRender().centerize()) // temp
+            .register(new TextureRenderer("resources/squiggy.png"))
             .register(new Physics(0, 0))
             .register(new Squiggy(player))
             .addTags(GameTags.PLAYER_TEAM_TAGS);
@@ -81,18 +85,27 @@ public class Squiggy extends ECSystem {
     public void setup() {
         trans = require(Transform.class);
         tangible = require(Tangible.class);
+        effect = require(Effect.class);
+        effect.addDamageScaling(info -> effect.getLevel() * info.damage());
+        
+        Rect rect = require(Rect.class);
 
         Physics physics = requireSystem(Physics.class);
         physics.setImpulseResistance(400);
 
-        Effect effect = require(Effect.class);
 
-        weapon = new SimpleWeapon(BASE_DAMAGE, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, Duration.ofSeconds(1), 0.5f, Optional.of(effect));
+        TextureRenderer texRender = requireSystem(TextureRenderer.class);
+        physics.setHitboxOffset(new Vec2(-texRender.getTexture().width()/2, -texRender.getTexture().height()/2));
+        rect.width = texRender.getTexture().width();
+        rect.height = texRender.getTexture().height();
+
+        // weapon = new SimpleWeapon(BASE_DAMAGE, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, Duration.ofSeconds(1), 0.5f, Optional.of(effect));
+        weapon = new ArcWeapon(BASE_DAMAGE, (float)(Math.PI/4), 5, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, 0.5f, Duration.ofSeconds(1), Optional.of(effect));
         weapon.setHitMarkerColor(DamageColor.SPECIAL);
     }
 
     public void setLevel(int level) {
-        System.out.println("level todo");
+        effect.setLevel(level);
     }
 
     public State getState() {
@@ -155,13 +168,13 @@ public class Squiggy extends ECSystem {
                 break;
         }
 
-        tangible.velocity.moveTowardsEq(trans.position.directionTo(desiredPosition).multiplyEq(MAX_SPEED), 1000 * delta());
+        tangible.velocity.moveTowardsEq(trans.position.directionTo(desiredPosition).multiplyEq(MAX_SPEED), 1200 * infreqDelta());
     }
     
     private void followingProcess() {
         if (movementStopwatch.hasElapsedAdvance(Duration.ofSeconds(1))) {
             
-            if (playerTransform.position.distance(trans.position) <= 100) {
+            if (playerTransform.position.distance(trans.position) <= 300) {
                 desiredPosition = trans.position.clone();
             } else {
                 desiredPosition = playerTransform.position.clone();

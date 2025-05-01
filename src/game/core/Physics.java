@@ -56,6 +56,10 @@ public class Physics extends ECSystem {
         this(Kind.DYNAMIC, layer, layerMask, hitBoxOffset);    
     }
 
+    public void setHitboxOffset(Vec2 offset) {
+        hitBoxOffset = offset;
+    }
+
     public static List<Physics> testCircle(Vec2 pos, float radius, int layerMask) {
         ArrayList<Physics> res = new ArrayList<>();
         for (var obj : physicsObjects.get(layerMask)) {
