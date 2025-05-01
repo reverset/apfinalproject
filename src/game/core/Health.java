@@ -28,6 +28,7 @@ public class Health implements Component {
         maxHealth = maxHp;
         health = maxHealth;
         this.effect = effect;
+        invincibilityStopwatch.start();
     }
 
     public Health(int maxHp, Effect effect) {

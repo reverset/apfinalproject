@@ -293,8 +293,8 @@ public class Player extends ECSystem implements Controllable {
 
     private void tryFireWeapon() {
         if (weapon.canFire()) {
-            Vec2 direction = trans.position.add(new Vec2(rect.width*0.5f, rect.height*0.5f)).directionTo(GameLoop.getMousePosition());
-            weapon.fire(rect.getCenter(trans.position), direction, entity);
+            Vec2 direction = trans.position.directionTo(GameLoop.getMousePosition());
+            weapon.fire(trans.position.clone(), direction, entity);
         }
     }
 
