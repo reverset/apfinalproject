@@ -22,6 +22,8 @@ import game.ecs.comps.Transform;
 
 public class RandomPowerup {
     public static void showScreen() {
+        if (GameLoop.findEntityByTag(GameTags.PLAYER).isEmpty()) return; // player died do not show screen.
+
         GameLoop.pause();
         Text text = new Text("SELECT A POWERUP", Vec2.screenCenter().addEq(0, -200), 54, Color.WHITE).center();
         GameLoop.track(Text.makeEntity(text).addTags("powerupselect"));
