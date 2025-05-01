@@ -14,6 +14,7 @@ public class TextureRenderer extends ECSystem {
     private RayTexture texture;
     private Transform trans;
     private Vec2 centeredPosition = new Vec2();
+    private boolean enabled = true;
 
     public TextureRenderer(String path) {
         this(new RayImage(path).uploadToGPU());
@@ -21,6 +22,14 @@ public class TextureRenderer extends ECSystem {
 
     public TextureRenderer(RayTexture texture) {
         this.texture = texture;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean val) {
+        enabled = val;
     }
 
     public RayTexture getTexture() {
@@ -34,6 +43,8 @@ public class TextureRenderer extends ECSystem {
 
     @Override
     public void render() {
+        if (!enabled) return;
+
         centeredPosition.x = trans.position.x - texture.width()/2;
         centeredPosition.y = trans.position.y - texture.height()/2;
         texture.render(centeredPosition, trans.rotation, Color.WHITE);

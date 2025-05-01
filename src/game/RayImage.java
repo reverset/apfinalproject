@@ -9,11 +9,13 @@ public class RayImage {
 
     private Color[][] pixels = null;
 
-    public RayImage(Raylib.Image internal) {
+    public RayImage(Raylib.Image internal, int width, int height) {
         this.internal = internal;
-        width = internal.width();
-        height = internal.height();
+        width = width == -1 ? internal.width() : width;
+        height = height == -1 ? internal.height() : height;
 
+        Raylib.ImageResizeNN(internal, width, height);
+        
         pixels = new Color[width][height];
         
         for (int i = 0; i < width; i++) {
@@ -30,8 +32,16 @@ public class RayImage {
 
     }
 
+    public RayImage(Raylib.Image internal) {
+        this(internal, -1, -1);
+    }
+
     public RayImage(String path) {
-        this(Raylib.LoadImage(path));
+        this(path, -1, -1);
+    }
+
+    public RayImage(String path, int width, int height) {
+        this(Raylib.LoadImage(path), width, height);
     }
 
     public static RayImage perlinNoise(Vec2 dimensions, Vec2 offset, float scale) {
