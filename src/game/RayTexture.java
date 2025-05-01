@@ -22,7 +22,24 @@ public class RayTexture {
     }
 
     public void render(Vec2 position, float rotation, Color tint) {
-        Raylib.DrawTextureEx(internal, position.asCanonicalVector2(), rotation, 1f, tint.getPointer());
+        
+        float x = position.x + width()/2f;
+        float y = position.y + height()/2f;
+
+        try {
+            Raylib.rlPushMatrix();
+
+            Raylib.rlTranslatef(x, y, 0); // in order to rotate around the center.
+            Raylib.rlRotatef(rotation, 0, 0, -1);
+            Raylib.rlTranslatef(-x, -y, 0);
+            
+            render(position, tint);
+            // Raylib.DrawTextureEx(internal, position.asCanonicalVector2(), rotation, 1f, tint.getPointer());
+        } finally {
+            Raylib.rlPopMatrix();
+        }
+
+
     }
 
     public Rect getBoundingRectangle() {

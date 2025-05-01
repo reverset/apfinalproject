@@ -47,6 +47,7 @@ public class TextureRenderer extends ECSystem {
 
         centeredPosition.x = trans.position.x - texture.width()/2;
         centeredPosition.y = trans.position.y - texture.height()/2;
+        
         texture.render(centeredPosition, trans.rotation, Color.WHITE);
     }
     

@@ -50,6 +50,8 @@ public class Squiggy extends ECSystem {
     private Weapon2 weapon = null;
     private Effect effect = null;
 
+    private TextureRenderer textureRenderer;
+
     public static EntityOf<Squiggy> makeEntity(Entity player, int level) {
         EntityOf<Squiggy> e = new EntityOf<>("Squiggy", Squiggy.class);
 
@@ -94,10 +96,10 @@ public class Squiggy extends ECSystem {
         physics.setImpulseResistance(400);
 
 
-        TextureRenderer texRender = requireSystem(TextureRenderer.class);
-        physics.setHitboxOffset(new Vec2(-texRender.getTexture().width()/2, -texRender.getTexture().height()/2));
-        rect.width = texRender.getTexture().width();
-        rect.height = texRender.getTexture().height();
+        textureRenderer = requireSystem(TextureRenderer.class);
+        physics.setHitboxOffset(new Vec2(-textureRenderer.getTexture().width()/2, -textureRenderer.getTexture().height()/2));
+        rect.width = textureRenderer.getTexture().width();
+        rect.height = textureRenderer.getTexture().height();
 
         // weapon = new SimpleWeapon(BASE_DAMAGE, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, Duration.ofSeconds(1), 0.5f, Optional.of(effect));
         weapon = new ArcWeapon(BASE_DAMAGE, (float)(Math.PI/4), 5, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, 0.5f, Duration.ofSeconds(1), Optional.of(effect));
@@ -124,6 +126,11 @@ public class Squiggy extends ECSystem {
     public void setAttacking(Enemy target) {
         state = State.ATTACKING;
         this.target = Optional.of(target);
+    }
+
+    @Override
+    public void frame() {
+        trans.rotation = (tangible.velocity.x / MAX_SPEED) * 8;
     }
 
     @Override
