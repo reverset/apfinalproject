@@ -79,7 +79,7 @@ public class Sigma extends Enemy {
     public void frame() {
         if (playerTransform == null || player.isEmpty()) return;
 
-        float angle = trans.position.directionTo(playerTransform.position).getAngleDegrees();
+        float angle = -trans.position.directionTo(playerTransform.position).getAngleDegrees();
         trans.rotation = angle;
     }
 }
