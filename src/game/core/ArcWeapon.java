@@ -35,12 +35,14 @@ public class ArcWeapon extends Weapon2 {
         float angle = direction.getAngle();
         // float range = angle + ((float)Math.PI/4) - (angle - ((float)Math.PI/4));
 
-        for (float rad = angle - (arcRadians/2); rad < angle + (arcRadians/2); rad += (arcRadians/pellets)) {
-            Vec2 dir = Vec2.fromAngle(rad);
-
-            EntityOf<Bullet> bullet = BulletFactory.bullet(baseDmgPerPellet, effect, position.clone(), dir.multiplyEq(bulletSpeed), color, owner, ignoreTags, lifetime, this);
-            GameLoop.safeTrack(bullet);
-        }
+        GameLoop.defer(() -> {
+            for (float rad = angle - (arcRadians/2); rad < angle + (arcRadians/2); rad += (arcRadians/pellets)) {
+                Vec2 dir = Vec2.fromAngle(rad);
+    
+                EntityOf<Bullet> bullet = BulletFactory.bullet(baseDmgPerPellet, effect, position.clone(), dir.multiplyEq(bulletSpeed), color, owner, ignoreTags, lifetime, this);
+                GameLoop.track(bullet);
+            }
+        });
     }
     
 }

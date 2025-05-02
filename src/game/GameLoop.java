@@ -184,15 +184,17 @@ public class GameLoop {
 	public static void destroy(Entity entity) {
 		Objects.requireNonNull(entity);
 		entity.destroy();
-		if (entities.remove(entity) && orderedEntityRenderList.remove(entity)) {
-			sortOrderedEntityRenderList();
-		}
+
+		entities.remove(entity);
+		orderedEntityRenderList.remove(entity);
+		
+		sortOrderedEntityRenderList();
 	}
 
 	public static void safeDestroy(Entity entity) {
 		Objects.requireNonNull(entity);
 		GameLoop.defer(() -> {
-			if (entities.contains(entity)) {
+			if (isPresent(entity)) {
 				destroy(entity);
 			}
 		});
@@ -245,18 +247,12 @@ public class GameLoop {
 			Entity entity = iter.next();
 			entity.destroy();
 			iter.remove();
+			orderedEntityRenderList.remove(entity);
 		}
 	}
 
 	public static void clearAllEntities() {
-		GameLoop.defer(() -> {
-			ListIterator<Entity> iter = entities.listIterator();
-			while (iter.hasNext()) {
-				Entity entity = iter.next();
-				entity.destroy();
-				iter.remove();
-			}
-		});
+		GameLoop.defer(() -> clearAllEntitiesNow());
 	}
 
 	public static void init() {
