@@ -85,7 +85,7 @@ public class Health implements Component {
     **/
     public DamageInfo damageOrHeal(DamageInfo info, boolean showNumbers, boolean bypassInvincibility) {
         if (isDead()) return DamageInfo.ofNone();
-        if (info.isHarmful() && !bypassInvincibility && !invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return DamageInfo.ofNone();
+        if (invincibilityDuration != 0 && info.isHarmful() && !bypassInvincibility && !invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return DamageInfo.ofNone();
         
         DamageInfo inf = info;
         if (inf.isHarmful() && effect.isPresent()) inf = effect.get().computeDamageResistance(inf);
