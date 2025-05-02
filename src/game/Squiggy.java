@@ -29,6 +29,9 @@ public class Squiggy extends ECSystem {
         ATTACKING
     }
 
+    private static final int SIZE = 100;
+    private static final RayTexture TEXTURE = new RayImage("resources/squiggy.png", SIZE, SIZE).uploadToGPU();
+
     private final float MAX_SPEED = 500;
     private final float ATTACK_RADIUS = 300;
 
@@ -57,11 +60,11 @@ public class Squiggy extends ECSystem {
 
         e
             .addComponent(new Transform())
-            .addComponent(new Rect(30, 30, Color.WHITE))
+            .addComponent(new Rect(SIZE, SIZE, Color.WHITE))
             .addComponent(new Tangible())
             .addComponent(new Effect().setLevel(level))
             // .register(new RectRender().centerize()) // temp
-            .register(new TextureRenderer("resources/squiggy.png"))
+            .register(new TextureRenderer(TEXTURE))
             .register(new Physics(0, 0))
             .register(new Squiggy(player))
             .addTags(GameTags.PLAYER_TEAM_TAGS);
@@ -98,8 +101,8 @@ public class Squiggy extends ECSystem {
 
         textureRenderer = requireSystem(TextureRenderer.class);
         physics.setHitboxOffset(new Vec2(-textureRenderer.getTexture().width()/2, -textureRenderer.getTexture().height()/2));
-        rect.width = textureRenderer.getTexture().width();
-        rect.height = textureRenderer.getTexture().height();
+        // rect.width = textureRenderer.getTexture().width();
+        // rect.height = textureRenderer.getTexture().height();
 
         // weapon = new SimpleWeapon(BASE_DAMAGE, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, Duration.ofSeconds(1), 0.5f, Optional.of(effect));
         weapon = new ArcWeapon(BASE_DAMAGE, (float)(Math.PI/4), 5, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, 0.5f, Duration.ofSeconds(1), Optional.of(effect));

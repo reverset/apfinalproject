@@ -21,9 +21,9 @@ public class HealthSyphon extends Powerup {
     private float range = 300;
     private Health health;
 
-    private final static Duration STEAL_INTERVAL = Duration.ofMillis(200); 
+    private static final Duration STEAL_INTERVAL = Duration.ofMillis(200); 
 
-    private final static int LIMIT = 2;
+    private static final int LIMIT = 2;
 
     private Stopwatch stealStopwatch = Stopwatch.ofGameTime();
 
