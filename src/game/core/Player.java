@@ -33,10 +33,10 @@ public class Player extends ECSystem implements Controllable {
     public static final int BULLET_SPEED = 800;
 
     public static final int HEALTH_BONUS_LEVEL_AMOUNT = 50;
-    public static final int BASE_HEALTH = 1000;
+    public static final int BASE_HEALTH = 100;
 
     public static final Duration BULLET_LIFETIME = Duration.ofSeconds(3);
-    public static final Duration iDuration = Duration.ofMillis(200);
+    public static final Duration iDuration = Duration.ofMillis(50);
     
     public Signal<Enemy> onKillEnemy = new Signal<>();    
 
