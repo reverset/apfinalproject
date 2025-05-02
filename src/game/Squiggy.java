@@ -107,6 +107,8 @@ public class Squiggy extends ECSystem {
         // weapon = new SimpleWeapon(BASE_DAMAGE, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, Duration.ofSeconds(1), 0.5f, Optional.of(effect));
         weapon = new ArcWeapon(BASE_DAMAGE, (float)(Math.PI/4), 5, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, 0.5f, Duration.ofSeconds(1), Optional.of(effect));
         weapon.setHitMarkerColor(DamageColor.SPECIAL);
+
+        entity.setRenderPriority(90);
     }
 
     public void setLevel(int level) {

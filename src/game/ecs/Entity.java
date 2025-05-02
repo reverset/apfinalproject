@@ -28,6 +28,8 @@ public class Entity {
 	
 	public final String name;
 
+	private int renderPriority = 10;
+
 	private boolean hidden = false;
 
 	private boolean manifested = false;
@@ -47,6 +49,14 @@ public class Entity {
 				throw new RecoverableException(message);
 			}
 		});
+	}
+
+	public void setRenderPriority(int priority) {
+		renderPriority = priority;
+	}
+
+	public int getRenderPriority() {
+		return renderPriority;
 	}
 
 	public Entity setPauseBehavior(boolean work) {

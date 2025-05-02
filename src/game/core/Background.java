@@ -19,6 +19,7 @@ public class Background extends ECSystem {
 
     @Override
     public void setup() {
+        entity.setRenderPriority(-100);
     }
 
     

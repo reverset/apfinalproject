@@ -52,6 +52,7 @@ public class Bullet extends ECSystem {
         rect.color = rect.color.cloneIfImmutable();
 
         entity.addTags(GameTags.BULLET);
+        entity.setRenderPriority(0);
     }
 
     public int getDamage() {

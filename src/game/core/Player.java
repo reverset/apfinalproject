@@ -147,6 +147,8 @@ public class Player extends ECSystem implements Controllable {
         effect.onLevelUp.listen(n -> {
             health.setMaxHealth(health.getMaxHealth() + HEALTH_BONUS_LEVEL_AMOUNT);
         }, entity);
+
+        entity.setRenderPriority(100);
     }
 
     public ExpAccumulator getExpAccumulator() {

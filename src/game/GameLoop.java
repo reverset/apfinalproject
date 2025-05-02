@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.file.DirectoryStream;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,6 +37,8 @@ public class GameLoop {
 	public static final Signal<Duration> onShutdown = new Signal<>();
 
 	private static final ArrayList<Entity> entities = new ArrayList<>();
+	private static final ArrayList<Entity> orderedEntityRenderList = new ArrayList<>();
+
 	private static final Queue<Runnable> deferments = new LinkedList<>();
 	private static final LinkedList<ScheduledAction> scheduledActions = new LinkedList<>();
 
@@ -135,9 +136,17 @@ public class GameLoop {
 	
 	public static <T extends Entity> T track(T entity) {
 		Objects.requireNonNull(entity);
+		
 		entities.add(entity);
+		orderedEntityRenderList.add(entity);
+		sortOrderedEntityRenderList();
+		
 		entity.ready();
 		return entity;
+	}
+
+	private static void sortOrderedEntityRenderList() {
+		orderedEntityRenderList.sort((a, b) -> Integer.compare(a.getRenderPriority(), b.getRenderPriority()));
 	}
 
 	public static <T> Tween<T> makeTween(TweenFunction<T> supplier, double durationSeconds, Consumer<T> updater) {
@@ -175,7 +184,9 @@ public class GameLoop {
 	public static void destroy(Entity entity) {
 		Objects.requireNonNull(entity);
 		entity.destroy();
-		entities.remove(entity);
+		if (entities.remove(entity) && orderedEntityRenderList.remove(entity)) {
+			sortOrderedEntityRenderList();
+		}
 	}
 
 	public static void safeDestroy(Entity entity) {
@@ -381,7 +392,15 @@ public class GameLoop {
 	}
 
 	private static void forEachEntitySafe(Consumer<Entity> action, boolean ignorePause) {
-		ListIterator<Entity> iter = entities.listIterator();
+		forEachSafe(entities, action, ignorePause);
+	}
+
+	private static void forEachEntitySafeUsingRenderPriorty(Consumer<Entity> action, boolean ignorePause) {
+		forEachSafe(orderedEntityRenderList, action, ignorePause);
+	}
+
+	private static void forEachSafe(List<Entity> list, Consumer<Entity> action, boolean ignorePause) {
+		ListIterator<Entity> iter = list.listIterator();
 		while (iter.hasNext()) {
 			Entity en = iter.next();
 			if (!ignorePause && !en.runWhilePaused && paused) continue;
@@ -411,7 +430,8 @@ public class GameLoop {
 		Raylib.BeginMode2D(mainCameraSystem.getPointer());
 		
 		// getEntitiesIterator().forEachRemaining(Entity::render);
-		forEachEntitySafe(Entity::render, true);
+		// forEachEntitySafe(Entity::render, true)
+		forEachEntitySafeUsingRenderPriorty(Entity::render, true);;
 		
 		Raylib.EndMode2D();
 		
