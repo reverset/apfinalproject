@@ -398,7 +398,7 @@ public class GameLoop {
 	
 	private static void frameUpdate() {
         // if (Raylib.IsKeyPressed(Raylib.KEY_P)) GameLoop.togglePause(); // for testing
-		if (!GameLoop.isPaused()) unpausedTime += Raylib.GetFrameTime();
+		if (!GameLoop.isPaused()) unpausedTime += Raylib.GetFrameTime() * GameLoop.timeScale;
 		if (Raylib.IsKeyPressed(Raylib.KEY_GRAVE)) consoleEnabled = !consoleEnabled;
 		forEachEntitySafe(Entity::frame, false);
 	}

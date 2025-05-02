@@ -63,7 +63,7 @@ public class Sigma extends Enemy {
                     .ifPresent(health -> {
                         health.damage(new DamageInfo(BASE_DAMAGE, other.entity, null).setAttacker(entity));
                 });
-                GameLoop.safeDestroy(entity);
+                health.kill();
             }
         });
     }
