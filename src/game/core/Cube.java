@@ -144,7 +144,7 @@ public class Cube extends Enemy {
     }
 
     private void altAttack() {
-        GameLoop.safeTrack(SeekingSquare.makeEntity(trans.position.clone(), Vec2.randomUnit().multiplyEq(1_000), effect.getLevel()));
+        GameLoop.safeTrack(Sigma.makeEntity(trans.position.clone(), Vec2.randomUnit().multiplyEq(1_000), effect.getLevel()));
     }
 
     private void attackTick(Transform plTrans) {

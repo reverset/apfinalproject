@@ -5,32 +5,37 @@ import java.util.Optional;
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
+import game.RayImage;
+import game.RayTexture;
 import game.Vec2;
 import game.core.rendering.Rect;
-import game.core.rendering.RectRender;
+import game.core.rendering.TextureRenderer;
 import game.ecs.comps.Transform;
 
-public class SeekingSquare extends Enemy {
+public class Sigma extends Enemy {
     private Optional<Player> playerComp = Optional.empty();
     private static final int BASE_HEALTH = 10;
     private static final int BASE_DAMAGE = 50;
+    private static final int WIDTH = 50;
+    private static final int HEIGHT = 50;
+
+    private static final RayTexture TEXTURE = new RayImage("resources/sigma.png", WIDTH, HEIGHT).uploadToGPU();
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, Vec2 velocity, int level) {
-        EntityOf<Enemy> entity = new EntityOf<>("Seeking Square", Enemy.class);
+        EntityOf<Enemy> entity = new EntityOf<>("Sigma", Enemy.class);
 
-        final int width = 50;
-        final int height = 50;
 
         entity
-            .addComponent(new Rect(width, height, Color.RED))
+            .addComponent(new Rect(WIDTH, HEIGHT, Color.RED))
             .addComponent(new Transform(position))
             .addComponent(new Health(BASE_HEALTH))
             .addComponent(new Tangible(velocity))
             .addComponent(new Effect().setLevel(level))
-            .register(new Physics(0, 0, new Vec2(-width/2, -height/2)))
-            .register(new RectRender().centerize())
-            .register(new HealthBar(new Vec2(-width, -height), entity.name))
-            .register(new SeekingSquare())
+            .register(new Physics(0, 0, new Vec2(-WIDTH/2, -HEIGHT/2)))
+            // .register(new RectRender().centerize())
+            .register(new TextureRenderer(TEXTURE))
+            .register(new HealthBar(new Vec2(-WIDTH, -HEIGHT), entity.name))
+            .register(new Sigma())
             .addTags(GameTags.ENEMY_TEAM_TAGS);
 
 
