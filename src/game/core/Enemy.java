@@ -17,7 +17,6 @@ import game.core.rendering.Rect;
 import game.core.rendering.RectRender;
 import game.core.rendering.ViewCuller;
 import game.ecs.ECSystem;
-import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
 // If I were to rewrite this, this class would be abstract or an interface, this is HORRIRBLE!!hjOIDWAUJ
@@ -39,8 +38,8 @@ public class Enemy extends ECSystem {
 
     Stopwatch movementStopwatch = Stopwatch.ofGameTime();
     
-    Optional<Entity> player;
-    Transform playerTransform;
+    // Optional<Entity> player;
+    // Transform playerTransform;
     Effect effect;
 
     private Vec2 desiredDirection = null;
@@ -91,10 +90,10 @@ public class Enemy extends ECSystem {
         health = require(Health.class);
         effect = require(Effect.class);
 
-        player = GameLoop.findEntityByTag(GameTags.PLAYER);
-        playerTransform = player
-            .flatMap(p -> p.getComponent(Transform.class))
-            .orElse(null);
+        // player = GameLoop.findEntityByTag(GameTags.PLAYER);
+        // playerTransform = player
+        //     .flatMap(p -> p.getComponent(Transform.class))
+        //     .orElse(null);
     }
 
     @Override
@@ -116,24 +115,29 @@ public class Enemy extends ECSystem {
             GameLoop.safeDestroy(entity);
             GameLoop.safeTrack(DestroyEffect.makeEntity(rect.dimensions(), trans.position.clone()));
             // GameLoop.safeTrack(HealingOrb.makeEntity(trans.position, 10 + (5 * (effect.getLevel()-1))));
-            player
-                .flatMap(en -> en.getSystem(Player.class))
-                .ifPresent(p -> p.getExpAccumulator().accumulate(10));
+            // player
+            //     .flatMap(en -> en.getSystem(Player.class))
+            //     .ifPresent(p -> p.getExpAccumulator().accumulate(10));
+
+            Team.getTeamByTagOf(entity).grantExp(10);
         }, entity);
     }
 
     @Override
     public void frame() {
-        if (playerTransform == null) return;
+        Team team = Team.getTeamByTagOf(entity);
+        final var ot = team.findTarget(trans.position);
+        if (ot.isEmpty()) return;
+        Target target = ot.get();
 
-        float distance = playerTransform.position.distance(trans.position);
+        float distance = target.trans().position.distance(trans.position);
         if (movementStopwatch.hasElapsedSecondsAdvance(timeOffset)) {
             float desiredSpeed = SPEED;
             if (distance > 500) desiredSpeed *= 2;
-            desiredDirection = trans.position.directionTo(playerTransform.position).multiplyEq(desiredSpeed);
+            desiredDirection = trans.position.directionTo(target.trans().position).multiplyEq(desiredSpeed);
         }
 
-        if (weapon.canFire() && BulletFactory.bullets.size() < 60) weapon.fire(trans.position, trans.position.directionTo(playerTransform.position), entity);
+        if (weapon.canFire() && BulletFactory.bullets.size() < 60) weapon.fire(trans.position, trans.position.directionTo(target.trans().position), entity);
 
         if (desiredDirection == null) return;
 

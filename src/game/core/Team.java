@@ -17,6 +17,10 @@ public abstract sealed class Team permits EnemyTeam, PlayerTeam {
         return null;
     }
 
+    public boolean isOnMyTeam(Entity other) {
+        return members.contains(other);
+    }
+
     public List<Entity> getMembers() {
         return members;
     }
@@ -42,4 +46,6 @@ public abstract sealed class Team permits EnemyTeam, PlayerTeam {
     public abstract Team getOpposingTeam();
     
     public abstract boolean shouldEntityBeTargetted(Entity target);
+
+    public abstract void grantExp(int xp);
 }

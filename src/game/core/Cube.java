@@ -35,8 +35,6 @@ public class Cube extends Enemy {
     private Shader shader;
     private Raylib.RenderTexture renderTexture = Raylib.LoadRenderTexture(TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
-    private Optional<Player> player;
-    private Optional<Transform> playerTransform;
     private Stopwatch movementTimer = Stopwatch.ofGameTime();
     private Duration nextMoveTime = Duration.ofMillis(2_000);
     private Tween<Vec2> movementTween;
@@ -51,8 +49,6 @@ public class Cube extends Enemy {
 
     private Stopwatch shieldEnableStopwatch = Stopwatch.ofGameTime();
     private Stopwatch shieldDisableStopwatch = Stopwatch.ofGameTime();
-
-    // private Stopwatch seekingSquareSpawnTimer = Stopwatch.ofGameTime();
 
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         EntityOf<Enemy> entity = new EntityOf<>("THE CUBE", Enemy.class);
@@ -101,15 +97,16 @@ public class Cube extends Enemy {
         shader = require(Shader.class);
         var postMortem = requireSystem(PostMortem.class);
         postMortem.addWill(i -> {
-            player
-                .ifPresent(p -> p.getExpAccumulator().accumulate(100));
+            Team.getTeamByTagOf(entity).grantExp(100);
+            // player
+            //     .ifPresent(p -> p.getExpAccumulator().accumulate(100));
         }).addWill(e -> GameLoop.defer(() -> Raylib.UnloadRenderTexture(renderTexture)));
         
         effect.addDamageRecievingResponse(info -> isShieldUp ? info.asHealing().damage() : info.damage());
 
-        var playerEntity = GameLoop.findEntityByTag(GameTags.PLAYER);
-        player = playerEntity.flatMap(entity -> entity.getSystem(Player.class));
-        playerTransform = playerEntity.flatMap(entity -> entity.getComponent(Transform.class));
+        // var playerEntity = GameLoop.findEntityByTag(GameTags.PLAYER);
+        // player = playerEntity.flatMap(entity -> entity.getSystem(Player.class));
+        // playerTransform = playerEntity.flatMap(entity -> entity.getComponent(Transform.class));
 
         weapon = new SimpleWeapon(
             BASE_DAMAGE, BULLET_SPEED, Color.RED, GameTags.ENEMY_TEAM_TAGS, BULLET_LIFETIME, BULLET_COOLDOWN_DURATION.toMillis()/1_000f, Optional.of(effect));
@@ -124,11 +121,14 @@ public class Cube extends Enemy {
 
     @Override
     public void infrequentUpdate() {
-        playerTransform.ifPresent(plTrans -> {
-            attackTick(plTrans);
-            movementTick(plTrans);
-            shieldTick();
-        });
+        Team team = Team.getTeamByTagOf(entity);
+        final var ot = team.findTarget(trans.position);
+        if (ot.isEmpty()) return;
+        Target target = ot.get();
+
+        attackTick(target.trans());
+        movementTick(target.trans());
+        shieldTick();
 
     }
 
@@ -173,7 +173,6 @@ public class Cube extends Enemy {
     }
 
     private void movementTick(Transform plTrans) {
-        if (player.isEmpty() || playerTransform.isEmpty()) return;
 
         var currentAngle = (trans.position.minus(plTrans.position)).getAngle();
         if (movementTimer.hasElapsedAdvance(nextMoveTime)) {

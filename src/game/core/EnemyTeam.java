@@ -6,7 +6,6 @@ import game.GameLoop;
 import game.Vec2;
 import game.ecs.Entity;
 
-// TODO, finish making enemies target using their Team rather than the player directly.
 public final class EnemyTeam extends Team {
     private static final EnemyTeam INSTANCE = new EnemyTeam();
 
@@ -20,6 +19,7 @@ public final class EnemyTeam extends Team {
         if (player.isEmpty()) {
             player = GameLoop.findEntityByTag(GameTags.PLAYER)
                 .map(Target::ofEntity);
+            player.get().entity().onDestroy.listenOnce(n -> player = Optional.empty());
         }
         return player;
     }
@@ -37,5 +37,12 @@ public final class EnemyTeam extends Team {
     @Override
     public boolean shouldEntityBeTargetted(Entity target) {
         return true;
+    }
+
+    @Override
+    public void grantExp(int xp) {
+        getPlayer().get().entity()
+            .getSystem(Player.class)
+            .ifPresent(p -> p.getExpAccumulator().accumulate(xp));
     }
 }

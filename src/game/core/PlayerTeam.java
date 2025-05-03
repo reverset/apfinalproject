@@ -3,6 +3,8 @@ package game.core;
 import java.util.List;
 import java.util.Optional;
 
+import com.raylib.Raylib.rAudioBuffer;
+
 import game.RecoverableException;
 import game.Vec2;
 import game.ecs.Entity;
@@ -41,4 +43,7 @@ public final class PlayerTeam extends Team {
             .filter(e -> e instanceof Cube cube && cube.isShieldActive())
             .isEmpty();
     }
+
+    @Override
+    public void grantExp(int xp) {}
 }

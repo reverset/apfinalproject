@@ -123,16 +123,18 @@ public class HexagonWorm extends Enemy {
         stateChange.start();
         healingStopwatch.start();
 
-        player = GameLoop.findEntityByTag(GameTags.PLAYER);
-        player.ifPresent(p -> {
-            playerTransform = p.getComponent(Transform.class).orElseThrow();
-        });
+        // player = GameLoop.findEntityByTag(GameTags.PLAYER);
+        // player.ifPresent(p -> {
+        //     playerTransform = p.getComponent(Transform.class).orElseThrow();
+        // });
 
         health.onDeath.listen(n -> {
-            player.ifPresent(en -> {
-                var p = en.getSystem(Player.class).orElseThrow();
-                p.getExpAccumulator().accumulate(XP_AWARD);
-            });
+            // player.ifPresent(en -> {
+            //     var p = en.getSystem(Player.class).orElseThrow();
+            //     p.getExpAccumulator().accumulate(XP_AWARD);
+            // });
+            Team.getTeamByTagOf(entity).grantExp(XP_AWARD);
+
             GameLoop.safeDestroy(entity);
 
             for (int i = 0; i < parts.length; i++) {
@@ -169,14 +171,18 @@ public class HexagonWorm extends Enemy {
 
     @Override
     public void frame() {
-        if (playerTransform == null) return;
+        // if (playerTransform == null) return;
+        Team team = Team.getTeamByTagOf(entity);
+        final var ot = team.findTarget(trans.position);
+        if (ot.isEmpty()) return;
+        Target target = ot.get();
         
         float speedCoeff = state == State.CIRCLING ? 1 : 12;
         float timeCoeff = 2;
 
         Vec2 offset = Vec2.fromAngle(time()*timeCoeff).multiplyEq(state == State.CIRCLING ? CIRCLING_DISTANCE : FAR_CIRCLING_DISTANCE);
 
-        Vec2 direction = trans.position.directionTo(playerTransform.position.add(offset)).multiply(SPEED*speedCoeff);
+        Vec2 direction = trans.position.directionTo(target.trans().position.add(offset)).multiply(SPEED*speedCoeff);
         tangible.velocity.moveTowardsEq(direction, 1000*delta());
         
         trans.rotation = (float) Math.toDegrees(tangible.velocity.getAngle());
@@ -184,7 +190,11 @@ public class HexagonWorm extends Enemy {
 
     @Override
     public void infrequentUpdate() {
-        if (playerTransform == null) return;
+        // if (playerTransform == null) return;
+        Team team = Team.getTeamByTagOf(entity);
+        final var ot = team.findTarget(trans.position);
+        if (ot.isEmpty()) return;
+        Target target = ot.get();
 
         if (stateChange.hasElapsedSecondsAdvance(STATE_CHANGE_TIME)) {
             state = MoreMath.pickRandomEnumeration(State.class);
@@ -192,7 +202,7 @@ public class HexagonWorm extends Enemy {
 
         if (state == State.FAR_CIRCLING) {
             if (skyLasers.get(0).canFire()) {
-                Vec2 pos = playerTransform.position.clone();
+                Vec2 pos = target.trans().position.clone();
                 // pos.x += Player.SIZE*0.5f;
 
                 for (int i = 0; i < skyLasers.size(); i++) {
@@ -203,7 +213,7 @@ public class HexagonWorm extends Enemy {
             }
         }
 
-        if (weapon.canFire()) weapon.fire(trans.position.clone(), trans.position.directionTo(playerTransform.position), entity);
+        if (weapon.canFire()) weapon.fire(trans.position.clone(), trans.position.directionTo(target.trans().position), entity);
 
         if (health.getHealthPercentage() < HEALING_THRESHOLD && healingStopwatch.hasElapsedSecondsAdvance(HEALING_COOLDOWN)) {
             // health.heal(HEAL_AMOUNT);

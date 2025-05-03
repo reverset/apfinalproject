@@ -13,7 +13,6 @@ import game.core.rendering.TextureRenderer;
 import game.ecs.comps.Transform;
 
 public class Sigma extends Enemy {
-    private Optional<Player> playerComp = Optional.empty();
     private static final int BASE_HEALTH = 10;
     private static final int BASE_DAMAGE = 50;
     private static final int WIDTH = 50;
@@ -52,13 +51,14 @@ public class Sigma extends Enemy {
 
     @Override
     public void ready() {
-        playerComp = player.flatMap(p -> p.getSystem(Player.class));
+        // playerComp = player.flatMap(p -> p.getSystem(Player.class));
         health.onDeath.listen(e -> {
             GameLoop.safeDestroy(entity);
+            Team.getTeamByTagOf(entity).grantExp(10);
         }, entity);
 
         tangible.onCollision.listen(other -> {
-            if (other.entity == player.orElse(null)) {
+            if (!Team.getTeamByTagOf(entity).isOnMyTeam(other.entity)) {
                 other.entity
                     .getComponent(Health.class)
                     .ifPresent(health -> {
@@ -71,16 +71,24 @@ public class Sigma extends Enemy {
 
     @Override
     public void infrequentUpdate() {
-        if (playerTransform == null || player.isEmpty()) return;
+        // if (playerTransform == null || player.isEmpty()) return;
+        Team team = Team.getTeamByTagOf(entity);
+        final var ot = team.findTarget(trans.position);
+        if (ot.isEmpty()) return;
+        Target target = ot.get();
 
-        tangible.velocity.moveTowardsEq(trans.position.directionTo(playerTransform.position).multiplyEq(1000), 1000*infreqDelta());
+        tangible.velocity.moveTowardsEq(trans.position.directionTo(target.trans().position).multiplyEq(1000), 1000*infreqDelta());
     }
 
     @Override
     public void frame() {
-        if (playerTransform == null || player.isEmpty()) return;
+        // if (playerTransform == null || player.isEmpty()) return;
+        Team team = Team.getTeamByTagOf(entity);
+        final var ot = team.findTarget(trans.position);
+        if (ot.isEmpty()) return;
+        Target target = ot.get();
 
-        float angle = -trans.position.directionTo(playerTransform.position).getAngleDegrees();
+        float angle = -trans.position.directionTo(target.trans().position).getAngleDegrees();
         trans.rotation = angle;
     }
 }

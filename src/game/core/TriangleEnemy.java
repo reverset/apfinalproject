@@ -29,8 +29,6 @@ public class TriangleEnemy extends Enemy {
     Color rayColor = new Color(255, 140, 0, 0);
     boolean freezeRotation = false;
 
-    Tangible playerTangible;
-
     public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
         // Supplier<Float> timeSupplier = ECSystem::time; // ????
         EntityOf<Enemy> entity = new EntityOf<>("Triangle", Enemy.class);
@@ -64,11 +62,11 @@ public class TriangleEnemy extends Enemy {
 
     @Override
     public void setup() {
-        player = GameLoop.findEntityByTag(GameTags.PLAYER);
-        player.ifPresent(p -> {
-            playerTransform = p.getComponent(Transform.class).orElseThrow();
-            playerTangible = p.getComponent(Tangible.class).orElseThrow();
-        });
+        // player = GameLoop.findEntityByTag(GameTags.PLAYER);
+        // player.ifPresent(p -> {
+        //     playerTransform = p.getComponent(Transform.class).orElseThrow();
+        //     playerTangible = p.getComponent(Tangible.class).orElseThrow();
+        // });
 
         trans = require(Transform.class);
         tangible = require(Tangible.class);
@@ -84,9 +82,11 @@ public class TriangleEnemy extends Enemy {
     public void ready() {
         health.onDeath.listen(n -> {
             GameLoop.safeDestroy(entity);
-            player
-                .flatMap(en -> en.getSystem(Player.class))
-                .ifPresent(p -> p.getExpAccumulator().accumulate(10));
+            // player
+            //     .flatMap(en -> en.getSystem(Player.class))
+            //     .ifPresent(p -> p.getExpAccumulator().accumulate(10));
+            Team.getTeamByTagOf(entity).grantExp(10);
+
         }, entity);
     }
 
@@ -113,9 +113,14 @@ public class TriangleEnemy extends Enemy {
     @Override
     public void infrequentUpdate() {
         if (freezeRotation) return;
-        if (playerTransform == null || playerTangible == null) return;
+        // if (playerTransform == null || playerTangible == null) return;
+        Team team = Team.getTeamByTagOf(entity);
+        final var ot = team.findTarget(trans.position);
+        if (ot.isEmpty()) return;
+        Target target = ot.get();
+        if (target.physics().isEmpty()) return;
 
-        Vec2 pos = playerTransform.position.add(playerTangible.velocity.divide(2));
+        Vec2 pos = target.trans().position.add(target.physics().get().getTangible().velocity.divide(2));
         Vec2 dir = trans.position.directionTo(pos);
         trans.rotation = (float) -Math.toDegrees(dir.getAngle()) - 90; // why does raylib use degrees :(
     }

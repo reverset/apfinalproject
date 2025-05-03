@@ -85,10 +85,10 @@ public class CircleEnemy extends Enemy {
         int level = effect.getLevel();
         health.setMaxHealthAndHealth(BASE_HEALTH + ((int) Math.ceil((level-1)/9) * 50));
 
-        player = GameLoop.findEntityByTag(GameTags.PLAYER);
-        player.ifPresent(p -> {
-            playerTransform = p.getComponent(Transform.class).orElseThrow();
-        });
+        // player = GameLoop.findEntityByTag(GameTags.PLAYER);
+        // player.ifPresent(p -> {
+        //     playerTransform = p.getComponent(Transform.class).orElseThrow();
+        // });
 
         weapon = new NovaWeapon(BASE_DAMAGE, DEGREE_PER_BULLET, BULLET_SPEED, Color.PINK, GameTags.ENEMY_TEAM_TAGS, WEAPON_COOLDOWN, BULLET_LIFETIME, Optional.of(effect));
         deathWeapon = new NovaWeapon(BASE_DEATH_DAMAGE, DEGREE_PER_DEATH_BULLET, DEATH_BULLET_SPEED, Color.PINK, GameTags.NONE, WEAPON_COOLDOWN, DEATH_BULLET_LIFETIME, Optional.of(effect));
@@ -99,26 +99,35 @@ public class CircleEnemy extends Enemy {
         health.onDeath.listen(n -> {
             deathWeapon.forceFire(trans.position, null, entity);
             GameLoop.safeDestroy(entity);
-            player
-                .flatMap(en -> en.getSystem(Player.class))
-                .ifPresent(p -> p.getExpAccumulator().accumulate(10));
+            // player
+            //     .flatMap(en -> en.getSystem(Player.class))
+            //     .ifPresent(p -> p.getExpAccumulator().accumulate(10));
+            Team.getTeamByTagOf(entity).grantExp(10);
+
         }, entity);
     }
 
     @Override
     public void frame() {
-        if (playerTransform == null) return;
+        // if (playerTransform == null) return;
+        Team team = Team.getTeamByTagOf(entity); // Kind of verbose...
+        final var ot = team.findTarget(trans.position);
+        if (ot.isEmpty()) return;
+        Target target = ot.get();
 
         if (movementStopwatch.hasElapsedSecondsAdvance(MOVE_DELAY)) {
-            desiredPosition = playerTransform.position.add(Vec2.randomUnit().multiply(50));
+            desiredPosition = target.trans().position.add(Vec2.randomUnit().multiply(50));
         }
     }
     
     @Override
     public void infrequentUpdate() {
-        if (playerTransform == null) return;
+        Team team = Team.getTeamByTagOf(entity);
+        final var ot = team.findTarget(trans.position);
+        if (ot.isEmpty()) return;
+        Target target = ot.get();
         
-        float dist = trans.position.distance(playerTransform.position);
+        float dist = trans.position.distance(target.trans().position);
         if (dist < 100 && weapon.canFire()) weapon.fire(trans.position, null, entity);
 
         if (desiredPosition == null) return;
