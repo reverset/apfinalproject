@@ -34,7 +34,7 @@ public class DamageOverTime extends Powerup {
         final int chunks = desiredChunks;
 
         for (int i = 0; i < (int) (1 / getPercent()); i++) {
-            GameLoop.runAfter(entity, Duration.ofMillis(DAMAGE_INTERVAL_MILLIS * (i+1)), () -> {
+            GameLoop.runAfterGameTime(entity, Duration.ofMillis(DAMAGE_INTERVAL_MILLIS * (i+1)), () -> {
                 info.victim().getComponent(Health.class).ifPresent(health -> {
                     GameLoop.defer(() -> {
                         Optional<Vec2> pos = info.victim()

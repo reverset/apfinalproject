@@ -67,7 +67,7 @@ public class Player extends ECSystem implements Controllable {
         Effect effect = new Effect().setLevel(1);
 
         Entity entity = new Entity("Player");
-        effect.addDamageScaling(info -> effect.getLevel() * info.damage());
+        effect.addDamageScaling(info -> effect.getLevel() * info.damage() + (int)(Math.pow(1.5, effect.getLevel())));
         
         entity
             .addComponent(new Transform())

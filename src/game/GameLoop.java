@@ -227,9 +227,9 @@ public class GameLoop {
 		scheduledActions.add(action);
 	}
 
-	public static void runAfter(Entity entity, Duration duration, Runnable action) {
+	public static void runAfter(Entity entity, Duration duration, DoubleSupplier timeSupp, Runnable action) {
 		Objects.requireNonNull(action);
-		Stopwatch stopwatch = Stopwatch.ofRealTime();
+		Stopwatch stopwatch = new Stopwatch(timeSupp);
 		var toSchedule = new ScheduledAction(entity, List.of(
 			() -> stopwatch.hasElapsed(duration),
 			() -> {
@@ -240,6 +240,14 @@ public class GameLoop {
 		
 		stopwatch.start();
 		GameLoop.schedule(toSchedule);
+	}
+
+	public static void runAfter(Entity entity, Duration duration, Runnable action) {
+		runAfter(entity, duration, Raylib::GetTime, action);
+	}
+
+	public static void runAfterGameTime(Entity entity, Duration duration, Runnable action) {
+		runAfter(entity, duration, GameLoop::getUnpausedTime, action);
 	}
 
 	public static void clearAllEntitiesNow() {
