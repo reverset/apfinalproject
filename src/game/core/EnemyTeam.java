@@ -19,7 +19,7 @@ public final class EnemyTeam extends Team {
         if (player.isEmpty()) {
             player = GameLoop.findEntityByTag(GameTags.PLAYER)
                 .map(Target::ofEntity);
-            player.get().entity().onDestroy.listenOnce(n -> player = Optional.empty());
+            if (player.isPresent()) player.get().entity().onDestroy.listenOnce(n -> player = Optional.empty());
         }
         return player;
     }

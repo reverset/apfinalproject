@@ -6,6 +6,7 @@ public class Blahaj extends ECSystem {
 
     @Override
     public void setup() {
+        
     }
     
 }
