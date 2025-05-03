@@ -25,7 +25,7 @@ public class SquiggyPowerup extends Powerup {
     }
 
     @Override
-    public void levelUp() {
+    public void doLevelUp() {
         level += 1;
         squiggy.getMainSystem().setLevel(level);
     }

@@ -146,6 +146,9 @@ public class Player extends ECSystem implements Controllable {
 
         effect.onLevelUp.listen(n -> {
             health.setMaxHealth(health.getMaxHealth() + HEALTH_BONUS_LEVEL_AMOUNT);
+
+            // level up all powerups every 5 levels.
+            if (n % 5 == 0) effect.getPowerups().forEach(Powerup::levelUp);
         }, entity);
 
         entity.setRenderPriority(100);

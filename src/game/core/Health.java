@@ -103,7 +103,7 @@ public class Health implements Component {
         if (showNumbers) {
             final DamageInfo i = inf; // for the closure.
             inf.position().ifPresent(pos -> {
-                GameLoop.safeTrack(DamageNumber.makeEntity(pos, i.absoluteDamageOrHeal(), i.damageColor()));
+                GameLoop.safeTrack(DamageNumber.makeEntity(pos, i.absoluteDamageOrHeal(), getMaxHealth(), i.damageColor()));
             });
         }
         return inf;

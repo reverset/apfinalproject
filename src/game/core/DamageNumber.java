@@ -20,30 +20,32 @@ public class DamageNumber extends ECSystem {
 
     public static final int BASE_POPPED_FONT_SIZE = 54;
 
-    int value;
-    Color color;
+    private int value;
+    private int maxHealth;
+    private Color color;
 
-    Text text = new Text("", null, value, color);
-    Transform trans;
+    private Text text = new Text("", null, value, color);
+    private Transform trans;
 
-    TweenAnimation animation;
+    private TweenAnimation animation;
 
-    Vec2 velocity;
+    private Vec2 velocity;
 
-    public DamageNumber(int value, Color color) {
+    public DamageNumber(int value, Color color, int maxHealth) {
         this.value = value;
         this.color = color;
+        this.maxHealth = maxHealth;
 
         velocity = Vec2.randomUnit().multiplyEq(100);
     }
 
-    public static EntityOf<DamageNumber> makeEntity(Vec2 pos, int value, Color color) {
+    public static EntityOf<DamageNumber> makeEntity(Vec2 pos, int value, int maxHealth, Color color) {
         EntityOf<DamageNumber> entity = new EntityOf<>("DMG Num", DamageNumber.class);
 
         entity
             .addComponent(new Transform(pos))
             .register(new RemoveAfter(DURATION))
-            .register(new DamageNumber(value, color));
+            .register(new DamageNumber(value, color, maxHealth));
 
         return entity;
     }
@@ -56,7 +58,7 @@ public class DamageNumber extends ECSystem {
         text.color = color;
         text.text = String.format("%,d", value);
         
-        int desiredPoppedSize = Math.min(BASE_POPPED_FONT_SIZE + value, 248);
+        int desiredPoppedSize = Math.min((int)(BASE_POPPED_FONT_SIZE + 300 * (value / (float)maxHealth)), 200);
         
         int orig = text.fontSize;
         text.fontSize = desiredPoppedSize;

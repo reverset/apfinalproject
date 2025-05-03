@@ -59,7 +59,7 @@ public class Diamond extends Powerup { // Currently does not grant XP!
     }
 
     @Override
-    public void levelUp() {
+    public void doLevelUp() {
         level += 1;
     }
 

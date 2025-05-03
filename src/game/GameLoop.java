@@ -145,6 +145,7 @@ public class GameLoop {
 		return entity;
 	}
 
+	// potential performance bug, consider inserting into this list in an ordered way rather than sorting it each time.
 	private static void sortOrderedEntityRenderList() {
 		orderedEntityRenderList.sort((a, b) -> Integer.compare(a.getRenderPriority(), b.getRenderPriority()));
 	}

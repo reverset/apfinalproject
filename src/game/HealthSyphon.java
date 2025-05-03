@@ -49,7 +49,7 @@ public class HealthSyphon extends Powerup {
     }
 
     @Override
-    public void levelUp() {
+    public void doLevelUp() {
         level += 1;
     }
 

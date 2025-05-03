@@ -192,7 +192,7 @@ public class HexagonWorm extends Enemy {
         if (state == State.FAR_CIRCLING) {
             if (skyLasers.get(0).canFire()) {
                 Vec2 pos = playerTransform.position.clone();
-                pos.x += Player.SIZE*0.5f;
+                // pos.x += Player.SIZE*0.5f;
 
                 for (int i = 0; i < skyLasers.size(); i++) {
                     LaserWeapon laser = skyLasers.get(i);

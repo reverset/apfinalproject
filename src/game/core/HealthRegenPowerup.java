@@ -50,7 +50,7 @@ public class HealthRegenPowerup extends Powerup {
     }
 
     @Override
-    public void levelUp() {
+    public void doLevelUp() {
         System.out.println("Health regen level up.");
         level += 1;
     }

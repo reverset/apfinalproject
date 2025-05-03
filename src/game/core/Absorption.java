@@ -3,7 +3,6 @@ package game.core;
 import game.ecs.Entity;
 
 public class Absorption extends Powerup {
-    // currently absorption applies before AND after decay, consider tweaking this TODO.
     public Absorption(Entity entity, Weapon2 weapon, Effect effect, int level) {
         super(entity, weapon, effect, level);
     }
@@ -18,16 +17,16 @@ public class Absorption extends Powerup {
     private int calculateDamage(DamageInfo info) {
         if (Math.random() < getRandomChance()) return 0;
 
-        return (int) (info.damage() * (1 - getPercentage()));
+        return Math.max((int) (info.damage() * (1 - getPercentage())), 1);
     }
 
     @Override
     public int getMaxLevel() {
-        return 100;
+        return 9;
     }
 
     @Override
-    public void levelUp() {
+    public void doLevelUp() {
         level += 1;
     }
 

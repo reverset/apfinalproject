@@ -127,7 +127,6 @@ public class Effect implements Component {
         Optional<T> power = getPowerUp(clazz);
 
         power.ifPresent(p -> {
-            if (p.level >= p.getMaxLevel()) return;
             p.levelUp();
         });
 

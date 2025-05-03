@@ -22,7 +22,11 @@ public abstract class Powerup extends ECSystem {
     }
 
     public abstract int getMaxLevel();
-    public abstract void levelUp();
+    protected abstract void doLevelUp();
+    
+    public void levelUp() {
+        if (level < getMaxLevel()) doLevelUp();
+    }
 
     public abstract String getName();
     public abstract String getDescription();

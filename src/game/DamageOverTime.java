@@ -18,7 +18,7 @@ public class DamageOverTime extends Powerup {
 
     public DamageOverTime(Entity entity, Weapon2 weapon, Effect effect, int level) {
         super(entity, weapon, effect, level);
-        setPriority(-1);
+        setPriority(10);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class DamageOverTime extends Powerup {
     }
 
     @Override
-    public void levelUp() {
+    public void doLevelUp() {
         level += 1;
     }
 

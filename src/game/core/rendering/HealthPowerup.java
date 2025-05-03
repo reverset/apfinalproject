@@ -33,7 +33,7 @@ public class HealthPowerup extends Powerup {
     }
 
     @Override
-    public void levelUp() {
+    public void doLevelUp() {
         health.setMaxHealth(health.getMaxHealth() + HEALTH_BONUS);
     }
 
