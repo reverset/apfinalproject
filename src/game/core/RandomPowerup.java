@@ -34,7 +34,8 @@ public class RandomPowerup {
             () -> new HealthRegenPowerup(null, null, null, 0),
             () -> new DamageOverTime(null, null, null, 0),
             () -> new SquiggyPowerup(null, null, null, 0),
-            () -> new Absorption(null, null, null, 0)
+            () -> new Absorption(null, null, null, 0),
+            () -> new BlahajPowerup(null, null, null, 0)
         );
 
         ArrayList<Powerup> select = new ArrayList<>();

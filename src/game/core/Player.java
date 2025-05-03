@@ -360,6 +360,10 @@ public class Player extends ECSystem implements Controllable {
         Raylib.DrawText("Resources: " + GameLoop.getResourceManager().countLoadedResources(), 15, 148, 24, Color.WHITE.getPointer());
     }
 
+    public Transform getTransform() {
+        return trans;
+    }
+
     public void warningNotif(String message) {
         warningText.text = message;
         warningNotifVisible = true;

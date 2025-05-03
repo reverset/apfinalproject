@@ -15,6 +15,7 @@ public class TextureRenderer extends ECSystem {
     private Transform trans;
     private Vec2 centeredPosition = new Vec2();
     private boolean enabled = true;
+    private boolean flipped = false;
 
     public TextureRenderer(String path) {
         this(new RayImage(path).uploadToGPU());
@@ -22,6 +23,15 @@ public class TextureRenderer extends ECSystem {
 
     public TextureRenderer(RayTexture texture) {
         this.texture = texture;
+    }
+
+    public boolean isFlipped() {
+        return flipped;
+    }
+
+    public TextureRenderer setFlipped(boolean flipped) {
+        this.flipped = flipped;
+        return this;
     }
 
     public boolean isEnabled() {
@@ -48,7 +58,7 @@ public class TextureRenderer extends ECSystem {
         centeredPosition.x = trans.position.x - texture.width()/2;
         centeredPosition.y = trans.position.y - texture.height()/2;
         
-        texture.render(centeredPosition, trans.rotation, Color.WHITE);
+        texture.render(centeredPosition, trans.rotation, flipped, false, Color.WHITE);
     }
     
 }
