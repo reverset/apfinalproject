@@ -35,7 +35,7 @@ fn check_javaw() -> bool {
 fn main() {
     if check_game_jar() && check_javaw() {
         Command::new(JAVAW_PATH)
-            .args(["-jar", GAME_JAR_PATH])
+            .args(["-XX:+UseZGC", "-XX:+ZGenerational", "-Xmx1g", "-Xms1g", "-XX:+AlwaysPreTouch", "-XX:-ZUncommit", "-jar", GAME_JAR_PATH])
             .spawn().expect("failed to launch game.");
     }
 
