@@ -296,8 +296,8 @@ public class Player extends ECSystem implements Controllable {
 
         
         // Friction
-        if (MoreMath.isApprox(moveVector.x, 0)) tangible.velocity.x = MoreMath.moveTowards(tangible.velocity.x, 0, 1500 * delta());
-        if (MoreMath.isApprox(moveVector.y, 0)) tangible.velocity.y = MoreMath.moveTowards(tangible.velocity.y, 0, 1500 * delta());
+        if (MoreMath.isApprox(moveVector.x, 0)) tangible.velocity.x = MoreMath.moveTowards(tangible.velocity.x, 0, 2000 * delta());
+        if (MoreMath.isApprox(moveVector.y, 0)) tangible.velocity.y = MoreMath.moveTowards(tangible.velocity.y, 0, 2000 * delta());
         // tangible.velocity.clampEq(Vec2.one().multiply(100));
 
         GameLoop.getMainCamera().trans.position.lerpEq(trans.position, 2*delta());
