@@ -71,7 +71,7 @@ public class HexagonWorm extends Enemy {
             return d.setDamageAndColor(headshot ? d.damage()*2 : d.damage(), headshot ? DamageColor.CRITICAL : DamageColor.NORMAL);
         });
 
-        effect.addDamageScaling(info -> info.damage() * (Math.max(1, effect.getLevel()/6)));
+        effect.addDamageScaling(info -> info.damage() * Math.max(1, effect.getLevel()/4));
 
         Supplier<Float> timeSupplier = () -> time()*10;
         entity
@@ -139,7 +139,6 @@ public class HexagonWorm extends Enemy {
 
             for (int i = 0; i < parts.length; i++) {
                 GameLoop.safeDestroy(parts[i]);
-                GameLoop.safeTrack(HealingOrb.makeEntity(trans.position.add(Vec2.randomUnit().multiplyEq(50)), BASE_DEATH_HEALING));
             }
             
             GameLoop.defer(() -> {

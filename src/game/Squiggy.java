@@ -133,7 +133,7 @@ public class Squiggy extends ECSystem {
 
     @Override
     public void frame() {
-        trans.rotation = (tangible.velocity.x / MAX_SPEED) * 8;
+        trans.rotation = (tangible.velocity.x / MAX_SPEED) * 12;
     }
 
     @Override

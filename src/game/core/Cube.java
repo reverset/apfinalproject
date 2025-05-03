@@ -94,6 +94,8 @@ public class Cube extends Enemy {
         health = require(Health.class);
         effect = require(Effect.class);
 
+        health.setMaxHealthAndHealth(BASE_HEALTH * Math.max(1, effect.getLevel()/4));
+
         shader = require(Shader.class);
         var postMortem = requireSystem(PostMortem.class);
         postMortem.addWill(i -> {
@@ -103,6 +105,7 @@ public class Cube extends Enemy {
         }).addWill(e -> GameLoop.defer(() -> Raylib.UnloadRenderTexture(renderTexture)));
         
         effect.addDamageRecievingResponse(info -> isShieldUp ? info.asHealing().damage() : info.damage());
+        effect.addDamageScaling(info -> info.damage() * effect.getLevel()/10);
 
         // var playerEntity = GameLoop.findEntityByTag(GameTags.PLAYER);
         // player = playerEntity.flatMap(entity -> entity.getSystem(Player.class));

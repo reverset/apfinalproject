@@ -22,7 +22,7 @@ public class Absorption extends Powerup {
 
     @Override
     public int getMaxLevel() {
-        return 6;
+        return 4;
     }
 
     @Override

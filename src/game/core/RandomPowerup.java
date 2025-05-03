@@ -11,6 +11,7 @@ import game.Color;
 import game.DamageOverTime;
 import game.GameLoop;
 import game.HealthSyphon;
+import game.RecoverableException;
 import game.Text;
 import game.Tween;
 import game.Vec2;
@@ -22,11 +23,9 @@ import game.ecs.comps.Transform;
 
 public class RandomPowerup {
     public static void showScreen() {
-        if (GameLoop.findEntityByTag(GameTags.PLAYER).isEmpty()) return; // player died do not show screen.
-
-        GameLoop.pause();
-        Text text = new Text("SELECT A POWERUP", Vec2.screenCenter().addEq(0, -200), 54, Color.WHITE).center();
-        GameLoop.track(Text.makeEntity(text).addTags("powerupselect"));
+        final var player = GameLoop.findEntityByTag(GameTags.PLAYER);
+        if (player.isEmpty()) return; // player died do not show screen.
+        final var playerC = player.get().getComponent(Effect.class).orElseThrow(() -> new RecoverableException("Player is missing Effect."));
 
         final var powerups = List.<Supplier<Powerup>>of(
             () -> new Diamond(null, null, null, 0),
@@ -37,15 +36,26 @@ public class RandomPowerup {
             () -> new Absorption(null, null, null, 0),
             () -> new BlahajPowerup(null, null, null, 0)
         );
-
+            
         ArrayList<Powerup> select = new ArrayList<>();
         for (final var pow : powerups) {
+            final var playerPow = playerC.getPowerUp(pow.get().getClass());
+            
+            // skip powerups already at max level;
+            if (playerPow.isPresent() && !playerPow.get().canLevelUp()) continue;
+            
             select.add(pow.get());
         }
 
+        if (select.size() == 0) return; // All powerups at max level;
+
+        GameLoop.pause();
+        Text text = new Text("SELECT A POWERUP", Vec2.screenCenter().addEq(0, -200), 54, Color.WHITE).center();
+        GameLoop.track(Text.makeEntity(text).addTags("powerupselect"));
+            
         GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), select.remove((int) (Math.random()*select.size()))));
-        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), select.remove((int) (Math.random()*select.size()))));
-        GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(-400, 0), select.remove((int) (Math.random()*select.size()))));
+        if (select.size() > 0) GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), select.remove((int) (Math.random()*select.size()))));
+        if (select.size() > 0) GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(-400, 0), select.remove((int) (Math.random()*select.size()))));
 
 
         // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), new Diamond(null, null, null, 0)));

@@ -102,6 +102,7 @@ public class Blahaj extends ECSystem {
         effect = require(Effect.class);
         tangible = require(Tangible.class);
         textureRenderer = requireSystem(TextureRenderer.class);
+        trans.position = player.getTransform().position.clone();
 
         effect.addDamageScaling(info -> info.damage() * effect.getLevel());
 
@@ -113,6 +114,9 @@ public class Blahaj extends ECSystem {
         if (desiredPosition.isEmpty()) return;
 
         textureRenderer.setFlipped(trans.position.minus(desiredPosition.get()).x < 0);
+
+        trans.rotation = (tangible.velocity.y / MAX_SPEED) * 12;
+        trans.rotation *= textureRenderer.isFlipped() ? 1 : -1;
     }
 
     @Override
@@ -127,13 +131,20 @@ public class Blahaj extends ECSystem {
                 setAttacking();
             }
         } else if (target.isPresent() && !team.shouldEntityBeTargetted(target.get().entity())) setFollowing();
+        else if (target.isPresent() && target.get().trans().position.distance(player.getTransform().position) > 1_000) setFollowing();
 
         switch (state) {
             case FOLLOWING, HEALING -> {
                 desiredPosition = Optional.of(getDesiredPlayerFollowPosition());
+
+                int hp = 10 * effect.getLevel();
                 if (state == State.HEALING) {
                     if (healStopwatch.hasElapsedAdvance(Duration.ofSeconds(1))) {
-                        GameLoop.safeTrack(HealingOrb.makeEntity(trans.position.clone(), 10));
+                        GameLoop.safeTrack(HealingOrb.makeEntity(trans.position.clone(), hp));
+                    }
+                } else {
+                    if (healStopwatch.hasElapsedAdvance(Duration.ofSeconds(4))) {
+                        GameLoop.safeTrack(HealingOrb.makeEntity(trans.position.clone(), hp));
                     }
                 }
             }
