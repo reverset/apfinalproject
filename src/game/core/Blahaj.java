@@ -162,7 +162,7 @@ public class Blahaj extends ECSystem {
                         final var dmg = effect.computeDamage(
                             new DamageInfo(BASE_DAMAGE, target.get().entity(), null, trans.position.clone())
                                 .setAttacker(entity)
-                                .setColor(DamageColor.SPECIAL));
+                                .setColor(DamageColor.MELEE));
                         target.get().health().ifPresent(h -> h.damage(dmg));
                     }
                 }
