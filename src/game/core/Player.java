@@ -67,7 +67,7 @@ public class Player extends ECSystem implements Controllable {
         Effect effect = new Effect().setLevel(1);
 
         Entity entity = new Entity("Player");
-        effect.addDamageScaling(info -> effect.getLevel() * info.damage() + (int)(Math.pow(1.5, effect.getLevel())));
+        effect.addDamageScaling(info -> effect.getLevel() * info.damage() + (int)(Math.pow(1.1, effect.getLevel())));
         
         entity
             .addComponent(new Transform())
@@ -358,6 +358,7 @@ public class Player extends ECSystem implements Controllable {
         Raylib.DrawText("Speed: " + tangible.velocity.magnitude(), 15, 102, 24, Color.WHITE.getPointer());
         Raylib.DrawText("Bullets: " + BulletFactory.bullets.size(), 15, 124, 24, Color.WHITE.getPointer());
         Raylib.DrawText("Resources: " + GameLoop.getResourceManager().countLoadedResources(), 15, 148, 24, Color.WHITE.getPointer());
+        Raylib.DrawText("Position: " + trans.position, 15, 172, 24, Color.WHITE.getPointer());
     }
 
     public Transform getTransform() {

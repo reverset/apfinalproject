@@ -1,12 +1,15 @@
 package game.core;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import game.Color;
 import game.EntityOf;
+import game.GameLoop;
 import game.RayImage;
 import game.RayTexture;
 import game.RecoverableException;
+import game.Stopwatch;
 import game.Vec2;
 import game.core.rendering.Rect;
 import game.core.rendering.TextureRenderer;
@@ -16,12 +19,22 @@ import game.ecs.comps.Transform;
 
 public class Blahaj extends ECSystem {
 
+    public enum State {
+        FOLLOWING,
+        HEALING,
+        ATTACKING
+    }
+
     private static final int WIDTH = 100;
     private static final int HEIGHT = 52;
+    private static final int MAX_SPEED = 300;
+    private static final float BITE_DISTANCE = 10;
+    private static final int BASE_DAMAGE = 30;
 
     private static final RayTexture TEXTURE = new RayImage("resources/blahaj.png", WIDTH, HEIGHT).uploadToGPU();
 
     private Transform trans;
+    private Tangible tangible;
     private Effect effect;
 
     private Optional<Vec2> desiredPosition = Optional.empty();
@@ -29,6 +42,11 @@ public class Blahaj extends ECSystem {
     private TextureRenderer textureRenderer;
 
     private Player player;
+    private Optional<Target> target = Optional.empty();
+    private State state = State.FOLLOWING;
+
+    private Stopwatch biteStopwatch = Stopwatch.ofGameTime();
+    private Stopwatch healStopwatch = Stopwatch.ofGameTime();
 
     public static EntityOf<Blahaj> makeEntity(Entity player, int level) {
         EntityOf<Blahaj> e = new EntityOf<>("Blahaj", Blahaj.class);
@@ -51,6 +69,29 @@ public class Blahaj extends ECSystem {
         this.player = player.getSystem(Player.class).orElseThrow(() -> new RecoverableException("Player is missing player system!"));
     }
 
+    public State getState() {
+        return state;
+    }
+
+    public void setAttacking() {
+        state = State.ATTACKING;
+    }
+
+    public void attack(Target target) {
+        this.target = Optional.of(target);
+        setAttacking();
+    }
+
+    public void setHealing() {
+        state = State.HEALING;
+        target = Optional.empty();
+    }
+
+    public void setFollowing() {
+        state = State.FOLLOWING;
+        target = Optional.empty();
+    }
+
     public void setLevel(int level) {
         effect.setLevel(level);
     }
@@ -59,17 +100,79 @@ public class Blahaj extends ECSystem {
     public void setup() {
         trans = require(Transform.class);
         effect = require(Effect.class);
+        tangible = require(Tangible.class);
         textureRenderer = requireSystem(TextureRenderer.class);
+
+        effect.addDamageScaling(info -> info.damage() * effect.getLevel());
 
         entity.setRenderPriority(90);
     }
 
     @Override
     public void frame() {
-        desiredPosition = Optional.of(player.getTransform().position);
-
         if (desiredPosition.isEmpty()) return;
+
         textureRenderer.setFlipped(trans.position.minus(desiredPosition.get()).x < 0);
     }
-    
+
+    @Override
+    public void infrequentUpdate() {
+        Team team = Team.getTeamByTagOf(entity);
+
+        if (player.getHealth().isCritical()) {
+            setHealing();
+        } else if (target.isEmpty()) {
+            target = team.findTarget(trans.position);
+            if (target.isPresent()) {
+                setAttacking();
+            }
+        } else if (target.isPresent() && !team.shouldEntityBeTargetted(target.get().entity())) setFollowing();
+
+        switch (state) {
+            case FOLLOWING, HEALING -> {
+                desiredPosition = Optional.of(getDesiredPlayerFollowPosition());
+                if (state == State.HEALING) {
+                    if (healStopwatch.hasElapsedAdvance(Duration.ofSeconds(1))) {
+                        GameLoop.safeTrack(HealingOrb.makeEntity(trans.position.clone(), 10));
+                    }
+                }
+            }
+            case ATTACKING -> {
+                if (target.isEmpty()) {
+                    System.err.println("attempted to attack NOTHING!");
+                    setFollowing();
+                    break;
+                }
+                desiredPosition = Optional.of(target.get().trans().position);
+
+                if (trans.position.distance(target.get().trans().position) < BITE_DISTANCE) {
+                    if (biteStopwatch.hasElapsedAdvance(Duration.ofMillis(500))) {
+                        // BITE
+                        final var dmg = effect.computeDamage(
+                            new DamageInfo(BASE_DAMAGE, target.get().entity(), null, trans.position.clone())
+                                .setAttacker(entity)
+                                .setColor(DamageColor.SPECIAL));
+                        target.get().health().ifPresent(h -> h.damage(dmg));
+                    }
+                }
+            }
+        }
+
+        if (state != State.HEALING) desiredPosition.ifPresent(p -> tangible.velocity.moveTowardsEq(trans.position.directionTo(p).multiplyEq(MAX_SPEED), 1200 * infreqDelta()));
+        else desiredPosition.ifPresent(p -> tangible.velocity = trans.position.directionTo(p).multiplyEq(MAX_SPEED * 3));
+    }
+
+    private Vec2 getDesiredPlayerFollowPosition() {
+        final var center = player.getTransform().position;
+        
+        double boost = state == State.HEALING ? 3 : 1;
+        final double x = 100 * Math.cos(GameLoop.getUnpausedTime() * 3 * boost);
+        final double y = 100 * Math.sin(GameLoop.getUnpausedTime() * 3 * boost);
+
+        return center.add((float)x, (float)y);
+    }
+
+    public Optional<Target> getTarget() {
+        return target;
+    }
 }

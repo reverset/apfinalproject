@@ -62,7 +62,8 @@ public class Sigma extends Enemy {
                 other.entity
                     .getComponent(Health.class)
                     .ifPresent(health -> {
-                        health.damage(new DamageInfo(BASE_DAMAGE, other.entity, null).setAttacker(entity));
+                        health.damage(new DamageInfo(BASE_DAMAGE, other.entity, null, trans.position.clone())
+                            .setAttacker(entity));
                 });
                 health.kill();
             }
@@ -88,7 +89,7 @@ public class Sigma extends Enemy {
         if (ot.isEmpty()) return;
         Target target = ot.get();
 
-        float angle = -trans.position.directionTo(target.trans().position).getAngleDegrees();
+        float angle = trans.position.directionTo(target.trans().position).getAngleDegrees();
         trans.rotation = angle;
     }
 }

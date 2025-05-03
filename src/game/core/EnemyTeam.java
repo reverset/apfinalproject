@@ -41,8 +41,8 @@ public final class EnemyTeam extends Team {
 
     @Override
     public void grantExp(int xp) {
-        getPlayer().get().entity()
+        getPlayer().ifPresent(pe -> pe.entity()
             .getSystem(Player.class)
-            .ifPresent(p -> p.getExpAccumulator().accumulate(xp));
+            .ifPresent(p -> p.getExpAccumulator().accumulate(xp)));
     }
 }

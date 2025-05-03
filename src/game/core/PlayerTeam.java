@@ -40,7 +40,7 @@ public final class PlayerTeam extends Team {
     @Override
     public boolean shouldEntityBeTargetted(Entity target) {
         return target.getSystem(Enemy.class)
-            .filter(e -> e instanceof Cube cube && cube.isShieldActive())
+            .filter(e -> e instanceof Cube cube && cube.isShieldActive() || e.health.isDead())
             .isEmpty();
     }
 

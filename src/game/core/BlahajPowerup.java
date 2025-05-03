@@ -2,6 +2,7 @@ package game.core;
 
 import game.EntityOf;
 import game.GameLoop;
+import game.core.Blahaj.State;
 import game.ecs.Entity;
 
 public class BlahajPowerup extends Powerup {
@@ -39,4 +40,10 @@ public class BlahajPowerup extends Powerup {
         return "A friendly shark.";
     }
     
+
+    @Override
+    public String getSmallHUDInfo() {
+        final var state = blahaj.getMainSystem().getState();
+        return state + (state == State.ATTACKING ? " " + blahaj.getMainSystem().getTarget().get().entity().name.toUpperCase() : "");
+    }
 }

@@ -21,7 +21,6 @@ import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
-// todo: if player dies, squiggy will keep the game going in the defeat screen.
 public class Squiggy extends ECSystem {
     public enum State {
         FOLLOWING,
@@ -62,7 +61,6 @@ public class Squiggy extends ECSystem {
             .addComponent(new Rect(SIZE, SIZE, Color.WHITE))
             .addComponent(new Tangible())
             .addComponent(new Effect().setLevel(level))
-            // .register(new RectRender().centerize()) // temp
             .register(new TextureRenderer(TEXTURE))
             .register(new Physics(0, 0))
             .register(new AutoTeamRegister())

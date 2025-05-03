@@ -72,6 +72,7 @@ public class HealingOrb extends ECSystem {
     public void infrequentUpdate() {
         if (player.isEmpty() || playerTrans.isEmpty()) return;
 
-        tangible.velocity.moveTowardsEq(trans.position.directionTo(playerTrans.get().position).multiplyEq(1000), 1000*infreqDelta());
+        // tangible.velocity.moveTowardsEq(trans.position.directionTo(playerTrans.get().position).multiplyEq(1000), 1000*infreqDelta());
+        tangible.velocity = trans.position.directionTo(playerTrans.get().position).multiplyEq(1000);
     }
 }
