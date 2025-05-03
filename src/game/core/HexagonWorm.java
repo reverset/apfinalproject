@@ -86,6 +86,7 @@ public class HexagonWorm extends Enemy {
             .register(new HealthBar(new Vec2(-RADIUS, -100), entity.name, true))
             .register(new Physics(0, 0, new Vec2(-RADIUS/MoreMath.ROOT_TWO, -RADIUS/MoreMath.ROOT_TWO)))
             .register(new PolyRenderer())
+            .register(new AutoTeamRegister())
             .register(new HexagonWorm())
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
 

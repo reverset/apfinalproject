@@ -20,6 +20,7 @@ import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
+// If I were to rewrite this, this class would be abstract or an interface, this is HORRIRBLE!!hjOIDWAUJ
 public class Enemy extends ECSystem {
     public static final float SPEED = 200;
     public static final int SIZE = 50;
@@ -75,13 +76,13 @@ public class Enemy extends ECSystem {
             .register(new HealthBar(
                 new Vec2(-rect.width*0.5f, -20), entity.name
             ))
+            .register(new AutoTeamRegister())
             .register(new Enemy())
             .register(new ViewCuller(Vec2.screen().x+SIZE))
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
 
         return entity;
     }
-
 
     protected void basicSetup() {
         trans = require(Transform.class);

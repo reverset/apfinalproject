@@ -51,6 +51,7 @@ public class TriangleEnemy extends Enemy {
             .register(new HealthBar(
                 new Vec2(-SIZE*1.5f, -40), entity.name
             ))
+            .register(new AutoTeamRegister())
             .register(new TriangleEnemy())
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
 

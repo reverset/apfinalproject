@@ -77,6 +77,7 @@ public class Cube extends Enemy {
             .register(new PostMortem(GameLoop::safeDestroy)
                 .addWill(e -> GameLoop.defer(RandomPowerup::showScreen))
             )
+            .register(new AutoTeamRegister())
             .register(new Cube())
             .addTags(GameTags.ENEMY_TEAM);
 

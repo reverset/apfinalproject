@@ -1,22 +1,21 @@
 package game;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Optional;
 
 import game.core.ArcWeapon;
-import game.core.Cube;
+import game.core.AutoTeamRegister;
 import game.core.DamageColor;
 import game.core.Effect;
 import game.core.Enemy;
 import game.core.GameTags;
 import game.core.Physics;
 import game.core.Player;
-import game.core.SimpleWeapon;
 import game.core.Tangible;
+import game.core.Target;
+import game.core.Team;
 import game.core.Weapon2;
 import game.core.rendering.Rect;
-import game.core.rendering.RectRender;
 import game.core.rendering.TextureRenderer;
 import game.ecs.ECSystem;
 import game.ecs.Entity;
@@ -33,7 +32,7 @@ public class Squiggy extends ECSystem {
     private static final RayTexture TEXTURE = new RayImage("resources/squiggy.png", SIZE, SIZE).uploadToGPU();
 
     private final float MAX_SPEED = 500;
-    private final float ATTACK_RADIUS = 300;
+    private final float ATTACK_RADIUS = 400;
 
     private final int BASE_DAMAGE = 10;
 
@@ -48,7 +47,7 @@ public class Squiggy extends ECSystem {
     private Stopwatch movementStopwatch = Stopwatch.ofGameTime();
 
     private State state = State.FOLLOWING;
-    private Optional<Enemy> target = Optional.empty();
+    private Optional<Target> target = Optional.empty();
 
     private Weapon2 weapon = null;
     private Effect effect = null;
@@ -66,6 +65,7 @@ public class Squiggy extends ECSystem {
             // .register(new RectRender().centerize()) // temp
             .register(new TextureRenderer(TEXTURE))
             .register(new Physics(0, 0))
+            .register(new AutoTeamRegister())
             .register(new Squiggy(player))
             .addTags(GameTags.PLAYER_TEAM_TAGS);
     
@@ -119,7 +119,7 @@ public class Squiggy extends ECSystem {
         return state;
     }
 
-    public Optional<Enemy> getTarget() {
+    public Optional<Target> getTarget() {
         return target;
     }
 
@@ -130,7 +130,7 @@ public class Squiggy extends ECSystem {
 
     public void setAttacking(Enemy target) {
         state = State.ATTACKING;
-        this.target = Optional.of(target);
+        this.target = Optional.of(Target.ofEntity(target.entity));
     }
 
     @Override
@@ -141,34 +141,23 @@ public class Squiggy extends ECSystem {
     @Override
     public void infrequentUpdate() {
         float playerDistance = trans.position.distance(playerTransform.position);
+        Team team = Team.getTeamByTagOf(entity);
 
         if (playerDistance > 1_000) {
             setFollowing();
         } else {
             if (target.isEmpty()) {
-                List<Physics> potentialTargets = Physics.testCircle(trans.position, ATTACK_RADIUS, 0);
-                for (final var pt : potentialTargets) {
-                    Optional<Enemy> oEnemy = pt.entity.getSystem(Enemy.class);
-                    if (oEnemy.isPresent()) {
-                        if (oEnemy.get() instanceof Cube) { // skip the Cube if it's shield is up.
-                            if (((Cube)oEnemy.get()).isShieldActive()) continue;
-                        }
-                        setAttacking(oEnemy.get());
-                        break;
-                    }
-                }
+                target = team.findTarget(trans.position);
+                
+                if (target.isPresent()) state = State.ATTACKING;
             } else {
-                if (target.get().health.isDead()) {
-                    setFollowing();
-                } else if (target.get() instanceof Cube && ((Cube)target.get()).isShieldActive()) { // skip the Cube if it's shield is up.
+                if (target.get().health().get().isDead() || !team.shouldEntityBeTargetted(target.get().entity())) {
                     setFollowing();
                 } else {
-                    desiredPosition = target.get().trans.position.clone();
+                    desiredPosition = target.get().trans().position.clone();
                 }
             }
         }
-
-
 
         switch (state) {
             case FOLLOWING:
@@ -195,7 +184,7 @@ public class Squiggy extends ECSystem {
     }
 
     private void attackingProcess() {
-        weapon.fire(trans.position.clone(), trans.position.directionTo(target.get().trans.position), entity);
+        weapon.fire(trans.position.clone(), trans.position.directionTo(target.get().trans().position), entity);
     }
     
 }

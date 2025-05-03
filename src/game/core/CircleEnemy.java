@@ -62,6 +62,7 @@ public class CircleEnemy extends Enemy {
             .register(new HealthBar(
                 new Vec2(-RADIUS*2, -50), entity.name
             ))
+            .register(new AutoTeamRegister())
             .register(new CircleEnemy())
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
 

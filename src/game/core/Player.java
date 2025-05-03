@@ -80,6 +80,7 @@ public class Player extends ECSystem implements Controllable {
             .register(new RectRender().centerize())
             .register(new Physics(0, 0, new Vec2(-SIZE/2, -SIZE/2)))
             .register(new ExpAccumulator(100))
+            .register(new AutoTeamRegister())
             .register(new Player())
             .register(new Controller<>(Player.class))
             // .register(new Diamond(entity, null, effect, 1))

@@ -35,6 +35,7 @@ public class Sigma extends Enemy {
             // .register(new RectRender().centerize())
             .register(new TextureRenderer(TEXTURE))
             .register(new HealthBar(new Vec2(-WIDTH, -HEIGHT), entity.name))
+            .register(new AutoTeamRegister())
             .register(new Sigma())
             .addTags(GameTags.ENEMY_TEAM_TAGS);
 
