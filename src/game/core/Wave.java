@@ -2,14 +2,13 @@ package game.core;
 
 import java.time.Duration;
 import java.util.Queue;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import game.EntityOf;
 import game.Stopwatch;
 
 public class Wave {
-    public Queue<EntityOf<Square>> spawnQueue;
+    public Queue<EntityOf<Unit>> spawnQueue;
     public boolean waveStarted = false;
     
     EnemySpawner spawner;
@@ -19,9 +18,9 @@ public class Wave {
     private Stopwatch timer = Stopwatch.ofGameTime();
     private int totalEnemies;
     
-    Supplier<EntityOf<Square>> enemies;
+    Supplier<EntityOf<Unit>> enemies;
 
-    public Wave(Supplier<EntityOf<Square>> enemies, int totalEnemies, Duration spawnRate) {
+    public Wave(Supplier<EntityOf<Unit>> enemies, int totalEnemies, Duration spawnRate) {
         this.enemies = enemies;
         this.totalEnemies = totalEnemies;
         this.spawnRate = spawnRate;
@@ -29,7 +28,7 @@ public class Wave {
 
     public void update() {
         if (timer.hasElapsedAdvance(spawnRate)) {
-            EntityOf<Square> enemy = enemies.get();
+            EntityOf<Unit> enemy = enemies.get();
             spawnQueue.add(enemy);
         }
     }

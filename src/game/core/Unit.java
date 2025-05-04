@@ -50,4 +50,8 @@ public abstract class Unit extends ECSystem {
         this.team = team;
         this.team.registerMember(entity, true);
     }
+
+    public boolean isBossEnemy() {
+        return false;
+    }
 }

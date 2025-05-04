@@ -18,7 +18,7 @@ public class BossWave extends Wave {
     private boolean finished = false;
     private final int levelValue;
 
-    public BossWave(Supplier<EntityOf<Square>> enemies, Duration delay, int levelValue) {
+    public BossWave(Supplier<EntityOf<Unit>> enemies, Duration delay, int levelValue) {
         super(enemies, 0, null);
         this.delay = delay;
         this.levelValue = levelValue;
@@ -29,10 +29,10 @@ public class BossWave extends Wave {
         if (!started && stopwatch.hasElapsed(delay)) {
             started = true;
 
-            EntityOf<Square> enemy = enemies.get();
+            EntityOf<Unit> enemy = enemies.get();
             spawnQueue.add(enemy);
 
-            enemy.getMainSystem().health.onDeath.listen(n -> {
+            enemy.getMainSystem().getHealth().onDeath.listen(n -> {
                 finished = true;
             }, enemy);
 

@@ -1,7 +1,5 @@
 package game.core;
 
-import java.util.Optional;
-
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
@@ -12,7 +10,7 @@ import game.core.rendering.Rect;
 import game.core.rendering.TextureRenderer;
 import game.ecs.comps.Transform;
 
-public class Sigma extends Square {
+public class Sigma extends Unit {
     private static final int BASE_HEALTH = 10;
     private static final int BASE_DAMAGE = 50;
     private static final int WIDTH = 50;
@@ -20,8 +18,8 @@ public class Sigma extends Square {
 
     private static final RayTexture TEXTURE = new RayImage("resources/sigma.png", WIDTH, HEIGHT).uploadToGPU();
 
-    public static EntityOf<Square> makeEntity(Vec2 position, Vec2 velocity, int level) {
-        EntityOf<Square> entity = new EntityOf<>("Sigma", Square.class);
+    public static EntityOf<Unit> makeEntity(Vec2 position, Vec2 velocity, int level) {
+        EntityOf<Unit> entity = new EntityOf<>("Sigma", Unit.class);
 
 
         entity
@@ -44,28 +42,27 @@ public class Sigma extends Square {
 
     @Override
     public void setup() {
-        basicSetup();
-        health.setMaxHealthAndHealth(BASE_HEALTH + (BASE_HEALTH / 4 * (effect.getLevel() - 1)));
-        effect.addDamageScaling(d -> d.damage() * effect.getLevel());
+        getHealth().setMaxHealthAndHealth(BASE_HEALTH + (BASE_HEALTH / 4 * (getEffect().getLevel() - 1)));
+        getEffect().addDamageScaling(d -> d.damage() * getEffect().getLevel());
     }
 
     @Override
     public void ready() {
         // playerComp = player.flatMap(p -> p.getSystem(Player.class));
-        health.onDeath.listen(e -> {
+        getHealth().onDeath.listen(e -> {
             GameLoop.safeDestroy(entity);
             Team.getTeamByTagOf(entity).grantExp(10);
         }, entity);
 
-        tangible.onCollision.listen(other -> {
+        getTangible().onCollision.listen(other -> {
             if (!Team.getTeamByTagOf(entity).isOnMyTeam(other.entity)) {
                 other.entity
                     .getComponent(Health.class)
                     .ifPresent(health -> {
-                        health.damage(new DamageInfo(BASE_DAMAGE, other.entity, null, trans.position.clone())
+                        health.damage(new DamageInfo(BASE_DAMAGE, other.entity, null, getTransform().position.clone())
                             .setAttacker(entity));
                 });
-                health.kill();
+                getHealth().kill();
             }
         });
     }
@@ -73,23 +70,21 @@ public class Sigma extends Square {
     @Override
     public void infrequentUpdate() {
         // if (playerTransform == null || player.isEmpty()) return;
-        Team team = Team.getTeamByTagOf(entity);
-        final var ot = team.findTarget(trans.position);
+        final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
         Target target = ot.get();
 
-        tangible.velocity.moveTowardsEq(trans.position.directionTo(target.trans().position).multiplyEq(1000), 1000*infreqDelta());
+        getTangible().velocity.moveTowardsEq(getTransform().position.directionTo(target.trans().position).multiplyEq(1000), 1000*infreqDelta());
     }
 
     @Override
     public void frame() {
         // if (playerTransform == null || player.isEmpty()) return;
-        Team team = Team.getTeamByTagOf(entity);
-        final var ot = team.findTarget(trans.position);
+        final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
         Target target = ot.get();
 
-        float angle = trans.position.directionTo(target.trans().position).getAngleDegrees();
-        trans.rotation = angle;
+        float angle = getTransform().position.directionTo(target.trans().position).getAngleDegrees();
+        getTransform().rotation = angle;
     }
 }

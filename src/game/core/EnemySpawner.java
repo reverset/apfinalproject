@@ -20,7 +20,7 @@ public class EnemySpawner extends ECSystem {
 
     private int maxLevel = 1;
     
-    private Queue<EntityOf<Square>> spawnQueue = new LinkedList<>();
+    private Queue<EntityOf<Unit>> spawnQueue = new LinkedList<>();
 
     private final Stopwatch stopwatch = Stopwatch.ofGameTime();
 
@@ -56,7 +56,7 @@ public class EnemySpawner extends ECSystem {
         return Collections.unmodifiableList(enemies);
     }
 
-    public Queue<EntityOf<Square>> getSpawnQueue() {
+    public Queue<EntityOf<Unit>> getSpawnQueue() {
         return spawnQueue;
     }
 
@@ -64,7 +64,7 @@ public class EnemySpawner extends ECSystem {
         return maxLevel;
     }
 
-    public EntityOf<Square> randomEntity(Vec2 pos) {
+    public EntityOf<Unit> randomEntity(Vec2 pos) {
         double rand = Math.random();
         int level = (int) Math.max(1, getMaxLevel() - (Math.random() * 4));
         if (rand > 0.8) {
@@ -95,13 +95,13 @@ public class EnemySpawner extends ECSystem {
         }
 
         if (!spawnQueue.isEmpty()) {
-            EntityOf<Square> enemy = spawnQueue.poll();
+            EntityOf<Unit> enemy = spawnQueue.poll();
             if (enemy == null) return;
 
             GameLoop.safeTrack(enemy);
             enemies.add(enemy);
             totalEnemiesThisWave += 1;
-            enemy.getMainSystem().health.onDeath.listen(n -> {
+            enemy.getMainSystem().getHealth().onDeath.listen(n -> {
                 enemies.remove(enemy);
             }, enemy);
         }

@@ -3,12 +3,9 @@ package game.core;
 import java.util.List;
 import java.util.Optional;
 
-import com.raylib.Raylib.rAudioBuffer;
-
 import game.RecoverableException;
 import game.Vec2;
 import game.ecs.Entity;
-import game.ecs.comps.Transform;
 
 public final class PlayerTeam extends Team {
     private static final PlayerTeam INSTANCE = new PlayerTeam();
@@ -21,10 +18,10 @@ public final class PlayerTeam extends Team {
     public Optional<Target> findTarget(Vec2 pos) {
         List<Entity> potentialTargets = getOpposingTeam().getMembers();
         for (final var pt : potentialTargets) {
-            final var enemy = pt.getSystem(Square.class).orElseThrow(() -> new RecoverableException("Non-enemy on enemy team!"));
+            final var enemy = pt.getSystem(Unit.class).orElseThrow(() -> new RecoverableException("Non-enemy on enemy team!"));
             
             if (enemy instanceof Cube cube && cube.isShieldActive()) continue;
-            if (pos.distance(enemy.trans.position) > 400) continue;
+            if (pos.distance(enemy.getTransform().position) > 400) continue;
 
             return Optional.of(Target.ofEntity(enemy.entity));
         }
@@ -39,8 +36,8 @@ public final class PlayerTeam extends Team {
 
     @Override
     public boolean shouldEntityBeTargetted(Entity target) {
-        return target.getSystem(Square.class)
-            .filter(e -> e instanceof Cube cube && cube.isShieldActive() || e.health.isDead())
+        return target.getSystem(Unit.class)
+            .filter(e -> e instanceof Cube cube && cube.isShieldActive() || e.getHealth().isDead())
             .isEmpty();
     }
 

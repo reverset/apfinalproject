@@ -21,7 +21,7 @@ import game.Vec2;
 import game.core.rendering.Rect;
 import game.ecs.comps.Transform;
 
-public class Cube extends Square {
+public class Cube extends Unit {
     public static final int BASE_HEALTH = 1_000;
     public static final int BASE_DAMAGE = 20;
     public static final int BULLET_SPEED = 1_500;
@@ -50,8 +50,10 @@ public class Cube extends Square {
     private Stopwatch shieldEnableStopwatch = Stopwatch.ofGameTime();
     private Stopwatch shieldDisableStopwatch = Stopwatch.ofGameTime();
 
-    public static EntityOf<Square> makeEntity(Vec2 position, int level) {
-        EntityOf<Square> entity = new EntityOf<>("THE CUBE", Square.class);
+    private Rect rect;
+
+    public static EntityOf<Unit> makeEntity(Vec2 position, int level) {
+        EntityOf<Unit> entity = new EntityOf<>("THE CUBE", Unit.class);
 
         Effect effect = new Effect().setLevel(level);
         Supplier<Float> timeSupplier = () -> time();
@@ -88,13 +90,9 @@ public class Cube extends Square {
 
     @Override
     public void setup() {
-        super.basicSetup();
-        trans = require(Transform.class);
-        tangible = require(Tangible.class);
-        health = require(Health.class);
-        effect = require(Effect.class);
+        rect = require(Rect.class);
 
-        health.setMaxHealthAndHealth(BASE_HEALTH * Math.max(1, effect.getLevel()/4));
+        getHealth().setMaxHealthAndHealth(BASE_HEALTH * Math.max(1, getEffect().getLevel()/4));
 
         shader = require(Shader.class);
         var postMortem = requireSystem(PostMortem.class);
@@ -104,15 +102,15 @@ public class Cube extends Square {
             //     .ifPresent(p -> p.getExpAccumulator().accumulate(100));
         }).addWill(e -> GameLoop.defer(() -> Raylib.UnloadRenderTexture(renderTexture)));
         
-        effect.addDamageRecievingResponse(info -> isShieldUp ? info.asHealing().damage() : info.damage());
-        effect.addDamageScaling(info -> info.damage() * effect.getLevel()/10);
+        getEffect().addDamageRecievingResponse(info -> isShieldUp ? info.asHealing().damage() : info.damage());
+        getEffect().addDamageScaling(info -> info.damage() * getEffect().getLevel()/10);
 
         // var playerEntity = GameLoop.findEntityByTag(GameTags.PLAYER);
         // player = playerEntity.flatMap(entity -> entity.getSystem(Player.class));
         // playerTransform = playerEntity.flatMap(entity -> entity.getComponent(Transform.class));
 
         weapon = new SimpleWeapon(
-            BASE_DAMAGE, BULLET_SPEED, Color.RED, GameTags.ENEMY_TEAM_TAGS, BULLET_LIFETIME, BULLET_COOLDOWN_DURATION.toMillis()/1_000f, Optional.of(effect));
+            BASE_DAMAGE, BULLET_SPEED, Color.RED, GameTags.ENEMY_TEAM_TAGS, BULLET_LIFETIME, BULLET_COOLDOWN_DURATION.toMillis()/1_000f, Optional.of(getEffect()));
         
         shieldEnableStopwatch.start();
     }
@@ -124,8 +122,7 @@ public class Cube extends Square {
 
     @Override
     public void infrequentUpdate() {
-        Team team = Team.getTeamByTagOf(entity);
-        final var ot = team.findTarget(trans.position);
+        final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
         Target target = ot.get();
 
@@ -137,7 +134,7 @@ public class Cube extends Square {
 
     @Override
     public void frame() { // Why is this rendered here, why not render()? When render() is called, the GameLoop is already drawing to a render texture. Raylib doesn't support drawing to multiple render textures at the same time.
-        tangible.velocity.setEq(0, 0);
+        getTangible().velocity.setEq(0, 0);
         shader.setShaderValue("cubeColorCoeffs", getCubeColorCoeffs());
         shader.with(() -> {
             Raylib.BeginTextureMode(renderTexture);
@@ -148,11 +145,11 @@ public class Cube extends Square {
     }
 
     private void altAttack() {
-        GameLoop.safeTrack(Sigma.makeEntity(trans.position.clone(), Vec2.randomUnit().multiplyEq(1_000), effect.getLevel()));
+        GameLoop.safeTrack(Sigma.makeEntity(getTransform().position.clone(), Vec2.randomUnit().multiplyEq(1_000), getEffect().getLevel()));
     }
 
     private void attackTick(Transform plTrans) {
-        if (!isShieldUp && weapon.canFire()) weapon.fire(trans.position.clone(), trans.position.directionTo(plTrans.position), entity);
+        if (!isShieldUp && weapon.canFire()) weapon.fire(getTransform().position.clone(), getTransform().position.directionTo(plTrans.position), entity);
     }
 
     private void shieldTick() {
@@ -177,7 +174,7 @@ public class Cube extends Square {
 
     private void movementTick(Transform plTrans) {
 
-        var currentAngle = (trans.position.minus(plTrans.position)).getAngle();
+        var currentAngle = (getTransform().position.minus(plTrans.position)).getAngle();
         if (movementTimer.hasElapsedAdvance(nextMoveTime)) {
             var desiredAngle = (float) MoreMath.random(0, MoreMath.TAU);
             
@@ -188,13 +185,13 @@ public class Cube extends Square {
             
             movementTween = GameLoop.makeTweenGameTime(
                     Tween.circleLerp(currentAngle, desiredAngle, playerDistance, () -> plTrans.position), 1.2f, val -> {
-                        trans.position = val;
+                        getTransform().position = val;
             });
             movementTween
                 .setDestroy(false)
                 .start();
         } else {
-            trans.position = plTrans.position.add(Vec2.fromAngle(currentAngle).multiplyEq(playerDistance));
+            getTransform().position = plTrans.position.add(Vec2.fromAngle(currentAngle).multiplyEq(playerDistance));
         }
 
     }
@@ -205,7 +202,7 @@ public class Cube extends Square {
 
     @Override
     public void render() {
-        Raylib.DrawTexture(renderTexture.texture(), trans.position.xInt() - rect.width/2, trans.position.yInt() - rect.height/2, Color.WHITE.getPointerNoUpdate());
+        Raylib.DrawTexture(renderTexture.texture(), getTransform().position.xInt() - rect.width/2, getTransform().position.yInt() - rect.height/2, Color.WHITE.getPointerNoUpdate());
         
         // Raylib.DrawCircle(trans.position.xInt(), trans.position.yInt(), 10, Color.WHITE.getPointerNoUpdate());
         // Raylib.DrawCircle(getCenter().xInt(), getCenter().yInt(), 10, Color.WHITE.getPointerNoUpdate());

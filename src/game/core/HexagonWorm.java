@@ -20,7 +20,7 @@ import game.core.rendering.Rect;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
-public class HexagonWorm extends Square {
+public class HexagonWorm extends Unit {
     public enum State {
         CIRCLING,
         FAR_CIRCLING,
@@ -28,6 +28,8 @@ public class HexagonWorm extends Square {
 
     public static final float RADIUS = 50;
     public static final int SIDES = 6;
+
+    public static final float BULLET_SPEED = 600;
 
     public static final int BASE_HEALTH = 500;
     public static final int BASE_HEXABOMB_DAMAGE = 35;
@@ -62,8 +64,8 @@ public class HexagonWorm extends Square {
     private HexaBombLauncher weapon;
     private List<LaserWeapon> skyLasers = new ArrayList<>();
 
-    public static EntityOf<Square> makeEntity(Vec2 position, int level) {
-        EntityOf<Square> entity = new EntityOf<>("The Hexagon Worm", Square.class);
+    public static EntityOf<Unit> makeEntity(Vec2 position, int level) {
+        EntityOf<Unit> entity = new EntityOf<>("The Hexagon Worm", Unit.class);
 
         Effect effect = new Effect().setLevel(level);
         effect.addDamageRecievingResponseExtra(d -> {
@@ -95,27 +97,22 @@ public class HexagonWorm extends Square {
 
     @Override
     public void setup() {
-        trans = require(Transform.class);
-        tangible = require(Tangible.class);
-        health = require(Health.class);
-        effect = require(Effect.class);
-
         Entity last = entity;
         for (int i = 1; i <= PARTS; i++) {
             final int j = i;
             Transform t = last.getComponent(Transform.class).orElseThrow();
-            EntityOf<HexagonTail> body = HexagonTail.makeEntity(this, () -> t.position, () -> tangible.velocity.normalize().multiplyEq(j*4));
+            EntityOf<HexagonTail> body = HexagonTail.makeEntity(this, () -> t.position, () -> getTangible().velocity.normalize().multiplyEq(j*4));
             GameLoop.safeTrack(body);
             last = body;
             parts[i-1] = body;
         }
 
         for (int i = 0; i < 20; i++) {
-            LaserWeapon laser = new LaserWeapon(BASE_DAMAGE, trans.position, Vec2.down(), Color.RED, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 5, Optional.of(effect));
+            LaserWeapon laser = new LaserWeapon(BASE_DAMAGE, getTransform().position, Vec2.down(), Color.RED, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 5, Optional.of(getEffect()));
             skyLasers.add(laser);
         }
 
-        weapon = new HexaBombLauncher(BASE_HEXABOMB_DAMAGE, BULLET_SPEED, Color.YELLOW, GameTags.ENEMY_TEAM_TAGS, HEXABOMB_COOLDOWN, Optional.of(effect));
+        weapon = new HexaBombLauncher(BASE_HEXABOMB_DAMAGE, BULLET_SPEED, Color.YELLOW, GameTags.ENEMY_TEAM_TAGS, HEXABOMB_COOLDOWN, Optional.of(getEffect()));
     }
     
     @Override
@@ -123,17 +120,8 @@ public class HexagonWorm extends Square {
         stateChange.start();
         healingStopwatch.start();
 
-        // player = GameLoop.findEntityByTag(GameTags.PLAYER);
-        // player.ifPresent(p -> {
-        //     playerTransform = p.getComponent(Transform.class).orElseThrow();
-        // });
-
-        health.onDeath.listen(n -> {
-            // player.ifPresent(en -> {
-            //     var p = en.getSystem(Player.class).orElseThrow();
-            //     p.getExpAccumulator().accumulate(XP_AWARD);
-            // });
-            Team.getTeamByTagOf(entity).grantExp(XP_AWARD);
+        getHealth().onDeath.listen(n -> {
+            getTeam().grantExp(XP_AWARD);
 
             GameLoop.safeDestroy(entity);
 
@@ -146,7 +134,7 @@ public class HexagonWorm extends Square {
             });
         }, entity);
 
-        tangible.onCollision.listen(other -> {
+        getTangible().onCollision.listen(other -> {
             
             if (other.entity.hasAnyTag(GameTags.PLAYER_TEAM_TAGS)) {
                 
@@ -156,12 +144,12 @@ public class HexagonWorm extends Square {
                 
                 other.entity.getComponent(Health.class).ifPresent(otherHealth -> {
                     int dmg = (int) (otherHealth.getMaxHealth()*0.1f);
-                    otherHealth.damageOrHeal(new DamageInfo(dmg, other.entity, null, trans.position.clone(), DamageColor.MELEE));
+                    otherHealth.damageOrHeal(new DamageInfo(dmg, other.entity, null, getTransform().position.clone(), DamageColor.MELEE));
                 });
                 
                 
                 if (otherTrans.isPresent()) {
-                    Vec2 knockback = trans.position.directionTo(otherTrans.get().position).multiplyEq(1_000);
+                    Vec2 knockback = getTransform().position.directionTo(otherTrans.get().position).multiplyEq(1_000);
                     other.impulse(knockback);
                 }
             }
@@ -171,8 +159,7 @@ public class HexagonWorm extends Square {
     @Override
     public void frame() {
         // if (playerTransform == null) return;
-        Team team = Team.getTeamByTagOf(entity);
-        final var ot = team.findTarget(trans.position);
+        final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
         Target target = ot.get();
         
@@ -181,17 +168,15 @@ public class HexagonWorm extends Square {
 
         Vec2 offset = Vec2.fromAngle(time()*timeCoeff).multiplyEq(state == State.CIRCLING ? CIRCLING_DISTANCE : FAR_CIRCLING_DISTANCE);
 
-        Vec2 direction = trans.position.directionTo(target.trans().position.add(offset)).multiply(SPEED*speedCoeff);
-        tangible.velocity.moveTowardsEq(direction, 1000*delta());
+        Vec2 direction = getTransform().position.directionTo(target.trans().position.add(offset)).multiply(SPEED*speedCoeff);
+        getTangible().velocity.moveTowardsEq(direction, 1000*delta());
         
-        trans.rotation = (float) Math.toDegrees(tangible.velocity.getAngle());
+        getTransform().rotation = (float) Math.toDegrees(getTangible().velocity.getAngle());
     }
 
     @Override
     public void infrequentUpdate() {
-        // if (playerTransform == null) return;
-        Team team = Team.getTeamByTagOf(entity);
-        final var ot = team.findTarget(trans.position);
+        final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
         Target target = ot.get();
 
@@ -212,11 +197,11 @@ public class HexagonWorm extends Square {
             }
         }
 
-        if (weapon.canFire()) weapon.fire(trans.position.clone(), trans.position.directionTo(target.trans().position), entity);
+        if (weapon.canFire()) weapon.fire(getTransform().position.clone(), getTransform().position.directionTo(target.trans().position), entity);
 
-        if (health.getHealthPercentage() < HEALING_THRESHOLD && healingStopwatch.hasElapsedSecondsAdvance(HEALING_COOLDOWN)) {
+        if (getHealth().getHealthPercentage() < HEALING_THRESHOLD && healingStopwatch.hasElapsedSecondsAdvance(HEALING_COOLDOWN)) {
             // health.heal(HEAL_AMOUNT);
-            health.heal(new DamageInfo(-HEAL_AMOUNT, entity, null));
+            getHealth().heal(new DamageInfo(-HEAL_AMOUNT, entity, null));
         }
     }
     

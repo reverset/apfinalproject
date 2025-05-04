@@ -19,8 +19,7 @@ import game.core.rendering.ViewCuller;
 import game.ecs.ECSystem;
 import game.ecs.comps.Transform;
 
-// If I were to rewrite this, this class would be abstract or an interface, this is HORRIRBLE!!hjOIDWAUJ
-public class Square extends ECSystem {
+public class Square extends Unit {
     public static final float SPEED = 200;
     public static final int SIZE = 50;
 
@@ -31,17 +30,7 @@ public class Square extends ECSystem {
     public static final float BULLET_COOLDOWN = 3;
     public static final Duration BULLET_LIFETIME = Duration.ofSeconds(3);
 
-    public Health health;
-    public Rect rect;
-    public Transform trans;
-    public Tangible tangible;
-
-    Stopwatch movementStopwatch = Stopwatch.ofGameTime();
-    
-    // Optional<Entity> player;
-    // Transform playerTransform;
-    Effect effect;
-
+    private Stopwatch movementStopwatch = Stopwatch.ofGameTime();
     private Vec2 desiredDirection = null;
 
     // private Weapon weapon = WeaponFactory.standardWeapon(Color.RED, entity, new Object[]{GameTags.ENEMY_TEAM})
@@ -51,11 +40,13 @@ public class Square extends ECSystem {
 
     private double timeOffset = 0;
 
-    public static EntityOf<Square> makeEntity(Vec2 position, int level) {
+    private Rect rect;
+
+    public static EntityOf<Unit> makeEntity(Vec2 position, int level) {
         Rect rect = new Rect(SIZE, SIZE, Color.RED);
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
-        EntityOf<Square> entity = new EntityOf<>("Square", Square.class);
+        EntityOf<Unit> entity = new EntityOf<>("Square", Unit.class);
 
         Effect effect = new Effect()
             .setLevel(level);
@@ -83,37 +74,23 @@ public class Square extends ECSystem {
         return entity;
     }
 
-    protected void basicSetup() {
-        trans = require(Transform.class);
-        tangible = require(Tangible.class);
-        rect = require(Rect.class);
-        health = require(Health.class);
-        effect = require(Effect.class);
-
-        // player = GameLoop.findEntityByTag(GameTags.PLAYER);
-        // playerTransform = player
-        //     .flatMap(p -> p.getComponent(Transform.class))
-        //     .orElse(null);
-    }
-
     @Override
     public void setup() {
-        basicSetup();
-
-        int level = effect.getLevel();
-        health.setMaxHealthAndHealth(BASE_HEALTH+((level-1)*5));
+        rect = require(Rect.class);
         
+        getHealth().setMaxHealthAndHealth(BASE_HEALTH+((getEffect().getLevel()-1)*5));
+
         timeOffset = (Math.random()+0.5) * 2;
         movementStopwatch.start();
 
-        weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN, Optional.of(effect));
+        weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN, Optional.of(getEffect()));
     }
     
     @Override
     public void ready() {
-        health.onDeath.listen(n -> {
+        getHealth().onDeath.listen(n -> {
             GameLoop.safeDestroy(entity);
-            GameLoop.safeTrack(DestroyEffect.makeEntity(rect.dimensions(), trans.position.clone()));
+            GameLoop.safeTrack(DestroyEffect.makeEntity(rect.dimensions(), getTransform().position.clone()));
             // GameLoop.safeTrack(HealingOrb.makeEntity(trans.position, 10 + (5 * (effect.getLevel()-1))));
             // player
             //     .flatMap(en -> en.getSystem(Player.class))
@@ -125,29 +102,23 @@ public class Square extends ECSystem {
 
     @Override
     public void frame() {
-        Team team = Team.getTeamByTagOf(entity);
-        final var ot = team.findTarget(trans.position);
+        final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
         Target target = ot.get();
 
-        float distance = target.trans().position.distance(trans.position);
+        float distance = target.trans().position.distance(getTransform().position);
         if (movementStopwatch.hasElapsedSecondsAdvance(timeOffset)) {
             float desiredSpeed = SPEED;
             if (distance > 500) desiredSpeed *= 2;
-            desiredDirection = trans.position.directionTo(target.trans().position).multiplyEq(desiredSpeed);
+            desiredDirection = getTransform().position.directionTo(target.trans().position).multiplyEq(desiredSpeed);
         }
 
-        if (weapon.canFire() && BulletFactory.bullets.size() < 60) weapon.fire(trans.position, trans.position.directionTo(target.trans().position), entity);
+        if (weapon.canFire() && BulletFactory.bullets.size() < 60) weapon.fire(getTransform().position, getTransform().position.directionTo(target.trans().position), entity);
 
         if (desiredDirection == null) return;
 
         
-        tangible.velocity.moveTowardsEq(desiredDirection, 1_000f*delta());
+        getTangible().velocity.moveTowardsEq(desiredDirection, 1_000f*delta());
 
     }
-    
-    public boolean isBossEnemy() {
-        return false;
-    }
-    
 }

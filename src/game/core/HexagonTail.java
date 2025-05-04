@@ -52,7 +52,7 @@ public class HexagonTail extends ECSystem {
         health = require(Health.class);
 
         health.onDamage.listen(info -> {
-            boss.health.damageOrHeal(info.setExtras(new Object[]{HexagonTail.class}));
+            boss.getHealth().damageOrHeal(info.setExtras(new Object[]{HexagonTail.class}));
         }, entity);
     }
 

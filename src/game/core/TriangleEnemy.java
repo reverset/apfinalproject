@@ -5,6 +5,7 @@ import java.util.Optional;
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
+import game.Stopwatch;
 import game.Tween;
 import game.Vec2;
 import game.core.rendering.Rect;
@@ -12,7 +13,7 @@ import game.core.rendering.Triangle;
 import game.core.rendering.TriangleRenderer;
 import game.ecs.comps.Transform;
 
-public class TriangleEnemy extends Square {
+public class TriangleEnemy extends Unit {
     public static final float SIZE = 40;
     public static final float SHOOT_DISTANCE = 2_000;
 
@@ -29,9 +30,11 @@ public class TriangleEnemy extends Square {
     Color rayColor = new Color(255, 140, 0, 0);
     boolean freezeRotation = false;
 
-    public static EntityOf<Square> makeEntity(Vec2 position, int level) {
+    private Stopwatch movementStopwatch = Stopwatch.ofGameTime();
+
+    public static EntityOf<Unit> makeEntity(Vec2 position, int level) {
         // Supplier<Float> timeSupplier = ECSystem::time; // ????
-        EntityOf<Square> entity = new EntityOf<>("Triangle", Square.class);
+        EntityOf<Unit> entity = new EntityOf<>("Triangle", Unit.class);
 
         Effect effect = new Effect().setLevel(level);
         effect.addDamageScaling(d -> d.damage() + (effect.getLevel()-1)*10);
@@ -57,7 +60,7 @@ public class TriangleEnemy extends Square {
     }
     
     public Vec2 getFacing() {
-        return Vec2.fromAngle((float) Math.toRadians(-trans.rotation+270));
+        return Vec2.fromAngle((float) Math.toRadians(-getTransform().rotation+270));
     }
 
     @Override
@@ -68,19 +71,14 @@ public class TriangleEnemy extends Square {
         //     playerTangible = p.getComponent(Tangible.class).orElseThrow();
         // });
 
-        trans = require(Transform.class);
-        tangible = require(Tangible.class);
-        health = require(Health.class);
-        effect = require(Effect.class);
-
-        health.setMaxHealthAndHealth(BASE_HEALTH + (effect.getLevel()-1)*10);
+        getHealth().setMaxHealthAndHealth(BASE_HEALTH + (getEffect().getLevel()-1)*10);
         
-        weapon = new LaserWeapon(BASE_DAMAGE, trans.position, getFacing(), Color.ORANGE, SHOOT_DISTANCE, 1_000, 15, 0, new Object[]{GameTags.ENEMY_TEAM}, 0.1f, Optional.of(effect));
+        weapon = new LaserWeapon(BASE_DAMAGE, getTransform().position, getFacing(), Color.ORANGE, SHOOT_DISTANCE, 1_000, 15, 0, new Object[]{GameTags.ENEMY_TEAM}, 0.1f, Optional.of(getEffect()));
     }
 
     @Override
     public void ready() {
-        health.onDeath.listen(n -> {
+        getHealth().onDeath.listen(n -> {
             GameLoop.safeDestroy(entity);
             // player
             //     .flatMap(en -> en.getSystem(Player.class))
@@ -92,20 +90,20 @@ public class TriangleEnemy extends Square {
 
     @Override
     public void frame() {
-        tangible.velocity.setEq(0, 0);
+        getTangible().velocity.setEq(0, 0);
         if (movementStopwatch.hasElapsedSecondsAdvance(5)) {
             desiredPosition = Vec2.screenCenter().screenToWorldEq().addEq(Vec2.randomUnit().multiplyEq(200));
         }
 
         if (desiredPosition != null && (movementTween == null || !movementTween.isRunning())) {
-            movementTween = GameLoop.makeTween(Tween.lerp(trans.position.clone(), desiredPosition), 0.2, v -> {
-                trans.position = v;
+            movementTween = GameLoop.makeTween(Tween.lerp(getTransform().position.clone(), desiredPosition), 0.2, v -> {
+                getTransform().position = v;
             });
             movementTween.start();
             desiredPosition = null;
 
             movementTween.onFinish.listen(n -> {
-                weapon.chargeUp(() -> trans.position, this::getFacing, entity, impending -> freezeRotation = impending);
+                weapon.chargeUp(() -> getTransform().position, this::getFacing, entity, impending -> freezeRotation = impending);
             }, entity);
         }
     }
@@ -114,15 +112,15 @@ public class TriangleEnemy extends Square {
     public void infrequentUpdate() {
         if (freezeRotation) return;
         // if (playerTransform == null || playerTangible == null) return;
-        Team team = Team.getTeamByTagOf(entity);
-        final var ot = team.findTarget(trans.position);
+
+        final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
         Target target = ot.get();
         if (target.physics().isEmpty()) return;
 
         Vec2 pos = target.trans().position.add(target.physics().get().getTangible().velocity.divide(2));
-        Vec2 dir = trans.position.directionTo(pos);
-        trans.rotation = (float) -Math.toDegrees(dir.getAngle()) - 90; // why does raylib use degrees :(
+        Vec2 dir = getTransform().position.directionTo(pos);
+        getTransform().rotation = (float) -Math.toDegrees(dir.getAngle()) - 90; // why does raylib use degrees :(
     }
 
     @Override
