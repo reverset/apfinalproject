@@ -32,10 +32,6 @@ public class Blahaj extends Unit {
 
     private static final RayTexture TEXTURE = new RayImage("resources/blahaj.png", WIDTH, HEIGHT).uploadToGPU();
 
-    private Transform trans;
-    private Tangible tangible;
-    private Effect effect;
-
     private Optional<Vec2> desiredPosition = Optional.empty();
 
     private TextureRenderer textureRenderer;
@@ -94,20 +90,15 @@ public class Blahaj extends Unit {
     }
 
     public void setLevel(int level) {
-        effect.setLevel(level);
+        getEffect().setLevel(level);
     }
 
     @Override
     public void setup() {
-        // Team.getTeamByTagOf(entity).registerMember(, false);
-
-        trans = require(Transform.class);
-        effect = require(Effect.class);
-        tangible = require(Tangible.class);
         textureRenderer = requireSystem(TextureRenderer.class);
-        trans.position = player.getTransform().position.clone();
+        getTransform().position = player.getTransform().position.clone();
 
-        effect.addDamageScaling(info -> info.damage() * effect.getLevel());
+        getEffect().addDamageScaling(info -> info.damage() * getEffect().getLevel());
 
         entity.setRenderPriority(90);
     }
@@ -117,12 +108,12 @@ public class Blahaj extends Unit {
         if (desiredPosition.isEmpty()) return;
 
         if (flipStopwatch.hasElapsedAdvance(Duration.ofMillis(100))) {
-            textureRenderer.setFlipped(trans.position.minus(desiredPosition.get()).x < 0);
+            textureRenderer.setFlipped(getTransform().position.minus(desiredPosition.get()).x < 0);
         }
 
 
-        trans.rotation = (tangible.velocity.y / MAX_SPEED) * 12;
-        trans.rotation *= textureRenderer.isFlipped() ? 1 : -1;
+        getTransform().rotation = (getTangible().velocity.y / MAX_SPEED) * 12;
+        getTransform().rotation *= textureRenderer.isFlipped() ? 1 : -1;
     }
 
     @Override
@@ -132,7 +123,7 @@ public class Blahaj extends Unit {
         if (player.getHealth().isCritical()) {
             setHealing();
         } else if (target.isEmpty()) {
-            target = team.findTarget(trans.position);
+            target = team.findTarget(getTransform().position);
             if (target.isPresent()) {
                 setAttacking();
             }
@@ -143,14 +134,14 @@ public class Blahaj extends Unit {
             case FOLLOWING, HEALING -> {
                 desiredPosition = Optional.of(getDesiredPlayerFollowPosition());
 
-                int hp = 10 * effect.getLevel();
+                int hp = 10 * getEffect().getLevel();
                 if (state == State.HEALING) {
                     if (healStopwatch.hasElapsedAdvance(Duration.ofSeconds(1))) {
-                        GameLoop.safeTrack(HealingOrb.makeEntity(trans.position.clone(), hp));
+                        GameLoop.safeTrack(HealingOrb.makeEntity(getTransform().position.clone(), hp));
                     }
                 } else {
                     if (healStopwatch.hasElapsedAdvance(Duration.ofSeconds(4))) {
-                        GameLoop.safeTrack(HealingOrb.makeEntity(trans.position.clone(), hp));
+                        GameLoop.safeTrack(HealingOrb.makeEntity(getTransform().position.clone(), hp));
                     }
                 }
             }
@@ -162,11 +153,11 @@ public class Blahaj extends Unit {
                 }
                 desiredPosition = Optional.of(target.get().getTransform().position);
 
-                if (trans.position.distance(target.get().getTransform().position) < BITE_DISTANCE) {
+                if (getTransform().position.distance(target.get().getTransform().position) < BITE_DISTANCE) {
                     if (biteStopwatch.hasElapsedAdvance(Duration.ofMillis(500))) {
                         // BITE
-                        final var dmg = effect.computeDamage(
-                            new DamageInfo(BASE_DAMAGE, target.get().getEntity(), null, trans.position.clone())
+                        final var dmg = getEffect().computeDamage(
+                            new DamageInfo(BASE_DAMAGE, target.get().getEntity(), null, getTransform().position.clone())
                                 .setAttacker(entity)
                                 .setColor(DamageColor.MELEE));
                         target.get().getHealth().damage(dmg);
@@ -175,8 +166,8 @@ public class Blahaj extends Unit {
             }
         }
 
-        if (state != State.HEALING) desiredPosition.ifPresent(p -> tangible.velocity.moveTowardsEq(trans.position.directionTo(p).multiplyEq(MAX_SPEED), 1200 * infreqDelta()));
-        else desiredPosition.ifPresent(p -> tangible.velocity = trans.position.directionTo(p).multiplyEq(MAX_SPEED * 3));
+        if (state != State.HEALING) desiredPosition.ifPresent(p -> getTangible().velocity.moveTowardsEq(getTransform().position.directionTo(p).multiplyEq(MAX_SPEED), 1200 * infreqDelta()));
+        else desiredPosition.ifPresent(p -> getTangible().velocity = getTransform().position.directionTo(p).multiplyEq(MAX_SPEED * 3));
     }
 
     private Vec2 getDesiredPlayerFollowPosition() {

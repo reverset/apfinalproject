@@ -65,6 +65,7 @@ public class Squiggy extends Unit {
 
     @Override
     public void ready() {
+        super.ready();
         getTransform().position = playerTransform.position.clone();
         desiredPosition = getTransform().position.clone();
 
