@@ -9,23 +9,23 @@ import game.ecs.Entity;
 public final class EnemyTeam extends Team {
     private static final EnemyTeam INSTANCE = new EnemyTeam();
 
-    private Optional<Target> player = Optional.empty();
+    private Optional<Unit> player = Optional.empty();
 
     public static EnemyTeam get() {
         return INSTANCE;
     }
 
-    private Optional<Target> getPlayer() {
+    private Optional<Unit> getPlayer() {
         if (player.isEmpty()) {
             player = GameLoop.findEntityByTag(GameTags.PLAYER)
-                .map(Target::ofEntity);
-            if (player.isPresent()) player.get().entity().onDestroy.listenOnce(n -> player = Optional.empty());
+                .flatMap(p -> p.getSystem(Player.class));
+            if (player.isPresent()) player.get().getEntity().onDestroy.listenOnce(n -> player = Optional.empty());
         }
         return player;
     }
 
     @Override
-    public Optional<Target> findTarget(Vec2 pos) {
+    public Optional<Unit> findTarget(Vec2 pos) {
         return getPlayer();
     }
 
@@ -41,7 +41,7 @@ public final class EnemyTeam extends Team {
 
     @Override
     public void grantExp(int xp) {
-        getPlayer().ifPresent(pe -> pe.entity()
+        getPlayer().ifPresent(pe -> pe.getEntity()
             .getSystem(Player.class)
             .ifPresent(p -> p.getExpAccumulator().accumulate(xp)));
     }

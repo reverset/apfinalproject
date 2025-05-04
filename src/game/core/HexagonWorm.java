@@ -88,7 +88,6 @@ public class HexagonWorm extends Unit {
             .register(new HealthBar(new Vec2(-RADIUS, -100), entity.name, true))
             .register(new Physics(0, 0, new Vec2(-RADIUS/MoreMath.ROOT_TWO, -RADIUS/MoreMath.ROOT_TWO)))
             .register(new PolyRenderer())
-            .register(new AutoTeamRegister())
             .register(new HexagonWorm())
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
 
@@ -117,6 +116,8 @@ public class HexagonWorm extends Unit {
     
     @Override
     public void ready() {
+        super.ready();
+
         stateChange.start();
         healingStopwatch.start();
 
@@ -161,14 +162,14 @@ public class HexagonWorm extends Unit {
         // if (playerTransform == null) return;
         final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
-        Target target = ot.get();
+        Unit target = ot.get();
         
         float speedCoeff = state == State.CIRCLING ? 1 : 12;
         float timeCoeff = 2;
 
         Vec2 offset = Vec2.fromAngle(time()*timeCoeff).multiplyEq(state == State.CIRCLING ? CIRCLING_DISTANCE : FAR_CIRCLING_DISTANCE);
 
-        Vec2 direction = getTransform().position.directionTo(target.trans().position.add(offset)).multiply(SPEED*speedCoeff);
+        Vec2 direction = getTransform().position.directionTo(target.getTransform().position.add(offset)).multiply(SPEED*speedCoeff);
         getTangible().velocity.moveTowardsEq(direction, 1000*delta());
         
         getTransform().rotation = (float) Math.toDegrees(getTangible().velocity.getAngle());
@@ -178,7 +179,7 @@ public class HexagonWorm extends Unit {
     public void infrequentUpdate() {
         final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
-        Target target = ot.get();
+        Unit target = ot.get();
 
         if (stateChange.hasElapsedSecondsAdvance(STATE_CHANGE_TIME)) {
             state = MoreMath.pickRandomEnumeration(State.class);
@@ -186,7 +187,7 @@ public class HexagonWorm extends Unit {
 
         if (state == State.FAR_CIRCLING) {
             if (skyLasers.get(0).canFire()) {
-                Vec2 pos = target.trans().position.clone();
+                Vec2 pos = target.getTransform().position.clone();
                 // pos.x += Player.SIZE*0.5f;
 
                 for (int i = 0; i < skyLasers.size(); i++) {
@@ -197,7 +198,7 @@ public class HexagonWorm extends Unit {
             }
         }
 
-        if (weapon.canFire()) weapon.fire(getTransform().position.clone(), getTransform().position.directionTo(target.trans().position), entity);
+        if (weapon.canFire()) weapon.fire(getTransform().position.clone(), getTransform().position.directionTo(target.getTransform().position), entity);
 
         if (getHealth().getHealthPercentage() < HEALING_THRESHOLD && healingStopwatch.hasElapsedSecondsAdvance(HEALING_COOLDOWN)) {
             // health.heal(HEAL_AMOUNT);

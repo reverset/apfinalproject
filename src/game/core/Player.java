@@ -8,7 +8,6 @@ import com.raylib.Raylib;
 
 import game.BetterButton;
 import game.Color;
-import game.DamageOverTime;
 import game.Game;
 import game.GameLoop;
 import game.LoadingBar;
@@ -25,7 +24,7 @@ import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
-public class Player extends ECSystem implements Controllable {
+public class Player extends Unit implements Controllable {
     public static final float MAX_SPEED = 200;
     public static final int SIZE = 30;
 
@@ -80,7 +79,6 @@ public class Player extends ECSystem implements Controllable {
             .register(new RectRender().centerize())
             .register(new Physics(0, 0, new Vec2(-SIZE/2, -SIZE/2)))
             .register(new ExpAccumulator(100))
-            .register(new AutoTeamRegister())
             .register(new Player())
             .register(new Controller<>(Player.class))
             // .register(new Diamond(entity, null, effect, 1))
@@ -169,6 +167,8 @@ public class Player extends ECSystem implements Controllable {
 
     @Override
     public void ready() {
+        super.ready();
+
         GameLoop.safeTrack(HUD.makeEntity(this));
 
         health.onDamage.listen(v -> {

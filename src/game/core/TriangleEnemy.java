@@ -52,7 +52,6 @@ public class TriangleEnemy extends Unit {
             .register(new HealthBar(
                 new Vec2(-SIZE*1.5f, -40), entity.name
             ))
-            .register(new AutoTeamRegister())
             .register(new TriangleEnemy())
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
 
@@ -65,12 +64,6 @@ public class TriangleEnemy extends Unit {
 
     @Override
     public void setup() {
-        // player = GameLoop.findEntityByTag(GameTags.PLAYER);
-        // player.ifPresent(p -> {
-        //     playerTransform = p.getComponent(Transform.class).orElseThrow();
-        //     playerTangible = p.getComponent(Tangible.class).orElseThrow();
-        // });
-
         getHealth().setMaxHealthAndHealth(BASE_HEALTH + (getEffect().getLevel()-1)*10);
         
         weapon = new LaserWeapon(BASE_DAMAGE, getTransform().position, getFacing(), Color.ORANGE, SHOOT_DISTANCE, 1_000, 15, 0, new Object[]{GameTags.ENEMY_TEAM}, 0.1f, Optional.of(getEffect()));
@@ -78,11 +71,9 @@ public class TriangleEnemy extends Unit {
 
     @Override
     public void ready() {
+        super.ready();
         getHealth().onDeath.listen(n -> {
             GameLoop.safeDestroy(entity);
-            // player
-            //     .flatMap(en -> en.getSystem(Player.class))
-            //     .ifPresent(p -> p.getExpAccumulator().accumulate(10));
             Team.getTeamByTagOf(entity).grantExp(10);
 
         }, entity);
@@ -115,10 +106,9 @@ public class TriangleEnemy extends Unit {
 
         final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
-        Target target = ot.get();
-        if (target.physics().isEmpty()) return;
+        Unit target = ot.get();
 
-        Vec2 pos = target.trans().position.add(target.physics().get().getTangible().velocity.divide(2));
+        Vec2 pos = target.getTransform().position.add(target.getTangible().velocity.divide(2));
         Vec2 dir = getTransform().position.directionTo(pos);
         getTransform().rotation = (float) -Math.toDegrees(dir.getAngle()) - 90; // why does raylib use degrees :(
     }

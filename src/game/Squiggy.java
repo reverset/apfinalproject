@@ -4,24 +4,20 @@ import java.time.Duration;
 import java.util.Optional;
 
 import game.core.ArcWeapon;
-import game.core.AutoTeamRegister;
 import game.core.DamageColor;
 import game.core.Effect;
-import game.core.Square;
 import game.core.GameTags;
+import game.core.Health;
 import game.core.Physics;
-import game.core.Player;
 import game.core.Tangible;
-import game.core.Target;
-import game.core.Team;
+import game.core.Unit;
 import game.core.Weapon2;
 import game.core.rendering.Rect;
 import game.core.rendering.TextureRenderer;
-import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
-public class Squiggy extends ECSystem {
+public class Squiggy extends Unit {
     public enum State {
         FOLLOWING,
         ATTACKING
@@ -31,25 +27,18 @@ public class Squiggy extends ECSystem {
     private static final RayTexture TEXTURE = new RayImage("resources/squiggy.png", SIZE, SIZE).uploadToGPU();
 
     private final float MAX_SPEED = 500;
-    private final float ATTACK_RADIUS = 400;
 
     private final int BASE_DAMAGE = 10;
 
-    private Player player;
     private Transform playerTransform;
-    private Entity playerEntity;
     private Vec2 desiredPosition;
-
-    private Transform trans;
-    private Tangible tangible;
 
     private Stopwatch movementStopwatch = Stopwatch.ofGameTime();
 
     private State state = State.FOLLOWING;
-    private Optional<Target> target = Optional.empty();
+    private Optional<Unit> target = Optional.empty();
 
     private Weapon2 weapon = null;
-    private Effect effect = null;
 
     private TextureRenderer textureRenderer;
 
@@ -61,9 +50,9 @@ public class Squiggy extends ECSystem {
             .addComponent(new Rect(SIZE, SIZE, Color.WHITE))
             .addComponent(new Tangible())
             .addComponent(new Effect().setLevel(level))
+            .addComponent(Health.ofInvincible())
             .register(new TextureRenderer(TEXTURE))
             .register(new Physics(0, 0))
-            .register(new AutoTeamRegister())
             .register(new Squiggy(player))
             .addTags(GameTags.PLAYER_TEAM_TAGS);
     
@@ -71,25 +60,20 @@ public class Squiggy extends ECSystem {
     }
 
     public Squiggy(Entity player) {
-        playerEntity = player;
-        this.player = player.getSystem(Player.class).orElseThrow(() -> new RecoverableException("no player system"));
         this.playerTransform = player.getComponent(Transform.class).orElseThrow(() -> new RecoverableException("no player transform"));
     }
 
     @Override
     public void ready() {
-        trans.position = playerTransform.position.clone();
-        desiredPosition = trans.position.clone();
+        getTransform().position = playerTransform.position.clone();
+        desiredPosition = getTransform().position.clone();
 
         movementStopwatch.start();
     }
 
     @Override
     public void setup() {
-        trans = require(Transform.class);
-        tangible = require(Tangible.class);
-        effect = require(Effect.class);
-        effect.addDamageScaling(info -> effect.getLevel() * info.damage());
+        getEffect().addDamageScaling(info -> getEffect().getLevel() * info.damage());
         
         Rect rect = require(Rect.class);
 
@@ -103,21 +87,21 @@ public class Squiggy extends ECSystem {
         // rect.height = textureRenderer.getTexture().height();
 
         // weapon = new SimpleWeapon(BASE_DAMAGE, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, Duration.ofSeconds(1), 0.5f, Optional.of(effect));
-        weapon = new ArcWeapon(BASE_DAMAGE, (float)(Math.PI/4), 5, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, 0.5f, Duration.ofSeconds(1), Optional.of(effect));
+        weapon = new ArcWeapon(BASE_DAMAGE, (float)(Math.PI/4), 5, 1_000, Color.BLUE, GameTags.PLAYER_TEAM_TAGS, 0.5f, Duration.ofSeconds(1), Optional.of(getEffect()));
         weapon.setHitMarkerColor(DamageColor.SPECIAL);
 
         entity.setRenderPriority(90);
     }
 
     public void setLevel(int level) {
-        effect.setLevel(level);
+        getEffect().setLevel(level);
     }
 
     public State getState() {
         return state;
     }
 
-    public Optional<Target> getTarget() {
+    public Optional<Unit> getTarget() {
         return target;
     }
 
@@ -126,33 +110,32 @@ public class Squiggy extends ECSystem {
         target = Optional.empty();
     }
 
-    public void setAttacking(Square target) {
+    public void setAttacking(Unit target) {
         state = State.ATTACKING;
-        this.target = Optional.of(Target.ofEntity(target.entity));
+        this.target = Optional.of(target);
     }
 
     @Override
     public void frame() {
-        trans.rotation = (tangible.velocity.x / MAX_SPEED) * 12;
+        getTransform().rotation = (getTangible().velocity.x / MAX_SPEED) * 12;
     }
 
     @Override
     public void infrequentUpdate() {
-        float playerDistance = trans.position.distance(playerTransform.position);
-        Team team = Team.getTeamByTagOf(entity);
+        float playerDistance = getTransform().position.distance(playerTransform.position);
 
         if (playerDistance > 1_000) {
             setFollowing();
         } else {
             if (target.isEmpty()) {
-                target = team.findTarget(trans.position);
+                target = getTeam().findTarget(getTransform().position);
                 
                 if (target.isPresent()) state = State.ATTACKING;
             } else {
-                if (target.get().health().get().isDead() || !team.shouldEntityBeTargetted(target.get().entity())) {
+                if (target.get().getHealth().isDead() || !getTeam().shouldEntityBeTargetted(target.get().getEntity())) {
                     setFollowing();
                 } else {
-                    desiredPosition = target.get().trans().position.clone();
+                    desiredPosition = target.get().getTransform().position.clone();
                 }
             }
         }
@@ -167,14 +150,14 @@ public class Squiggy extends ECSystem {
                 break;
         }
 
-        tangible.velocity.moveTowardsEq(trans.position.directionTo(desiredPosition).multiplyEq(MAX_SPEED), 1200 * infreqDelta());
+        getTangible().velocity.moveTowardsEq(getTransform().position.directionTo(desiredPosition).multiplyEq(MAX_SPEED), 1200 * infreqDelta());
     }
     
     private void followingProcess() {
         if (movementStopwatch.hasElapsedAdvance(Duration.ofSeconds(1))) {
             
-            if (playerTransform.position.distance(trans.position) <= 300) {
-                desiredPosition = trans.position.clone();
+            if (playerTransform.position.distance(getTransform().position) <= 300) {
+                desiredPosition = getTransform().position.clone();
             } else {
                 desiredPosition = playerTransform.position.clone();
             }
@@ -182,7 +165,7 @@ public class Squiggy extends ECSystem {
     }
 
     private void attackingProcess() {
-        weapon.fire(trans.position.clone(), trans.position.directionTo(target.get().trans().position), entity);
+        weapon.fire(getTransform().position.clone(), getTransform().position.directionTo(target.get().getTransform().position), entity);
     }
     
 }

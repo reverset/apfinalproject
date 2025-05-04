@@ -3,7 +3,6 @@ package game.core;
 import java.util.List;
 import java.util.Optional;
 
-import game.RecoverableException;
 import game.Vec2;
 import game.ecs.Entity;
 
@@ -15,15 +14,14 @@ public final class PlayerTeam extends Team {
     }
 
     @Override
-    public Optional<Target> findTarget(Vec2 pos) {
-        List<Entity> potentialTargets = getOpposingTeam().getMembers();
+    public Optional<Unit> findTarget(Vec2 pos) {
+        List<Unit> potentialTargets = getOpposingTeam().getMembers();
         for (final var pt : potentialTargets) {
-            final var enemy = pt.getSystem(Unit.class).orElseThrow(() -> new RecoverableException("Non-enemy on enemy team!"));
-            
-            if (enemy instanceof Cube cube && cube.isShieldActive()) continue;
-            if (pos.distance(enemy.getTransform().position) > 400) continue;
 
-            return Optional.of(Target.ofEntity(enemy.entity));
+            if (pt instanceof Cube cube && cube.isShieldActive()) continue;
+            if (pos.distance(pt.getTransform().position) > 400) continue;
+
+            return Optional.of(pt);
         }
 
         return Optional.empty();

@@ -26,8 +26,8 @@ public class Health implements Component {
     private final Stopwatch invincibilityStopwatch = Stopwatch.ofGameTime();
     private boolean isInvincible = false;
 
-    public static Health ofInvincible(Optional<Effect> effect) {
-        Health h = new Health(Integer.MAX_VALUE, effect);
+    public static Health ofInvincible() {
+        Health h = new Health(Integer.MAX_VALUE);
         h.isInvincible = true;
         return h;
     }

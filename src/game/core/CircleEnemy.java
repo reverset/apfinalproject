@@ -70,7 +70,6 @@ public class CircleEnemy extends Unit {
             .register(new HealthBar(
                 new Vec2(-RADIUS*2, -50), entity.name
             ))
-            .register(new AutoTeamRegister())
             .register(new CircleEnemy())
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
 
@@ -89,6 +88,7 @@ public class CircleEnemy extends Unit {
 
     @Override
     public void ready() {
+        super.ready();
         getHealth().onDeath.listen(n -> {
             deathWeapon.forceFire(getTransform().position, null, entity);
             GameLoop.safeDestroy(entity);
@@ -102,10 +102,10 @@ public class CircleEnemy extends Unit {
         // if (playerTransform == null) return;
         final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
-        Target target = ot.get();
+        Unit target = ot.get();
 
         if (movementStopwatch.hasElapsedSecondsAdvance(MOVE_DELAY)) {
-            desiredPosition = target.trans().position.add(Vec2.randomUnit().multiply(50));
+            desiredPosition = target.getTransform().position.add(Vec2.randomUnit().multiply(50));
         }
     }
     
@@ -113,9 +113,9 @@ public class CircleEnemy extends Unit {
     public void infrequentUpdate() {
         final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
-        Target target = ot.get();
+        Unit target = ot.get();
         
-        float dist = getTransform().position.distance(target.trans().position);
+        float dist = getTransform().position.distance(target.getTransform().position);
         if (dist < 100 && weapon.canFire()) weapon.fire(getTransform().position, null, entity);
 
         if (desiredPosition == null) return;

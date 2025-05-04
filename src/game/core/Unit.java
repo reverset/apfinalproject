@@ -1,6 +1,7 @@
 package game.core;
 
 import game.ecs.ECSystem;
+import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
 public abstract class Unit extends ECSystem {
@@ -9,6 +10,11 @@ public abstract class Unit extends ECSystem {
     private Health health = null;
     private Effect effect = null;
     private Team team = null;
+
+    @Override
+    public void ready() {
+        Team.getTeamByTagOf(entity).registerMember(this, true);
+    }
 
     public Transform getTransform() {
         if (trans == null) {
@@ -46,9 +52,13 @@ public abstract class Unit extends ECSystem {
     }
 
     public void setTeam(Team team) {
-        this.team.unregisterMember(entity);
+        this.team.unregisterMember(this);
         this.team = team;
-        this.team.registerMember(entity, true);
+        this.team.registerMember(this, true);
+    }
+
+    public Entity getEntity() {
+        return entity;
     }
 
     public boolean isBossEnemy() {

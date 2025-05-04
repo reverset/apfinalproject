@@ -32,7 +32,6 @@ public class Sigma extends Unit {
             // .register(new RectRender().centerize())
             .register(new TextureRenderer(TEXTURE))
             .register(new HealthBar(new Vec2(-WIDTH, -HEIGHT), entity.name))
-            .register(new AutoTeamRegister())
             .register(new Sigma())
             .addTags(GameTags.ENEMY_TEAM_TAGS);
 
@@ -48,7 +47,8 @@ public class Sigma extends Unit {
 
     @Override
     public void ready() {
-        // playerComp = player.flatMap(p -> p.getSystem(Player.class));
+        super.ready();
+
         getHealth().onDeath.listen(e -> {
             GameLoop.safeDestroy(entity);
             Team.getTeamByTagOf(entity).grantExp(10);
@@ -72,9 +72,9 @@ public class Sigma extends Unit {
         // if (playerTransform == null || player.isEmpty()) return;
         final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
-        Target target = ot.get();
+        Unit target = ot.get();
 
-        getTangible().velocity.moveTowardsEq(getTransform().position.directionTo(target.trans().position).multiplyEq(1000), 1000*infreqDelta());
+        getTangible().velocity.moveTowardsEq(getTransform().position.directionTo(target.getTransform().position).multiplyEq(1000), 1000*infreqDelta());
     }
 
     @Override
@@ -82,9 +82,9 @@ public class Sigma extends Unit {
         // if (playerTransform == null || player.isEmpty()) return;
         final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
-        Target target = ot.get();
+        Unit target = ot.get();
 
-        float angle = getTransform().position.directionTo(target.trans().position).getAngleDegrees();
+        float angle = getTransform().position.directionTo(target.getTransform().position).getAngleDegrees();
         getTransform().rotation = angle;
     }
 }

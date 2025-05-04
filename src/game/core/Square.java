@@ -66,7 +66,6 @@ public class Square extends Unit {
             .register(new HealthBar(
                 new Vec2(-rect.width*0.5f, -20), entity.name
             ))
-            .register(new AutoTeamRegister())
             .register(new Square())
             .register(new ViewCuller(Vec2.screen().x+SIZE))
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
@@ -88,13 +87,10 @@ public class Square extends Unit {
     
     @Override
     public void ready() {
+        super.ready();
         getHealth().onDeath.listen(n -> {
             GameLoop.safeDestroy(entity);
             GameLoop.safeTrack(DestroyEffect.makeEntity(rect.dimensions(), getTransform().position.clone()));
-            // GameLoop.safeTrack(HealingOrb.makeEntity(trans.position, 10 + (5 * (effect.getLevel()-1))));
-            // player
-            //     .flatMap(en -> en.getSystem(Player.class))
-            //     .ifPresent(p -> p.getExpAccumulator().accumulate(10));
 
             Team.getTeamByTagOf(entity).grantExp(10);
         }, entity);
@@ -104,16 +100,16 @@ public class Square extends Unit {
     public void frame() {
         final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
-        Target target = ot.get();
+        Unit target = ot.get();
 
-        float distance = target.trans().position.distance(getTransform().position);
+        float distance = target.getTransform().position.distance(getTransform().position);
         if (movementStopwatch.hasElapsedSecondsAdvance(timeOffset)) {
             float desiredSpeed = SPEED;
             if (distance > 500) desiredSpeed *= 2;
-            desiredDirection = getTransform().position.directionTo(target.trans().position).multiplyEq(desiredSpeed);
+            desiredDirection = getTransform().position.directionTo(target.getTransform().position).multiplyEq(desiredSpeed);
         }
 
-        if (weapon.canFire() && BulletFactory.bullets.size() < 60) weapon.fire(getTransform().position, getTransform().position.directionTo(target.trans().position), entity);
+        if (weapon.canFire() && BulletFactory.bullets.size() < 60) weapon.fire(getTransform().position, getTransform().position.directionTo(target.getTransform().position), entity);
 
         if (desiredDirection == null) return;
 

@@ -75,7 +75,6 @@ public class Cube extends Unit {
             .register(new PostMortem(GameLoop::safeDestroy)
                 .addWill(e -> GameLoop.defer(RandomPowerup::showScreen))
             )
-            .register(new AutoTeamRegister())
             .register(new Cube())
             .addTags(GameTags.ENEMY_TEAM);
 
@@ -117,6 +116,7 @@ public class Cube extends Unit {
 
     @Override
     public void ready() {
+        super.ready();
         movementTimer.start();
     }
 
@@ -124,10 +124,10 @@ public class Cube extends Unit {
     public void infrequentUpdate() {
         final var ot = getTeam().findTarget(getTransform().position);
         if (ot.isEmpty()) return;
-        Target target = ot.get();
+        Unit target = ot.get();
 
-        attackTick(target.trans());
-        movementTick(target.trans());
+        attackTick(target.getTransform());
+        movementTick(target.getTransform());
         shieldTick();
 
     }

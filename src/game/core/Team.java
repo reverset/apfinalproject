@@ -1,6 +1,7 @@
 package game.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,7 +10,7 @@ import game.Vec2;
 import game.ecs.Entity;
 
 public abstract sealed class Team permits EnemyTeam, PlayerTeam {
-    private final List<Entity> members = new ArrayList<>();
+    private final List<Unit> members = new ArrayList<>();
 
     public static Team getTeamByTagOf(Entity entity) {
         if (entity.hasAnyTag(GameTags.PLAYER_TEAM_TAGS)) return PlayerTeam.get();
@@ -17,32 +18,40 @@ public abstract sealed class Team permits EnemyTeam, PlayerTeam {
         return null;
     }
 
-    public boolean isOnMyTeam(Entity other) {
+    public boolean isOnMyTeam(Unit other) {
         return members.contains(other);
     }
 
-    public List<Entity> getMembers() {
-        return members;
+    public boolean isOnMyTeam(Entity other) {
+        final var unit = other.getSystem(Unit.class);
+        if (unit.isEmpty()) return false;
+        return members.contains(unit.get());
     }
 
-    public void registerMember(Entity entity, boolean autoUnbind) {
-        members.add(entity);
+    public List<Unit> getMembers() {
+        return Collections.unmodifiableList(members);
+    }
+
+    public void registerMember(Unit unit, boolean autoUnbind) {
+        members.add(unit);
 
         if (autoUnbind) {
-            entity.bind(new Binded() {
+            unit.getEntity().bind(new Binded() {
                 @Override
                 public void unbind(Entity entity) {
-                    unregisterMember(entity);
+                    final var u = entity.getSystem(Unit.class);
+                    if (u.isEmpty()) return;
+                    unregisterMember(u.get());
                 }
             });
         }
     }
 
-    public void unregisterMember(Entity entity) {
-        members.remove(entity);
+    public void unregisterMember(Unit unit) {
+        members.remove(unit);
     }
 
-    public abstract Optional<Target> findTarget(Vec2 pos);
+    public abstract Optional<Unit> findTarget(Vec2 pos);
     public abstract Team getOpposingTeam();
     
     public abstract boolean shouldEntityBeTargetted(Entity target);

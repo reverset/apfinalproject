@@ -13,11 +13,10 @@ import game.Stopwatch;
 import game.Vec2;
 import game.core.rendering.Rect;
 import game.core.rendering.TextureRenderer;
-import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
-public class Blahaj extends ECSystem {
+public class Blahaj extends Unit {
 
     public enum State {
         FOLLOWING,
@@ -42,7 +41,7 @@ public class Blahaj extends ECSystem {
     private TextureRenderer textureRenderer;
 
     private Player player;
-    private Optional<Target> target = Optional.empty();
+    private Optional<Unit> target = Optional.empty();
     private State state = State.FOLLOWING;
 
     private Stopwatch biteStopwatch = Stopwatch.ofGameTime();
@@ -58,9 +57,9 @@ public class Blahaj extends ECSystem {
             .addComponent(new Rect(WIDTH, HEIGHT, Color.WHITE))
             .addComponent(new Tangible())
             .addComponent(new Effect().setLevel(level))
+            .addComponent(Health.ofInvincible())
             .register(new TextureRenderer(TEXTURE).setFlipped(true))
             .register(new Physics(0, 0, new Vec2(-WIDTH/2, -HEIGHT/2)))
-            .register(new AutoTeamRegister())
             .register(new Blahaj(player))
             .addTags(GameTags.PLAYER_TEAM_TAGS);
 
@@ -79,7 +78,7 @@ public class Blahaj extends ECSystem {
         state = State.ATTACKING;
     }
 
-    public void attack(Target target) {
+    public void attack(Unit target) {
         this.target = Optional.of(target);
         setAttacking();
     }
@@ -100,6 +99,8 @@ public class Blahaj extends ECSystem {
 
     @Override
     public void setup() {
+        // Team.getTeamByTagOf(entity).registerMember(, false);
+
         trans = require(Transform.class);
         effect = require(Effect.class);
         tangible = require(Tangible.class);
@@ -135,8 +136,8 @@ public class Blahaj extends ECSystem {
             if (target.isPresent()) {
                 setAttacking();
             }
-        } else if (target.isPresent() && !team.shouldEntityBeTargetted(target.get().entity())) setFollowing();
-        else if (target.isPresent() && target.get().trans().position.distance(player.getTransform().position) > 1_000) setFollowing();
+        } else if (target.isPresent() && !team.shouldEntityBeTargetted(target.get().getEntity())) setFollowing();
+        else if (target.isPresent() && target.get().getTransform().position.distance(player.getTransform().position) > 1_000) setFollowing();
 
         switch (state) {
             case FOLLOWING, HEALING -> {
@@ -159,16 +160,16 @@ public class Blahaj extends ECSystem {
                     setFollowing();
                     break;
                 }
-                desiredPosition = Optional.of(target.get().trans().position);
+                desiredPosition = Optional.of(target.get().getTransform().position);
 
-                if (trans.position.distance(target.get().trans().position) < BITE_DISTANCE) {
+                if (trans.position.distance(target.get().getTransform().position) < BITE_DISTANCE) {
                     if (biteStopwatch.hasElapsedAdvance(Duration.ofMillis(500))) {
                         // BITE
                         final var dmg = effect.computeDamage(
-                            new DamageInfo(BASE_DAMAGE, target.get().entity(), null, trans.position.clone())
+                            new DamageInfo(BASE_DAMAGE, target.get().getEntity(), null, trans.position.clone())
                                 .setAttacker(entity)
                                 .setColor(DamageColor.MELEE));
-                        target.get().health().ifPresent(h -> h.damage(dmg));
+                        target.get().getHealth().damage(dmg);
                     }
                 }
             }
@@ -188,7 +189,7 @@ public class Blahaj extends ECSystem {
         return center.add((float)x, (float)y);
     }
 
-    public Optional<Target> getTarget() {
+    public Optional<Unit> getTarget() {
         return target;
     }
 }

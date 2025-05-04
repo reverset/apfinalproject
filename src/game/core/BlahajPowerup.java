@@ -44,6 +44,6 @@ public class BlahajPowerup extends Powerup {
     @Override
     public String getSmallHUDInfo() {
         final var state = blahaj.getMainSystem().getState();
-        return state + (state == State.ATTACKING ? " " + blahaj.getMainSystem().getTarget().get().entity().name.toUpperCase() : "");
+        return state + (state == State.ATTACKING ? " " + blahaj.getMainSystem().getTarget().get().getEntity().name.toUpperCase() : "");
     }
 }
