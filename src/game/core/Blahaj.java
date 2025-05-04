@@ -48,6 +48,8 @@ public class Blahaj extends ECSystem {
     private Stopwatch biteStopwatch = Stopwatch.ofGameTime();
     private Stopwatch healStopwatch = Stopwatch.ofGameTime();
 
+    private Stopwatch flipStopwatch = Stopwatch.ofGameTime();
+
     public static EntityOf<Blahaj> makeEntity(Entity player, int level) {
         EntityOf<Blahaj> e = new EntityOf<>("Blahaj", Blahaj.class);
 
@@ -113,7 +115,10 @@ public class Blahaj extends ECSystem {
     public void frame() {
         if (desiredPosition.isEmpty()) return;
 
-        textureRenderer.setFlipped(trans.position.minus(desiredPosition.get()).x < 0);
+        if (flipStopwatch.hasElapsedAdvance(Duration.ofMillis(100))) {
+            textureRenderer.setFlipped(trans.position.minus(desiredPosition.get()).x < 0);
+        }
+
 
         trans.rotation = (tangible.velocity.y / MAX_SPEED) * 12;
         trans.rotation *= textureRenderer.isFlipped() ? 1 : -1;
