@@ -288,6 +288,8 @@ public class Player extends Unit implements Controllable {
 
     @Override
     public void frame() {
+
+
         Vec2 moveVector = controlledMoveVector();
         if (Raylib.IsKeyPressed(Raylib.KEY_ESCAPE)) PauseMenu.open();
         

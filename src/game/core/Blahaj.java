@@ -118,16 +118,14 @@ public class Blahaj extends Unit {
 
     @Override
     public void infrequentUpdate() {
-        Team team = Team.getTeamByTagOf(entity);
-
         if (player.getHealth().isCritical()) {
             setHealing();
         } else if (target.isEmpty()) {
-            target = team.findTarget(getTransform().position);
+            target = getTeam().findTarget(getTransform().position);
             if (target.isPresent()) {
                 setAttacking();
             }
-        } else if (target.isPresent() && !team.shouldEntityBeTargetted(target.get().getEntity())) setFollowing();
+        } else if (target.isPresent() && !getTeam().shouldEntityBeTargetted(target.get().getEntity())) setFollowing();
         else if (target.isPresent() && target.get().getTransform().position.distance(player.getTransform().position) > 1_000) setFollowing();
 
         switch (state) {
