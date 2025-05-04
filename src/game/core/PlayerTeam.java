@@ -21,7 +21,7 @@ public final class PlayerTeam extends Team {
     public Optional<Target> findTarget(Vec2 pos) {
         List<Entity> potentialTargets = getOpposingTeam().getMembers();
         for (final var pt : potentialTargets) {
-            final var enemy = pt.getSystem(Enemy.class).orElseThrow(() -> new RecoverableException("Non-enemy on enemy team!"));
+            final var enemy = pt.getSystem(Square.class).orElseThrow(() -> new RecoverableException("Non-enemy on enemy team!"));
             
             if (enemy instanceof Cube cube && cube.isShieldActive()) continue;
             if (pos.distance(enemy.trans.position) > 400) continue;
@@ -39,7 +39,7 @@ public final class PlayerTeam extends Team {
 
     @Override
     public boolean shouldEntityBeTargetted(Entity target) {
-        return target.getSystem(Enemy.class)
+        return target.getSystem(Square.class)
             .filter(e -> e instanceof Cube cube && cube.isShieldActive() || e.health.isDead())
             .isEmpty();
     }

@@ -20,7 +20,7 @@ public class EnemySpawner extends ECSystem {
 
     private int maxLevel = 1;
     
-    private Queue<EntityOf<Enemy>> spawnQueue = new LinkedList<>();
+    private Queue<EntityOf<Square>> spawnQueue = new LinkedList<>();
 
     private final Stopwatch stopwatch = Stopwatch.ofGameTime();
 
@@ -56,7 +56,7 @@ public class EnemySpawner extends ECSystem {
         return Collections.unmodifiableList(enemies);
     }
 
-    public Queue<EntityOf<Enemy>> getSpawnQueue() {
+    public Queue<EntityOf<Square>> getSpawnQueue() {
         return spawnQueue;
     }
 
@@ -64,7 +64,7 @@ public class EnemySpawner extends ECSystem {
         return maxLevel;
     }
 
-    public EntityOf<Enemy> randomEntity(Vec2 pos) {
+    public EntityOf<Square> randomEntity(Vec2 pos) {
         double rand = Math.random();
         int level = (int) Math.max(1, getMaxLevel() - (Math.random() * 4));
         if (rand > 0.8) {
@@ -74,11 +74,11 @@ public class EnemySpawner extends ECSystem {
             return TriangleEnemy.makeEntity(pos, level);
         }
         
-        return Enemy.makeEntity(pos, level);
+        return Square.makeEntity(pos, level);
     }
 
     public static Vec2 getOffScreenPos() {
-        Vec2 offset = Vec2.randomUnit().multiplyEq(Vec2.screen().x + Enemy.SIZE);
+        Vec2 offset = Vec2.randomUnit().multiplyEq(Vec2.screen().x + Square.SIZE);
         return Vec2.screenCenter().screenToWorldEq().addEq(offset);
     }
 
@@ -95,7 +95,7 @@ public class EnemySpawner extends ECSystem {
         }
 
         if (!spawnQueue.isEmpty()) {
-            EntityOf<Enemy> enemy = spawnQueue.poll();
+            EntityOf<Square> enemy = spawnQueue.poll();
             if (enemy == null) return;
 
             GameLoop.safeTrack(enemy);

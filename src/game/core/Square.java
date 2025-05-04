@@ -20,7 +20,7 @@ import game.ecs.ECSystem;
 import game.ecs.comps.Transform;
 
 // If I were to rewrite this, this class would be abstract or an interface, this is HORRIRBLE!!hjOIDWAUJ
-public class Enemy extends ECSystem {
+public class Square extends ECSystem {
     public static final float SPEED = 200;
     public static final int SIZE = 50;
 
@@ -51,11 +51,11 @@ public class Enemy extends ECSystem {
 
     private double timeOffset = 0;
 
-    public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
+    public static EntityOf<Square> makeEntity(Vec2 position, int level) {
         Rect rect = new Rect(SIZE, SIZE, Color.RED);
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
-        EntityOf<Enemy> entity = new EntityOf<>("Square", Enemy.class);
+        EntityOf<Square> entity = new EntityOf<>("Square", Square.class);
 
         Effect effect = new Effect()
             .setLevel(level);
@@ -76,7 +76,7 @@ public class Enemy extends ECSystem {
                 new Vec2(-rect.width*0.5f, -20), entity.name
             ))
             .register(new AutoTeamRegister())
-            .register(new Enemy())
+            .register(new Square())
             .register(new ViewCuller(Vec2.screen().x+SIZE))
             .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
 

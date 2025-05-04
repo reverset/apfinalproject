@@ -12,7 +12,7 @@ import game.core.rendering.Triangle;
 import game.core.rendering.TriangleRenderer;
 import game.ecs.comps.Transform;
 
-public class TriangleEnemy extends Enemy {
+public class TriangleEnemy extends Square {
     public static final float SIZE = 40;
     public static final float SHOOT_DISTANCE = 2_000;
 
@@ -29,9 +29,9 @@ public class TriangleEnemy extends Enemy {
     Color rayColor = new Color(255, 140, 0, 0);
     boolean freezeRotation = false;
 
-    public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
+    public static EntityOf<Square> makeEntity(Vec2 position, int level) {
         // Supplier<Float> timeSupplier = ECSystem::time; // ????
-        EntityOf<Enemy> entity = new EntityOf<>("Triangle", Enemy.class);
+        EntityOf<Square> entity = new EntityOf<>("Triangle", Square.class);
 
         Effect effect = new Effect().setLevel(level);
         effect.addDamageScaling(d -> d.damage() + (effect.getLevel()-1)*10);

@@ -7,7 +7,7 @@ import game.core.ArcWeapon;
 import game.core.AutoTeamRegister;
 import game.core.DamageColor;
 import game.core.Effect;
-import game.core.Enemy;
+import game.core.Square;
 import game.core.GameTags;
 import game.core.Physics;
 import game.core.Player;
@@ -126,7 +126,7 @@ public class Squiggy extends ECSystem {
         target = Optional.empty();
     }
 
-    public void setAttacking(Enemy target) {
+    public void setAttacking(Square target) {
         state = State.ATTACKING;
         this.target = Optional.of(Target.ofEntity(target.entity));
     }

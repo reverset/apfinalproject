@@ -21,7 +21,7 @@ import game.Vec2;
 import game.core.rendering.Rect;
 import game.ecs.comps.Transform;
 
-public class Cube extends Enemy {
+public class Cube extends Square {
     public static final int BASE_HEALTH = 1_000;
     public static final int BASE_DAMAGE = 20;
     public static final int BULLET_SPEED = 1_500;
@@ -50,8 +50,8 @@ public class Cube extends Enemy {
     private Stopwatch shieldEnableStopwatch = Stopwatch.ofGameTime();
     private Stopwatch shieldDisableStopwatch = Stopwatch.ofGameTime();
 
-    public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
-        EntityOf<Enemy> entity = new EntityOf<>("THE CUBE", Enemy.class);
+    public static EntityOf<Square> makeEntity(Vec2 position, int level) {
+        EntityOf<Square> entity = new EntityOf<>("THE CUBE", Square.class);
 
         Effect effect = new Effect().setLevel(level);
         Supplier<Float> timeSupplier = () -> time();

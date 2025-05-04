@@ -20,7 +20,7 @@ import game.core.rendering.Rect;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
-public class HexagonWorm extends Enemy {
+public class HexagonWorm extends Square {
     public enum State {
         CIRCLING,
         FAR_CIRCLING,
@@ -62,8 +62,8 @@ public class HexagonWorm extends Enemy {
     private HexaBombLauncher weapon;
     private List<LaserWeapon> skyLasers = new ArrayList<>();
 
-    public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
-        EntityOf<Enemy> entity = new EntityOf<>("The Hexagon Worm", Enemy.class);
+    public static EntityOf<Square> makeEntity(Vec2 position, int level) {
+        EntityOf<Square> entity = new EntityOf<>("The Hexagon Worm", Square.class);
 
         Effect effect = new Effect().setLevel(level);
         effect.addDamageRecievingResponseExtra(d -> {

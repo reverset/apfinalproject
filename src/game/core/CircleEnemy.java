@@ -18,7 +18,7 @@ import game.core.rendering.Rect;
 import game.ecs.ECSystem;
 import game.ecs.comps.Transform;
 
-public class CircleEnemy extends Enemy {
+public class CircleEnemy extends Square {
     public static final float RADIUS = 20;
     public static final float SPEED = 1_000;
     public static final float MOVE_DELAY = 3;
@@ -40,10 +40,10 @@ public class CircleEnemy extends Enemy {
 
     private Vec2 desiredPosition;
     
-    public static EntityOf<Enemy> makeEntity(Vec2 position, int level) {
+    public static EntityOf<Square> makeEntity(Vec2 position, int level) {
         
         Supplier<Float> timeSupplier = ECSystem::time; // ????
-        EntityOf<Enemy> entity = new EntityOf<>("Circle", Enemy.class);
+        EntityOf<Square> entity = new EntityOf<>("Circle", Square.class);
 
         Effect effect = new Effect().setLevel(level);
         effect.addDamageScaling(d -> d.damage() + ((int) Math.ceil((level-1)*2)));

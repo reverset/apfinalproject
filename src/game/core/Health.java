@@ -1,5 +1,6 @@
 package game.core;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import game.GameLoop;
@@ -23,7 +24,14 @@ public class Health implements Component {
     private Optional<Effect> effect;
 
     private final Stopwatch invincibilityStopwatch = Stopwatch.ofGameTime();
-    
+    private boolean isInvincible = false;
+
+    public static Health ofInvincible(Optional<Effect> effect) {
+        Health h = new Health(Integer.MAX_VALUE, effect);
+        h.isInvincible = true;
+        return h;
+    }
+
     public Health(int maxHp, Optional<Effect> effect) {
         maxHealth = maxHp;
         health = maxHealth;
@@ -85,7 +93,12 @@ public class Health implements Component {
     **/
     public DamageInfo damageOrHeal(DamageInfo info, boolean showNumbers, boolean bypassInvincibility) {
         if (isDead()) return DamageInfo.ofNone();
-        if (invincibilityDuration != 0 && info.isHarmful() && !bypassInvincibility && !invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)) return DamageInfo.ofNone();
+        if (isInvincible // huge if
+            || (invincibilityDuration != 0 
+                && info.isHarmful() 
+                && !bypassInvincibility 
+                && !invincibilityStopwatch.hasElapsedSecondsAdvance(invincibilityDuration)
+            )) return DamageInfo.ofNone();
         
         DamageInfo inf = info;
         if (inf.isHarmful() && effect.isPresent()) inf = effect.get().computeDamageResistance(inf);

@@ -12,7 +12,7 @@ import game.core.rendering.Rect;
 import game.core.rendering.TextureRenderer;
 import game.ecs.comps.Transform;
 
-public class Sigma extends Enemy {
+public class Sigma extends Square {
     private static final int BASE_HEALTH = 10;
     private static final int BASE_DAMAGE = 50;
     private static final int WIDTH = 50;
@@ -20,8 +20,8 @@ public class Sigma extends Enemy {
 
     private static final RayTexture TEXTURE = new RayImage("resources/sigma.png", WIDTH, HEIGHT).uploadToGPU();
 
-    public static EntityOf<Enemy> makeEntity(Vec2 position, Vec2 velocity, int level) {
-        EntityOf<Enemy> entity = new EntityOf<>("Sigma", Enemy.class);
+    public static EntityOf<Square> makeEntity(Vec2 position, Vec2 velocity, int level) {
+        EntityOf<Square> entity = new EntityOf<>("Sigma", Square.class);
 
 
         entity
