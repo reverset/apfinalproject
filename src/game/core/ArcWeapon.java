@@ -16,7 +16,6 @@ public class ArcWeapon extends Weapon2 {
     private int pellets;
     private float arcRadians;
     private Color color;
-    private Object[] ignoreTags;
     private Duration lifetime;
 
     public ArcWeapon(int baseDmgPerPellet, float arcRadians, int pellets, float bulletSpeed, Color color, Object[] ignoreTags, float cooldown, Duration lifetime, Optional<Effect> effect) {

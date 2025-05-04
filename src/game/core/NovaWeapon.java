@@ -18,7 +18,6 @@ public class NovaWeapon extends Weapon2 {
 
     private float radianPerBullet;
     private Color color;
-    private Object[] ignoreTags;
     private Duration lifetime;
 
     public NovaWeapon(int baseDmgPerPellet, float degreePerBullet, float bulletSpeed, Color color, Object[] ignoreTags, float cooldown, Duration lifetime, Optional<Effect> effect) {

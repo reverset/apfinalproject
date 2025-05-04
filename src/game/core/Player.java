@@ -288,7 +288,10 @@ public class Player extends Unit implements Controllable {
 
     @Override
     public void frame() {
-
+        // if (Raylib.IsKeyPressed(Raylib.KEY_BACKSLASH)) {
+        //     final var square = GameLoop.safeTrack(Square.makeEntity(trans.position.clone(), getEffect().getLevel()));
+        //     square.getMainSystem().setTeam(getTeam());
+        // }
 
         Vec2 moveVector = controlledMoveVector();
         if (Raylib.IsKeyPressed(Raylib.KEY_ESCAPE)) PauseMenu.open();

@@ -33,6 +33,8 @@ public abstract sealed class Team permits EnemyTeam, PlayerTeam {
     }
 
     public void registerMember(Unit unit, boolean autoUnbind) {
+        if (members.contains(unit)) return;
+        
         members.add(unit);
 
         if (autoUnbind) {
@@ -57,4 +59,6 @@ public abstract sealed class Team permits EnemyTeam, PlayerTeam {
     public abstract boolean shouldEntityBeTargetted(Entity target);
 
     public abstract void grantExp(int xp);
+
+    public abstract Object[] getTeamTags();
 }

@@ -52,9 +52,11 @@ public abstract class Unit extends ECSystem {
     }
 
     public void setTeam(Team team) {
-        this.team.unregisterMember(this);
+        entity.removeTags(getTeam().getTeamTags());
+        getTeam().unregisterMember(this);
         this.team = team;
         this.team.registerMember(this, true);
+        entity.addTags(getTeam().getTeamTags());
     }
 
     public Entity getEntity() {

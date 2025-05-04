@@ -13,10 +13,12 @@ public abstract class Weapon2 { // old weapon system was terrible, this is attem
     
     public final Signal<Physics> onHit = new Signal<>();
 
-    float cooldown;
+    protected float cooldown;
 
-    Stopwatch shootTimer = Stopwatch.ofGameTime();
-    Optional<Effect> effect;
+    protected Stopwatch shootTimer = Stopwatch.ofGameTime();
+    protected Optional<Effect> effect;
+
+    protected Object[] ignoreTags = {};
 
     private Color hitMarkerColor = Color.WHITE;
     
@@ -25,6 +27,9 @@ public abstract class Weapon2 { // old weapon system was terrible, this is attem
         this.effect = effect;
     }
 
+    public void setIgnoreTags(Object[] ignoreTags) {
+        this.ignoreTags = ignoreTags;
+    }
     
     abstract void forceFire(Vec2 position, Vec2 direction, Entity owner);
     

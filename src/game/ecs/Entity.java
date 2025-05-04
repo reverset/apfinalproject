@@ -1,6 +1,7 @@
 package game.ecs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
@@ -80,6 +81,25 @@ public class Entity {
 
 	public boolean isHidden() {
 		return hidden;
+	}
+
+	public Entity replaceTag(Object old, Object neww) {
+		for (int i = 0; i < tags.size(); i++) {
+			Object tag = tags.get(i);
+			if (tag.equals(old)) {
+				tags.set(i, neww);
+			}
+		}
+		return this;
+	}
+
+	public Entity removeTags(Object[] toRemove) {
+		for (int i = 0; i < toRemove.length; i++) {
+			if (tags.contains(toRemove[i])) {
+				tags.remove(toRemove[i]);
+			}
+		}
+		return this;
 	}
 
 	public Entity addTags(Object... tag) {

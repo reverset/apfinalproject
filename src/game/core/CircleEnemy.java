@@ -71,7 +71,7 @@ public class CircleEnemy extends Unit {
                 new Vec2(-RADIUS*2, -50), entity.name
             ))
             .register(new CircleEnemy())
-            .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
+            .addTags(GameTags.ENEMY_TEAM);
 
         return entity;
     }
@@ -95,6 +95,12 @@ public class CircleEnemy extends Unit {
             Team.getTeamByTagOf(entity).grantExp(10);
 
         }, entity);
+    }
+
+    @Override
+    public void setTeam(Team team) {
+        super.setTeam(team);
+        weapon.setIgnoreTags(getTeam().getTeamTags());
     }
 
     @Override

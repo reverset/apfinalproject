@@ -53,7 +53,7 @@ public class TriangleEnemy extends Unit {
                 new Vec2(-SIZE*1.5f, -40), entity.name
             ))
             .register(new TriangleEnemy())
-            .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
+            .addTags(GameTags.ENEMY_TEAM);
 
         return entity;
     }

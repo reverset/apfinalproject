@@ -68,7 +68,7 @@ public class Square extends Unit {
             ))
             .register(new Square())
             .register(new ViewCuller(Vec2.screen().x+SIZE))
-            .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
+            .addTags(GameTags.ENEMY_TEAM);
 
         return entity;
     }
@@ -81,8 +81,14 @@ public class Square extends Unit {
 
         timeOffset = (Math.random()+0.5) * 2;
         movementStopwatch.start();
-
+        
         weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN, Optional.of(getEffect()));
+    }
+
+    @Override
+    public void setTeam(Team team) {
+        super.setTeam(team);
+        weapon.setIgnoreTags(getTeam().getTeamTags());
     }
     
     @Override

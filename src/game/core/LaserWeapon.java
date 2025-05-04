@@ -12,21 +12,19 @@ import game.Vec2;
 import game.ecs.Entity;
 
 public class LaserWeapon extends Weapon2 {
-    Vec2 position;
-    Vec2 direction;
+    private Vec2 position;
+    private Vec2 direction;
 
-    Optional<Effect> effect;
+    private Optional<Effect> effect;
 
-    Color color;
+    private Color color;
 
-    float length;
-    float laserThickness;
-    float knockback;
+    private float length;
+    private float laserThickness;
+    private float knockback;
 
-    int layerMask;
-    int damage;
-
-    Object[] ignoreTags;
+    private int layerMask;
+    private int damage;
 
     private Ray ray;
     private boolean charging = false;

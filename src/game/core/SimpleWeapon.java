@@ -11,11 +11,10 @@ import game.ecs.Entity;
 
 public class SimpleWeapon extends Weapon2 {
 
-    int baseDamage;
-    Color color;
-    Object[] ignoreTags;
-    Duration lifetime;
-    float bulletSpeed;
+    private int baseDamage;
+    private Color color;
+    private Duration lifetime;
+    private float bulletSpeed;
 
     public SimpleWeapon(int baseDamage, float bulletSpeed, Color color, Object[] ignoreTags, Duration lifetime, float cooldown, Optional<Effect> effect) {
         super(cooldown, effect);

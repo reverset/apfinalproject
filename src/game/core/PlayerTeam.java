@@ -40,5 +40,16 @@ public final class PlayerTeam extends Team {
     }
 
     @Override
+    public void registerMember(Unit unit, boolean autoUnbind) {
+        super.registerMember(unit, autoUnbind);
+        System.out.println("new member: " + unit);
+    }
+
+    @Override
     public void grantExp(int xp) {}
+
+    @Override
+    public Object[] getTeamTags() {
+        return GameTags.PLAYER_TEAM_TAGS;
+    }
 }

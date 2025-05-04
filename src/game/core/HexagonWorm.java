@@ -89,7 +89,7 @@ public class HexagonWorm extends Unit {
             .register(new Physics(0, 0, new Vec2(-RADIUS/MoreMath.ROOT_TWO, -RADIUS/MoreMath.ROOT_TWO)))
             .register(new PolyRenderer())
             .register(new HexagonWorm())
-            .addTags(GameTags.ENEMY, GameTags.ENEMY_TEAM);
+            .addTags(GameTags.ENEMY_TEAM);
 
         return entity;
     }

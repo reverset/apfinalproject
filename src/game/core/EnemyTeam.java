@@ -45,4 +45,9 @@ public final class EnemyTeam extends Team {
             .getSystem(Player.class)
             .ifPresent(p -> p.getExpAccumulator().accumulate(xp)));
     }
+
+    @Override
+    public Object[] getTeamTags() {
+        return GameTags.ENEMY_TEAM_TAGS;
+    }
 }
