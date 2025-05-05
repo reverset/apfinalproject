@@ -10,7 +10,7 @@ uniform sampler2D texture0;
 uniform vec4 colDiffuse;
 
 const vec2 size = vec2(1280, 720);   // render size
-const float samples = 5.0;          // pixels per axis; higher = bigger glow, worse performance
+const float samples = 8.0;          // pixels per axis; higher = bigger glow, worse performance
 const float quality = 2.5;             // lower = smaller glow, better quality
 
 // Vignette
