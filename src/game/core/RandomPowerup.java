@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.raylib.Raylib;
+
 import game.Button;
 import game.Color;
 import game.DamageOverTime;
 import game.GameLoop;
 import game.HealthSyphon;
 import game.RecoverableException;
+import game.Shader;
 import game.Text;
 import game.Tween;
 import game.Vec2;
@@ -50,17 +53,52 @@ public class RandomPowerup {
         if (select.size() == 0) return; // All powerups at max level;
 
         GameLoop.pause();
+
+        GameLoop.track(makeBackground());
         Text text = new Text("SELECT A POWERUP", Vec2.screenCenter().addEq(0, -200), 54, Color.WHITE).center();
         GameLoop.track(Text.makeEntity(text).addTags("powerupselect"));
             
         GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), select.remove((int) (Math.random()*select.size()))));
         if (select.size() > 0) GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), select.remove((int) (Math.random()*select.size()))));
         if (select.size() > 0) GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(-400, 0), select.remove((int) (Math.random()*select.size()))));
+    }
 
+    public static Entity makeBackground() {
+        Entity e = new Entity("powerupbackground");
+        e.addTags("powerupselect");
+        e.setPauseBehavior(true);
 
-        // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), new Diamond(null, null, null, 0)));
-        // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), new HealthSyphon(null, null, null, 0)));
-        // GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(-400, 0), new HealthRegenPowerup(null, null, null, 0)));
+        e.register(new ECSystem() {
+            private int redX = -GameLoop.SCREEN_WIDTH;
+            private int blackX = GameLoop.SCREEN_WIDTH;
+            private int blackHeight = 500;
+            private Shader shader = Shader.fromCacheOrLoad("resources/powerupbackground.frag");
+
+            private Color blackColor = Color.BLACK.cloneIfImmutable().setAlpha(230);       
+
+            @Override
+            public void setup() {
+                GameLoop.makeTween(Tween.lerp(-GameLoop.SCREEN_WIDTH, 0), 0.5, val -> {
+                    redX = val.intValue();
+                    blackX = -val.intValue();
+                }).start().entity.setPauseBehavior(true);
+            }
+
+            @Override
+            public void frame() {
+                shader.setShaderValue("time", (float)Raylib.GetTime()/2);
+            }
+
+            @Override
+            public void hudRender() {
+                shader.with(() -> {
+                    Raylib.DrawRectangle(redX, 0, GameLoop.SCREEN_WIDTH, GameLoop.SCREEN_HEIGHT, Color.RED.getPointer());
+                });
+                Raylib.DrawRectangle(blackX, GameLoop.SCREEN_HEIGHT/2 - blackHeight/2, GameLoop.SCREEN_WIDTH, blackHeight, blackColor.getPointer());
+            }
+        });
+
+        return e;
     }
 
     public static Entity makeButton(Vec2 pos, Powerup powerup) {

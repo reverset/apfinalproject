@@ -128,7 +128,7 @@ public class Cube extends Unit {
 
         attackTick(target.getTransform());
         movementTick(target.getTransform());
-        shieldTick();
+        shieldTick(target.getTransform());
 
     }
 
@@ -144,23 +144,31 @@ public class Cube extends Unit {
         });
     }
 
-    private void altAttack() {
-        GameLoop.safeTrack(Sigma.makeEntity(getTransform().position.clone(), Vec2.randomUnit().multiplyEq(1_000), getEffect().getLevel()));
+    private void altAttack(Transform plTrans) {
+        Vec2 desiredVelocity = Vec2.randomUnit().multiplyEq(1_000);
+
+        // if (getHealth().getHealthPercentage() <= 0.5) {
+        //     desiredVelocity = getTransform().position.directionTo(plTrans.position).multiply(800);
+        // }
+
+        Vec2 desiredPos = getTransform().position.add(Vec2.randomUnit().multiplyEq(200));
+        GameLoop.safeTrack(Sigma.makeEntity(desiredPos, desiredVelocity, getEffect().getLevel()));
+
     }
 
     private void attackTick(Transform plTrans) {
         if (!isShieldUp && weapon.canFire()) weapon.fire(getTransform().position.clone(), getTransform().position.directionTo(plTrans.position), entity);
     }
 
-    private void shieldTick() {
+    private void shieldTick(Transform plTrans) {
         if (!isShieldUp) {
             if (shieldEnableStopwatch.hasElapsedAdvance(Duration.ofSeconds(5))) {
                 isShieldUp = true;
                 shieldDisableStopwatch.start();
                 shieldEnableStopwatch.stop();
 
-                for (int i = 0; i < 2; i++) {
-                    altAttack();
+                for (int i = 0; i < 3; i++) {
+                    altAttack(plTrans);
                 }
             }
         } else {

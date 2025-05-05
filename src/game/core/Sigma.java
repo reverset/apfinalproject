@@ -11,10 +11,12 @@ import game.core.rendering.TextureRenderer;
 import game.ecs.comps.Transform;
 
 public class Sigma extends Unit {
-    private static final int BASE_HEALTH = 10;
+    private static final int BASE_HEALTH = 25;
     private static final int BASE_DAMAGE = 50;
     private static final int WIDTH = 50;
     private static final int HEIGHT = 50;
+
+    private long spawnTime = 0;
 
     private static final RayTexture TEXTURE = new RayImage("resources/sigma.png", WIDTH, HEIGHT).uploadToGPU();
 
@@ -48,6 +50,7 @@ public class Sigma extends Unit {
     @Override
     public void ready() {
         super.ready();
+        spawnTime = System.currentTimeMillis();
 
         getHealth().onDeath.listen(e -> {
             GameLoop.safeDestroy(entity);
@@ -74,7 +77,9 @@ public class Sigma extends Unit {
         if (ot.isEmpty()) return;
         Unit target = ot.get();
 
-        getTangible().velocity.moveTowardsEq(getTransform().position.directionTo(target.getTransform().position).multiplyEq(1000), 1000*infreqDelta());
+        float elapsed = (float) ((System.currentTimeMillis() - (double)spawnTime) / 4_000);
+        getTangible().velocity.moveTowardsEq(getTransform().position.directionTo(target.getTransform().position).multiplyEq(Math.min(2_000, 300 * elapsed)), 1000*infreqDelta());
+        // getTangible().velocity = getTransform().position.directionTo(target.getTransform().position).multiplyEq(200);
     }
 
     @Override

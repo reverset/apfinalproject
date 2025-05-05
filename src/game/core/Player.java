@@ -210,7 +210,10 @@ public class Player extends Unit implements Controllable {
                         private Text text = new Text("DEFEAT", Vec2.screenCenter().addEq(0, -100), 54, Color.WHITE).center();
                         private float originalX = text.position.x;
                         private Tween<Float> textTween;
-    
+                        private Color blackColor = Color.BLACK.cloneIfImmutable().setAlpha(230);       
+                        private int blackX = 0;
+                        private int blackHeight = 500;
+
                         @Override
                         public void setup() {
                             textTween = GameLoop.makeTween(Tween.lerp(400, 200), 0.2f, val -> {
@@ -219,6 +222,10 @@ public class Player extends Unit implements Controllable {
                             }).start();
                             textTween.entity.setPauseBehavior(true);
                             entity.setPauseBehavior(true);
+
+                            GameLoop.makeTween(Tween.lerp(-GameLoop.SCREEN_WIDTH, 0), 0.2, val -> {
+                                blackX = val.intValue();
+                            }).start().entity.setPauseBehavior(true);
                         }
     
                         @Override
@@ -276,6 +283,7 @@ public class Player extends Unit implements Controllable {
     
                         @Override
                         public void hudRender() {
+                            Raylib.DrawRectangle(blackX, GameLoop.SCREEN_HEIGHT/2 - blackHeight/2, GameLoop.SCREEN_WIDTH, blackHeight, blackColor.getPointer());
                             text.render();
                         }
                         
