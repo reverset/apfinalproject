@@ -2,7 +2,6 @@ package game.core;
 
 import game.EntityOf;
 import game.GameLoop;
-import game.Squiggy;
 import game.ecs.Entity;
 
 public class SquiggyPowerup extends Powerup {

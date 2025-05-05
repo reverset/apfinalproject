@@ -1,17 +1,15 @@
-package game;
+package game.core;
 
 import java.time.Duration;
 import java.util.Optional;
 
-import game.core.ArcWeapon;
-import game.core.DamageColor;
-import game.core.Effect;
-import game.core.GameTags;
-import game.core.Health;
-import game.core.Physics;
-import game.core.Tangible;
-import game.core.Unit;
-import game.core.Weapon2;
+import game.Color;
+import game.EntityOf;
+import game.RayImage;
+import game.RayTexture;
+import game.RecoverableException;
+import game.Stopwatch;
+import game.Vec2;
 import game.core.rendering.Rect;
 import game.core.rendering.TextureRenderer;
 import game.ecs.Entity;

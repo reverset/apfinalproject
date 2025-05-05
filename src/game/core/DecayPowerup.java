@@ -1,22 +1,18 @@
-package game;
+package game.core;
 
 import java.time.Duration;
 import java.util.Optional;
 
-import game.core.DamageColor;
-import game.core.DamageInfo;
-import game.core.Effect;
-import game.core.Health;
-import game.core.Powerup;
-import game.core.Weapon2;
+import game.GameLoop;
+import game.Vec2;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
-public class DamageOverTime extends Powerup {
+public class DecayPowerup extends Powerup {
 
     private static final int DAMAGE_INTERVAL_MILLIS = 500;
 
-    public DamageOverTime(Entity entity, Weapon2 weapon, Effect effect, int level) {
+    public DecayPowerup(Entity entity, Weapon2 weapon, Effect effect, int level) {
         super(entity, weapon, effect, level);
         setPriority(10);
     }

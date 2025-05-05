@@ -1,17 +1,11 @@
-package game;
+package game.core;
 
 import java.time.Duration;
 
 import com.raylib.Raylib;
 
-import game.core.Cube;
-import game.core.DamageInfo;
-import game.core.Effect;
-import game.core.GameTags;
-import game.core.Health;
-import game.core.Physics;
-import game.core.Powerup;
-import game.core.Weapon2;
+import game.Color;
+import game.Stopwatch;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 

@@ -10,9 +10,7 @@ import com.raylib.Raylib;
 
 import game.Button;
 import game.Color;
-import game.DamageOverTime;
 import game.GameLoop;
-import game.HealthSyphon;
 import game.RecoverableException;
 import game.Shader;
 import game.Text;
@@ -34,7 +32,7 @@ public class RandomPowerup {
             () -> new Diamond(null, null, null, 0),
             () -> new HealthSyphon(null, null, null, 0),
             () -> new HealthRegenPowerup(null, null, null, 0),
-            () -> new DamageOverTime(null, null, null, 0),
+            () -> new DecayPowerup(null, null, null, 0),
             () -> new SquiggyPowerup(null, null, null, 0),
             () -> new Absorption(null, null, null, 0),
             () -> new BlahajPowerup(null, null, null, 0)
