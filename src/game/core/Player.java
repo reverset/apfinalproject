@@ -62,6 +62,8 @@ public class Player extends Unit implements Controllable {
     private Stopwatch warningStopwatch = Stopwatch.ofRealTime();
     private ExpAccumulator expAccumulator;
 
+    private boolean isShootingToggled = false;
+
     public static Entity makeEntity() {
         Effect effect = new Effect().setLevel(1);
 
@@ -274,6 +276,7 @@ public class Player extends Unit implements Controllable {
                         @Override
                         public void frame() {
                             if (Raylib.IsKeyPressed(Raylib.KEY_ENTER)) {
+                                GameLoop.timeScale = 1;
                                 GameLoop.clearAllEntities();
                                 GameLoop.defer(() -> {
                                     Game.loadLevel();
@@ -296,6 +299,7 @@ public class Player extends Unit implements Controllable {
 
     @Override
     public void frame() {
+        if (isShootingToggled) tryFireWeapon();
         // if (Raylib.IsKeyPressed(Raylib.KEY_BACKSLASH)) {
         //     final var square = GameLoop.safeTrack(Square.makeEntity(trans.position.clone(), getEffect().getLevel()));
         //     square.getMainSystem().setTeam(getTeam());
@@ -329,7 +333,12 @@ public class Player extends Unit implements Controllable {
 
     @Override
     public void controlledClick() {
-        tryFireWeapon();
+        // tryFireWeapon();
+    }
+
+    @Override
+    public void controlledClickOnce() {
+        isShootingToggled = !isShootingToggled;
     }
 
     @Override

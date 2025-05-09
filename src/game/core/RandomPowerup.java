@@ -135,9 +135,10 @@ public class RandomPowerup {
                 
             })
             .register(new Button(() -> {
-                GameLoop.runAfter(null, Duration.ofMillis(50), () -> {
-                    GameLoop.unpause();
-                });
+                // GameLoop.runAfter(null, Duration.ofMillis(50), () -> {
+                //     GameLoop.unpause();
+                // });
+                GameLoop.defer(() -> GameLoop.unpause());
 
                 Optional<Entity> playerEntity = GameLoop.findEntityByTag(GameTags.PLAYER);
 

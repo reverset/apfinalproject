@@ -47,6 +47,20 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
 			new Transform(), new CameraSettings(Vec2.screenCenter(), 1)
 		));
 
+        GameLoop.getMainCameraEntity().register(new ECSystem() {
+            private Transform trans;
+            @Override
+            public void setup() {
+                trans = require(Transform.class);
+            }
+
+            @Override
+            public void frame() {
+                trans.position.x = (float) Math.cos(Raylib.GetTime() / 2) * 200;
+                trans.position.y = (float) Math.sin(Raylib.GetTime() / 2) * 200;
+            }
+        });
+
 		GameLoop.track(GameLoop.getMainCameraEntity());
 		GameLoop.track(Background.makeEntity());
 
