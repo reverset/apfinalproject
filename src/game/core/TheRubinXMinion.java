@@ -23,6 +23,7 @@ public class TheRubinXMinion extends Unit {
     private Weapon2 weapon;
     private Optional<Vec2> desiredPositionDuringSpin = Optional.empty();
     private Stopwatch dashStopwatch = Stopwatch.ofGameTime();
+    private Stopwatch meleeStopwatch = Stopwatch.ofGameTime();
     private boolean canDash = false;
 
     public static EntityOf<TheRubinXMinion> makeEntity(Vec2 pos, int level, TheRubinX master, int index) {
@@ -97,11 +98,11 @@ public class TheRubinXMinion extends Unit {
             }
             case X -> {
                 if (index < 5) {
-                    desiredPosition.setEq(center.x - index*50 + (100), center.y - index*50 + (100));
+                    desiredPosition.setEq(center.x - index*80 + (160), center.y - index*80 + (160));
                 } else if (index < 7) {
-                    desiredPosition.setEq(center.x + (index-4)*50, center.y - (index-4)*50);
+                    desiredPosition.setEq(center.x + (index-4)*80, center.y - (index-4)*80);
                 } else {
-                    desiredPosition.setEq(center.x - (index-6)*50, center.y + (index-6)*50);
+                    desiredPosition.setEq(center.x - (index-6)*80, center.y + (index-6)*80);
                 }
             }
         };
@@ -131,10 +132,28 @@ public class TheRubinXMinion extends Unit {
             weapon.restartCooldown();
             canDash = false;
             if (newState == TheRubinX.State.SPIN) {
+                desiredPositionDuringSpin = Optional.empty();
                 dashStopwatch.restart();
             }
         }, entity);
         weapon = new SimpleWeapon(BASE_DAMAGE, 1000, Color.RED, GameTags.ENEMY_TEAM_TAGS, Duration.ofSeconds(5), index+1, Optional.of(getEffect())).setTailLength(100);
+    
+        getTangible().onCollision.listen(other -> {
+            if (!meleeStopwatch.hasElapsedAdvance(Duration.ofSeconds(1))) return;
+
+            other.entity.getSystem(Unit.class).ifPresent(unit -> {
+                if (!getTeam().isOnMyTeam(unit)) {
+                    unit.getHealth().damage(getEffect().computeDamage(
+                        new DamageInfo(BASE_DAMAGE*2, 
+                        other.entity, 
+                        weapon, 
+                        getTransform().position.clone())
+                            .setAttacker(entity)
+                            .setColor(DamageColor.MELEE)
+                    ));
+                }
+            });
+        }, entity);
     }
     
 }
