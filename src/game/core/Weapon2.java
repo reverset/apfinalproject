@@ -51,6 +51,10 @@ public abstract class Weapon2 { // old weapon system was terrible, this is attem
         return shootTimer.hasElapsedSeconds(cooldown);
     }
 
+    public void restartCooldown() {
+        shootTimer.restart();
+    }
+
     public DamageInfo getDesiredDamage(DamageInfo info) {
         return effect.isPresent()
             ? effect.get().computeDamage(info)

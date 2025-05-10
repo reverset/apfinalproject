@@ -15,6 +15,7 @@ public class SimpleWeapon extends Weapon2 {
     private Color color;
     private Duration lifetime;
     private float bulletSpeed;
+    private float tailLength = 20;
 
     public SimpleWeapon(int baseDamage, float bulletSpeed, Color color, Object[] ignoreTags, Duration lifetime, float cooldown, Optional<Effect> effect) {
         super(cooldown, effect);
@@ -25,11 +26,17 @@ public class SimpleWeapon extends Weapon2 {
         this.bulletSpeed = bulletSpeed;
     }
 
+    public SimpleWeapon setTailLength(float length) {
+        tailLength = length;
+        return this;
+    }
+
     @Override
     void forceFire(Vec2 position, Vec2 direction, Entity owner) {
 
         Vec2 velocity = direction.multiply(bulletSpeed);
         EntityOf<Bullet> bullet = BulletFactory.bullet(baseDamage, effect, position, velocity, color, owner, ignoreTags, lifetime, this);
+        bullet.getMainSystem().setTailLength(tailLength);
         GameLoop.safeTrack(bullet);
 
         bullet.getMainSystem().onHit.listen(phy -> onHit.emit(phy), bullet);

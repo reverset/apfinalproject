@@ -317,8 +317,25 @@ public class Vec2 {
 	}
 
 	public void moveTowardsEq(Vec2 other, float delta) {
-		x = MoreMath.moveTowards(x, other.x, delta);
+		x = MoreMath.moveTowards(x, other.x, delta); // potential FIXME, it would be nicer if the x and y arrived to the destination at the same time.
 		y = MoreMath.moveTowards(y, other.y, delta);
+		// float mag = magnitude();
+		// setFromAngleEq(MoreMath.moveTowards(getAngle(), other.getAngle(), delta));
+		// setMagnitudeEq(MoreMath.moveTowards(mag, other.magnitude(), delta));
+	}
+
+	public void setFromAngleEq(float angle) {
+		x = (float) (Math.cos(angle));
+		y = (float) (Math.sin(angle));
+	}
+
+	public void setMagnitudeEq(float mag) {
+		if (x == 0 && y == 0) return;
+
+		float m = magnitude();
+		if (m == mag) return;
+
+		multiplyEq(mag / m);
 	}
 
 	public Vec2 screenToWorld() {

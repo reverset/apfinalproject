@@ -33,6 +33,7 @@ public class Bullet extends ECSystem {
     protected Optional<Effect> effect;
 
     private Weapon2 weapon;
+    private float tailLength = 20;
 
     public Bullet(Entity owner, int damage, Optional<Effect> effect, Object[] ignoreTags, Weapon2 weapon) {
         this.owner = owner;
@@ -40,6 +41,10 @@ public class Bullet extends ECSystem {
         this.ignoreTags = ignoreTags;
         this.effect = effect;
         this.weapon = weapon;
+    }
+
+    public void setTailLength(float length) {
+        tailLength = length;
     }
 
     @Override
@@ -98,7 +103,7 @@ public class Bullet extends ECSystem {
         rect.color.a = (byte) (alphaCoeff*255);
         byte temp = rect.color.a;
         rect.color.a = (byte) (64*alphaCoeff);
-        Raylib.DrawLineEx(center.asCanonicalVector2(), center.minusEq(tangible.velocity.normalize().multiplyEq(20)).allocateRaylibVector2(), 10f, rect.color.getPointer());
+        Raylib.DrawLineEx(center.asCanonicalVector2(), center.minusEq(tangible.velocity.normalize().multiplyEq(tailLength)).allocateRaylibVector2(), 10f, rect.color.getPointer());
         rect.color.a = temp;
     }
 }

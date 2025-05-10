@@ -1,5 +1,6 @@
 package game.core;
 
+import game.Vec2;
 import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
@@ -65,5 +66,9 @@ public abstract class Unit extends ECSystem {
 
     public boolean isBossEnemy() {
         return false;
+    }
+
+    public Vec2 getFuturePosition(float futureSeconds) {
+        return getTransform().position.add(getTangible().velocity.multiply(futureSeconds));
     }
 }
