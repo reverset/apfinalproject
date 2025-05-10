@@ -29,10 +29,13 @@ public class Diamond extends Powerup { // Currently does not grant XP!
                 if (health.isAlive()) {
                     if (Math.random() > 0.1*level) return;
 
-                    health.damageOrHeal(info.setPosition(victTrans.position.clone()).setColor(DamageColor.SPECIAL));
+                    health.damageOrHeal(info
+                        .setPosition(victTrans.position.clone())
+                        .setDamage(info.damage()*4)
+                        .setColor(DamageColor.SPECIAL));
                     Entity damageEffect = new Entity("Diamond Effect");
 
-                    X x = new X(victTrans.position.addRandomByCoeff(10), Color.RED, 8, 0);
+                    X x = new X(victTrans.position.addRandomByCoeff(10), Color.AQUA, 8, 0);
                     damageEffect
                         .addComponent(x)
                         .register(new Tween<>(Tween.overEase(0, 50, 20), 0.2f, val -> {
@@ -70,7 +73,7 @@ public class Diamond extends Powerup { // Currently does not grant XP!
 
     @Override
     public String getDescription() {
-        return "Chance to reapply damage.";
+        return "Occasionally quadruple\nyour damage.";
     }
 
     @Override

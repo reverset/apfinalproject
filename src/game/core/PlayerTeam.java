@@ -35,14 +35,10 @@ public final class PlayerTeam extends Team {
     @Override
     public boolean shouldEntityBeTargetted(Entity target) {
         return target.getSystem(Unit.class)
-            .filter(e -> e instanceof Cube cube && cube.isShieldActive() || e.getHealth().isDead())
+            .filter(e -> e instanceof Cube cube && cube.isShieldActive()
+                || e instanceof TheRubinX
+                || e.getHealth().isDead())
             .isEmpty();
-    }
-
-    @Override
-    public void registerMember(Unit unit, boolean autoUnbind) {
-        super.registerMember(unit, autoUnbind);
-        System.out.println("new member: " + unit);
     }
 
     @Override

@@ -33,6 +33,10 @@ public class EntityOf<T extends ECSystem> extends Entity {
         return this;
     }
     
+    @SuppressWarnings("unchecked")
+    public <K extends ECSystem> EntityOf<K> downcast(Class<? super T> clazz) {
+        return (EntityOf<K>)this;
+    }
 
     public <K extends ECSystem> EntityOf<K> into(Class<K> clazz) {
         if (!clazz.isAssignableFrom(systemClass)) {
