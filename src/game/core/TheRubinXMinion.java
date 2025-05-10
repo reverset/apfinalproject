@@ -33,7 +33,7 @@ public class TheRubinXMinion extends Unit {
         final int X_LENGTH = 70;
 
         e
-            .addComponent(new Health(master.getHealth().getMaxHealth())) // health is managed by TheRubinX.java
+            .addComponent(new Health(master.getHealth().getMaxHealth() / 30)) // health is managed by TheRubinX.java
             .addComponent(new Transform(pos))
             .addComponent(new Tangible())
             .addComponent(new Rect(X_LENGTH, X_LENGTH, Color.WHITE))
@@ -41,6 +41,7 @@ public class TheRubinXMinion extends Unit {
             .addComponent(new Effect().setLevel(level)) // perhaps use the effect present in TheRubinX?
             .register(new Physics(0, 0, new Vec2(-X_LENGTH/2, -X_LENGTH/2)))
             .register(new XRenderer())
+            .register(new PostMortem(GameLoop::safeDestroy))
             .register(new TheRubinXMinion(master, index))
             .addTags(GameTags.ENEMY_TEAM_TAGS);
 
@@ -112,7 +113,7 @@ public class TheRubinXMinion extends Unit {
 
     private void dashMovement() {
         if (!canDash) return;
-        getTransform().position.moveTowardsEq(desiredPositionDuringSpin.get(), 1_000 * delta());
+        getTransform().position.lerpEq(desiredPositionDuringSpin.get(), 4 * delta());
     }
 
     @Override

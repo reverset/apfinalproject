@@ -116,17 +116,19 @@ public class Physics extends ECSystem {
 
         trans.position.addEq(tangible.velocity.x * delta(), tangible.velocity.y * delta());
 
-        // checkCollisions();
+        checkCollisions();
     }
 
     @Override
     public void infrequentUpdate() {
-        checkCollisions();
+        // checkCollisions();
     }
 
     private void checkCollisions() { // still a performance bug
+        if (!tangible.isTangible()) return;
         for (var obj : physicsObjects.get(layerMask)) {
             if (obj == this) continue;
+            if (!obj.getTangible().isTangible()) continue;
 
             if (obj.collisionRect.overlaps(
                 obj.trans.position.x+obj.hitBoxOffset.x, obj.trans.position.y+obj.hitBoxOffset.y, 
