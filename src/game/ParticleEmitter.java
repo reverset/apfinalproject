@@ -127,6 +127,7 @@ public class ParticleEmitter extends ECSystem {
         for (int i = particles.size()-1; i >= 0; i--) {
             if (GameLoop.getUnpausedTime() > particles.get(i).getSpawnTime() + particleLifetime.toSeconds()) {
                 particles.remove(i);
+                continue;
             }
             Particle particle = particles.get(i);
             Vec2 dV = particle.velocity.multiply(delta());
