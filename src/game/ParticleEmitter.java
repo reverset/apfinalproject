@@ -26,6 +26,12 @@ public class ParticleEmitter extends ECSystem {
     private Transform trans;
     private boolean relativePosition;
     private float spawnRadius;
+    private SpawnStrategy spawnStrategy;
+
+    public enum SpawnStrategy {
+        PERIMETER,
+        AREA
+    }
 
     public class Particle {
         private Vec2 position = new Vec2();
@@ -33,6 +39,16 @@ public class ParticleEmitter extends ECSystem {
         private Vec2 velocity = new Vec2();
         private double size = 1;
         private double spawnTime = GameLoop.getUnpausedTime();
+        private double timeAlive = 0;
+        private double lifetime = 0;
+
+        public double getLifetime() {
+            return lifetime;
+        }
+
+        public double getTimeAlive() {
+            return timeAlive;
+        }
 
         public double getSize() {
             return size;
@@ -89,6 +105,7 @@ public class ParticleEmitter extends ECSystem {
             Duration particleLifetime,
             boolean relativePosition,
             float spawnRadius,
+            SpawnStrategy spawnStrategy,
             Consumer<Particle> particleRenderer,
             Function<Double, Double> sizeOverTime,
             Function<Double, Double> speedOverTime) {
@@ -99,6 +116,7 @@ public class ParticleEmitter extends ECSystem {
         this.particleLifetime = particleLifetime;
         this.relativePosition = relativePosition;
         this.spawnRadius = spawnRadius;
+        this.spawnStrategy = spawnStrategy;
         this.particleRenderer = particleRenderer;
         this.sizeOverTime = sizeOverTime;
         this.speedOverTime = speedOverTime;
@@ -113,14 +131,17 @@ public class ParticleEmitter extends ECSystem {
     public void frame() {
         if (particles.size() <= maxParticles && spawnStopwatch.hasElapsedAdvance(nextParticleDuration)) {
             Particle particle = new Particle();
+            particle.lifetime = particleLifetime.toMillis() / 1_000.0;
+
             if (!relativePosition) {
                 particle.getPosition().setEq(trans.position.x, trans.position.y);
             }
-            particle.getPosition().addRandomByCoeff(spawnRadius);
+            if (spawnStrategy == SpawnStrategy.PERIMETER) particle.getPosition().addRandomByCoeffEq(spawnRadius);
+            else if (spawnStrategy == SpawnStrategy.AREA) particle.getPosition().addRandomByCoeffEq(-spawnRadius, spawnRadius);
 
             particle.getVelocity()
                 .setFromAngleEq((float)(emitAngle + MoreMath.randomExcluding(-angleVariation, angleVariation)))
-                .multiplyEq((speedOverTime.apply(GameLoop.getUnpausedTime() - particle.spawnTime).floatValue()));
+                .multiplyEq((speedOverTime.apply(particle.timeAlive).floatValue()));
             particles.add(particle);
         }
 
@@ -130,10 +151,13 @@ public class ParticleEmitter extends ECSystem {
                 continue;
             }
             Particle particle = particles.get(i);
+
+            particle.timeAlive = GameLoop.getUnpausedTime() - particle.spawnTime;
+
             Vec2 dV = particle.velocity.multiply(delta());
             particle.position.addEq(dV);
 
-            particle.setSize(sizeOverTime.apply(GameLoop.getUnpausedTime() - particle.spawnTime));
+            particle.setSize(sizeOverTime.apply(particle.timeAlive));
         }
     }
 

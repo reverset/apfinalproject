@@ -2,9 +2,11 @@ package game;
 
 import game.core.Background;
 import game.core.EnemySpawner;
+import game.core.GameTags;
 import game.core.MainMenu;
 import game.core.Player;
 import game.core.RandomPowerup;
+import game.core.Settings;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
@@ -40,10 +42,12 @@ public class Game {
 
 		GameLoop.track(Player.makeEntity());
 
-		GameLoop.track(new Entity("a")
-			.addComponent(new Transform())
-			// .register(new Wobble(100, 10))
-			.register(ParticlePresets.flame(Color.ORANGE)));
+		if (Settings.dust) {
+			GameLoop.track(new Entity("dust")
+				.addComponent(new Transform())
+				.register(new CopyPosition(() -> GameLoop.findEntityByTag(GameTags.PLAYER).orElse(null)))
+				.register(ParticlePresets.dust()));
+		}
 
 		RandomPowerup.showScreen();
 		

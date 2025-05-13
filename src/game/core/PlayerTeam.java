@@ -36,7 +36,7 @@ public final class PlayerTeam extends Team {
     public boolean shouldEntityBeTargetted(Entity target) {
         return target.getSystem(Unit.class)
             .filter(e -> e instanceof Cube cube && cube.isShieldActive()
-                || e instanceof TheRubinX
+                || e instanceof TheRubinX x && !x.isInFinalState()
                 || e.getHealth().isDead())
             .isEmpty();
     }

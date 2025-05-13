@@ -247,6 +247,10 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
         });
         settingsItems.add(backButton);
 
+        makeSettingsToggleButton("Space Dust", -100, Settings.dust, 
+            () -> Settings.dust = true, 
+            () -> Settings.dust = false);
+
         makeSettingsToggleButton("Post Processing", 0, GameLoop.isPostProcessEnabled(), 
             () -> GameLoop.enablePostProcessShader(), 
             () -> GameLoop.disablePostProcessShader());

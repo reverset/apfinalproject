@@ -555,6 +555,9 @@ public class GameLoop {
 		);
 	}
 
+	/**
+	 * @return The unpaused game time that has elapsed since the start of the application with respect to the game's timescale.
+	 */
 	public static double getUnpausedTime() {
 		return unpausedTime;
 	}

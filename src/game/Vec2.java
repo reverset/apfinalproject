@@ -212,6 +212,16 @@ public class Vec2 {
 		return res;
 	}
 
+	public Vec2 addRandomByCoeffEq(float coeff) {
+		return addEq(randomUnit().multiplyEq(coeff));
+	}
+
+	public Vec2 addRandomByCoeffEq(float min, float max) {
+		x += (float) MoreMath.random(min, max);
+		y += (float) MoreMath.random(min, max);
+		return this;
+	}
+
 	public Vec2 addEq(Vec2 other) {
 		x += other.x;
 		y += other.y;

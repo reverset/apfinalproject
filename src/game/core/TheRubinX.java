@@ -73,6 +73,10 @@ public class TheRubinX extends Unit {
         setState(vals[(state.ordinal() + 1) % vals.length]);
     }
 
+    public boolean isInFinalState() {
+        return entity.isVisible();
+    }
+
     @Override
     public void setup() {
         getHealth().onDeath.listenOnce(n -> {
