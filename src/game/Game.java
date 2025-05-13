@@ -40,6 +40,11 @@ public class Game {
 
 		GameLoop.track(Player.makeEntity());
 
+		GameLoop.track(new Entity("a")
+			.addComponent(new Transform())
+			// .register(new Wobble(100, 10))
+			.register(ParticlePresets.flame(Color.ORANGE)));
+
 		RandomPowerup.showScreen();
 		
 	}

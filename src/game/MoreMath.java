@@ -49,6 +49,10 @@ public class MoreMath {
         return (Math.random() * (1+max-min)) + min;
     }
 
+    public static double randomExcluding(double min, double exMax) {
+        return (Math.random() * (exMax-min)) + min;
+    }
+
     public static boolean randomBoolean() {
         return Math.random() > 0.5;
     }

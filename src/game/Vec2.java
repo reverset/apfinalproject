@@ -324,9 +324,10 @@ public class Vec2 {
 		// setMagnitudeEq(MoreMath.moveTowards(mag, other.magnitude(), delta));
 	}
 
-	public void setFromAngleEq(float angle) {
+	public Vec2 setFromAngleEq(float angle) {
 		x = (float) (Math.cos(angle));
 		y = (float) (Math.sin(angle));
+		return this;
 	}
 
 	public void setMagnitudeEq(float mag) {
