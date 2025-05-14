@@ -34,7 +34,8 @@ public class RandomPowerup {
             () -> new DecayPowerup(null, null, null, 0),
             () -> new SquiggyPowerup(null, null, null, 0),
             () -> new Absorption(null, null, null, 0),
-            () -> new BlahajPowerup(null, null, null, 0)
+            () -> new BlahajPowerup(null, null, null, 0),
+            () -> new RhombusPowerup(null, null, null, 0)
         );
             
         ArrayList<Powerup> select = new ArrayList<>();
