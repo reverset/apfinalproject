@@ -217,9 +217,7 @@ public class Vec2 {
 	}
 
 	public Vec2 addRandomByCoeffEq(float min, float max) {
-		x += (float) MoreMath.random(min, max);
-		y += (float) MoreMath.random(min, max);
-		return this;
+		return addRandomByCoeffEq((float)MoreMath.random(min, max));
 	}
 
 	public Vec2 addEq(Vec2 other) {

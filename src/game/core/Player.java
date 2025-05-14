@@ -12,6 +12,7 @@ import game.Game;
 import game.GameLoop;
 import game.LoadingBar;
 import game.MoreMath;
+import game.ParticlePresets;
 import game.Signal;
 import game.Stopwatch;
 import game.Text;
@@ -301,8 +302,7 @@ public class Player extends Unit implements Controllable {
     public void frame() {
         if (isShootingToggled) tryFireWeapon();
         // if (Raylib.IsKeyPressed(Raylib.KEY_BACKSLASH)) {
-        //     final var square = GameLoop.safeTrack(Square.makeEntity(trans.position.clone(), getEffect().getLevel()));
-        //     square.getMainSystem().setTeam(getTeam());
+        //     GameLoop.makeTemporary(Duration.ofSeconds(2), trans.position.clone(), ParticlePresets.pop(10, Color.ORANGE));
         // }
 
         Vec2 moveVector = controlledMoveVector();

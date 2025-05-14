@@ -25,6 +25,7 @@ import com.raylib.Raylib;
 import game.Tween.TweenFunction;
 import game.ecs.ECSystem;
 import game.ecs.Entity;
+import game.ecs.comps.Transform;
 
 public class GameLoop {
 	public static final int SCREEN_WIDTH = 1280; // This width and height are actually the render size.
@@ -177,6 +178,20 @@ public class GameLoop {
 			GameLoop.track(entity);
 		});
 		return entity;
+	}
+
+	public static Entity makeTemporary(Duration lifetime, Vec2 position, ECSystem... systems) {
+		Entity e = new Entity("temporary-" + lifetime.toSeconds());
+		e.setRenderPriority(110);
+
+		e.addComponent(new Transform(position));
+		
+		e.register(new RemoveAfter(lifetime));
+		for (ECSystem sys : systems) {
+			e.register(sys);
+		}
+
+		return GameLoop.safeTrack(e);
 	}
 
 	public static boolean isPresent(Entity entity) {

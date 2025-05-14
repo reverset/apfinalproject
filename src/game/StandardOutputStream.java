@@ -28,6 +28,8 @@ public class StandardOutputStream extends OutputStream {
     public void writeGen(int b, PrintStream original) {
         original.write(b);
         char c = (char)b;
+        if (c == '\r') return;
+        
         if (c == '\n') {
             if (lines.size() > MAX_LENGTH) {
                 lines.remove(0);

@@ -1,10 +1,12 @@
 package game.core;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
+import game.ParticlePresets;
 import game.Stopwatch;
 import game.Tween;
 import game.Vec2;
@@ -76,6 +78,7 @@ public class TriangleEnemy extends Unit {
             GameLoop.safeDestroy(entity);
             Team.getTeamByTagOf(entity).grantExp(10);
 
+            GameLoop.makeTemporary(Duration.ofSeconds(800), getTransform().position.clone(), ParticlePresets.pop(10, Color.ORANGE));
         }, entity);
     }
 
