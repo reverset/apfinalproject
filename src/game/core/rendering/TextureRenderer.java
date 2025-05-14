@@ -16,6 +16,7 @@ public class TextureRenderer extends ECSystem {
     private Vec2 centeredPosition = new Vec2();
     private boolean enabled = true;
     private boolean flipped = false;
+    private boolean hudMode = false;
 
     public TextureRenderer(String path) {
         this(path, -1, -1);
@@ -55,10 +56,25 @@ public class TextureRenderer extends ECSystem {
         trans = require(Transform.class);
     }
 
+    public TextureRenderer setHudMode(boolean hud) {
+        hudMode = hud;
+        return this;
+    }
+
     @Override
     public void render() {
-        if (!enabled) return;
-
+        if (hudMode || !enabled) return;
+        draw();
+    }
+    
+    @Override
+    public void hudRender() {
+        if (!hudMode || !enabled) return;
+        
+        draw();
+    }
+    
+    private void draw() {
         centeredPosition.x = trans.position.x - texture.width()/2;
         centeredPosition.y = trans.position.y - texture.height()/2;
         

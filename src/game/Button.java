@@ -10,11 +10,17 @@ public class Button extends ECSystem {
 
     protected Rect rect;
     protected Transform trans;
+    private boolean centered;
 
     protected Runnable callback = () -> {};
 
     public Button(Runnable callback) {
+        this(callback, false);
+    }
+
+    public Button(Runnable callback, boolean centered) {
         this.callback = callback;
+        this.centered = centered;
     }
 
     public Button() {}
@@ -30,7 +36,9 @@ public class Button extends ECSystem {
         if (entity.isHidden()) return;
         
         Vec2 mousePos = GameLoop.getMouseScreenPosition();
-        if (Raylib.IsMouseButtonPressed(0) && rect.pointWithin(trans.position, mousePos)) {
+        Vec2 c = trans.position;
+        if (centered) c = rect.centerize(trans.position);
+        if (Raylib.IsMouseButtonPressed(0) && rect.pointWithin(c, mousePos)) {
             onClick();
         }
     }

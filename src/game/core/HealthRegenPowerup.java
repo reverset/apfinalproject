@@ -69,4 +69,9 @@ public class HealthRegenPowerup extends Powerup {
     public String getSmallHUDInfo() {
         return "+" + calculateDesiredHealth() + "hp" + "/" + HEALTH_RATE.toSeconds() + "sec";
     }
+
+    @Override
+    public String getIconPath() {
+        return "resources/healthregen.png";
+    }
 }

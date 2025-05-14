@@ -7,8 +7,6 @@ public class RayImage {
     private int width;
     private int height;
 
-    private Color[][] pixels = null;
-
     public RayImage(Raylib.Image internal, int width, int height) {
         this.internal = internal;
         width = width == -1 ? internal.width() : width;
@@ -16,15 +14,6 @@ public class RayImage {
 
         Raylib.ImageResizeNN(internal, width, height);
         
-        pixels = new Color[width][height];
-        
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                Raylib.Color col = Raylib.GetImageColor(internal, i, j);
-                pixels[i][j] = new Color(col);
-            }
-        }
-
         Janitor.register(this, () -> {
             Raylib.UnloadImage(internal);
             internal.close();
@@ -50,10 +39,6 @@ public class RayImage {
                 dimensions.xInt(), dimensions.yInt(), offset.xInt(), offset.yInt(), scale));
     }
 
-    public Color colorAt(Vec2 pos) {
-        return pixels[pos.xInt()][pos.yInt()];
-    }
-    
     public int getWidth() {
         return width;
     }

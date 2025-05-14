@@ -1,6 +1,5 @@
 package game.core;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,7 @@ import game.Text;
 import game.Tween;
 import game.Vec2;
 import game.core.rendering.Rect;
-import game.core.rendering.RectRender;
+import game.core.rendering.TextureRenderer;
 import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
@@ -104,26 +103,29 @@ public class RandomPowerup {
         entity.runWhilePaused = true;
         
         Rect rect = new Rect(200, 200, Color.DARK_RED);
+        Vec2 p = rect.centerize(pos);
         
-        Vec2 desiredPos = rect.centerize(pos);
-        Transform trans = new Transform(desiredPos.clone());
-        trans.position.y = -100;
+        TextureRenderer tex = new TextureRenderer(powerup.getIconPath(), 200, 200).setHudMode(true);
 
+        Transform trans = new Transform(pos.clone());
+        trans.position.y = -100;
         entity
             .addComponent(trans)
             .addComponent(rect)
-            .register(new RectRender().setHudMode(true))
+            .register(tex)
+            // .register(new RectRender().setHudMode(true))
             .register(new ECSystem() {
 
-                Text name = new Text(powerup.getName(), trans.position, 24, Color.WHITE);
+                Text name = new Text(powerup.getName(), trans.position.clone(), 24, Color.WHITE);
                 Text description = null;
 
                 @Override
                 public void setup() {
-                    GameLoop.makeTween(Tween.overEase(-200, desiredPos.y, 1), 1, val -> {
+                    GameLoop.makeTween(Tween.overEase(-200, pos.y, 1), 1, val -> {
                         trans.position.y = val;
                     }).runWhilePaused(true).start().onFinish.listenOnce(n -> {
-                        description = new Text(powerup.getDescription(), trans.position.add(0, 200), 24, Color.WHITE);
+                        name.position.setEq(trans.position.x - 100, trans.position.y - 100);
+                        description = new Text(powerup.getDescription(), trans.position.add(-100, 100), 24, Color.WHITE);
                     });
                 }
 
@@ -131,6 +133,10 @@ public class RandomPowerup {
                 public void hudRender() {
                     name.render();
                     if (description != null) description.renderWithNewlines();
+                }
+
+                public void destroy() {
+                    // tex.getTexture().
                 }
                 
             })
@@ -158,7 +164,7 @@ public class RandomPowerup {
                     GameLoop.safeDestroy(selects);
                 }
 
-            })).addTags("powerupselect");
+            }, true)).addTags("powerupselect");
         
         return entity;
     }

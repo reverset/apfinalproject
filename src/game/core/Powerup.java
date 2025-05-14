@@ -85,4 +85,8 @@ public abstract class Powerup extends ECSystem {
         this.weapon = weapon;
         return this;
     }
+
+    public String getIconPath() {
+        return "resources/genericpowerup.png";
+    }
 }

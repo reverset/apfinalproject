@@ -108,5 +108,10 @@ public class HealthSyphon extends Powerup {
     private int getHealthSteal() {
         return level * 2;
     }
+
+    @Override
+    public String getIconPath() {
+        return "resources/healthsyphon.png";
+    }
     
 }

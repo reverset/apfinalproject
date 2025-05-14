@@ -81,4 +81,8 @@ public class Diamond extends Powerup { // Currently does not grant XP!
         return getWholePercentChance() + "% chance";
     }
     
+    @Override
+    public String getIconPath() {
+        return "resources/diamond.png";
+    }
 }

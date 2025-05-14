@@ -103,6 +103,7 @@ public class TheRubinX extends Unit {
 
     @Override
     public void ready() {
+        super.ready();
         getTangible().setTangible(false);
         stateChangeStopwatch.restart();
     }

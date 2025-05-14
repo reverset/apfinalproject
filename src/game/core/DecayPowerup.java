@@ -76,4 +76,9 @@ public class DecayPowerup extends Powerup {
     private double getPercent() {
         return Math.pow(0.5, level+1);
     }
+
+    @Override
+    public String getIconPath() {
+        return "resources/decay.png";
+    }
 }

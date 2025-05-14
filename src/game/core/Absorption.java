@@ -52,5 +52,9 @@ public class Absorption extends Powerup {
     private double getRandomChance() {
         return 0.2;
     }
-    
+
+    @Override
+    public String getIconPath() {
+        return "resources/absorption.png";
+    }
 }

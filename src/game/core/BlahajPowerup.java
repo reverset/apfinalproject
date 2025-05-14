@@ -46,4 +46,9 @@ public class BlahajPowerup extends Powerup {
         final var state = blahaj.getMainSystem().getState();
         return state + (state == State.ATTACKING ? " " + blahaj.getMainSystem().getTarget().get().getEntity().name.toUpperCase() : "");
     }
+
+    @Override
+    public String getIconPath() {
+        return "resources/blahajicon.png";
+    }
 }

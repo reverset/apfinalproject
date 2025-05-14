@@ -46,5 +46,10 @@ public class SquiggyPowerup extends Powerup {
             : ""
             );
     }
+
+    @Override
+    public String getIconPath() {
+        return "resources/squiggyicon.png";
+    }
     
 }
