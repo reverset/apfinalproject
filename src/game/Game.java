@@ -21,8 +21,8 @@ public class Game {
 
 		GameLoop.setPostProcessShader(post);
 
-		// loadLevel();
-		MainMenu.clearAndLoad();
+		SplashScreen.load();
+		// MainMenu.clearAndLoad();
 
 		GameLoop.runBlocking();
 		// System.exit(0);

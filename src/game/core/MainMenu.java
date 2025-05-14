@@ -196,7 +196,8 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
                 text.text = "\n\n\t\tCredits\n\n\t\t" +
                     "Programming \t\t\t\tSebastian\n\t\t" +
                     "Game Design \t\t\t\tSebastian\n\t\t" +
-                    "Squiggy Art\t\t\t\t\tLeah";
+                    "Squiggy Art\t\t\t\t\tLeah\n\t\t" +
+                    "Playtesting\t\t\t\t\tAaron";
             }
 
             @Override

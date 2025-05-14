@@ -17,6 +17,9 @@ public class Color {
 
 	public static final Color DARK_RED = new ImmutableColor(50, 0, 0, 255);
 	public static final Color DARK_GREEN = new ImmutableColor(0, 50, 0, 255);
+	public static final Color DARK_BLUE = new ImmutableColor(0, 0, 50, 255);
+
+	public static final Color SPLASH_BLUE = new ImmutableColor(25, 25, 30, 255);
 	
 	public static final Color LIGHT_GRAY = new ImmutableColor(70, 70, 70, 255);
 	

@@ -18,7 +18,11 @@ public class TextureRenderer extends ECSystem {
     private boolean flipped = false;
 
     public TextureRenderer(String path) {
-        this(new RayImage(path).uploadToGPU());
+        this(path, -1, -1);
+    }
+
+    public TextureRenderer(String path, int width, int height) {
+        this(new RayImage(path, width, height).uploadToGPU());
     }
 
     public TextureRenderer(RayTexture texture) {

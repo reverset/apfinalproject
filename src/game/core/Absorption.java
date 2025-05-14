@@ -37,7 +37,7 @@ public class Absorption extends Powerup {
 
     @Override
     public String getDescription() {
-        return "Absorb a percentage of\nincoming damage, with a\nchance to absorb\nall of it.";
+        return "Cancel a percentage of\nincoming damage, with a\nchance to remove\nall of it.";
     }
 
     @Override

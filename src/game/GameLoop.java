@@ -74,6 +74,16 @@ public class GameLoop {
 	private static StandardOutputStream console;
 	private static boolean consoleEnabled = false;
 
+	private static Color backgroundColor = Color.BLACK;
+
+	public static Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public static void setBackgroundColor(Color color) {
+		backgroundColor = color;
+	}
+
 	public static ResourceManager getResourceManager() {
 		return resourceManager;
 	}
@@ -446,7 +456,7 @@ public class GameLoop {
 	private static void renderUpdate() {
 		Raylib.BeginTextureMode(renderTexture);
 
-		Raylib.ClearBackground(Jaylib.BLACK);
+		Raylib.ClearBackground(backgroundColor.getPointer());
 		
 		Raylib.BeginMode2D(mainCameraSystem.getPointer());
 		
