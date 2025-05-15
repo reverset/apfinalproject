@@ -1,6 +1,7 @@
 package game;
 
 import game.core.Background;
+import game.core.Border;
 import game.core.EnemySpawner;
 import game.core.GameTags;
 import game.core.MainMenu;
@@ -48,6 +49,8 @@ public class Game {
 				.register(new CopyPosition(() -> GameLoop.findEntityByTag(GameTags.PLAYER).orElse(null)))
 				.register(ParticlePresets.dust()));
 		}
+
+        GameLoop.track(Border.makeEntity(Vec2.zero(), 1_000));
 
 		RandomPowerup.showScreen();
 		

@@ -44,6 +44,13 @@ public class EnemySpawner extends ECSystem {
     //     return Cube.makeEntity(Vec2.ZERO.screenToWorld(), maxLevel);
     // }, 1, Duration.ofSeconds(1))), this);
 
+
+    // private Round round = new Round(List.of(new Wave(() -> {
+    //     if (totalEnemiesThisWave >= 1) return null;
+
+    //     return HexagonWorm.makeEntity(Vec2.ZERO.screenToWorld(), maxLevel);
+    // }, 1, Duration.ofSeconds(1))), this);
+
     // private Round round = new Round(List.of(new Wave(() -> {
     //     if (totalEnemiesThisWave >= 1) return null;
 

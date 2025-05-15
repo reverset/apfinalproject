@@ -19,7 +19,8 @@ import game.ecs.comps.Transform;
 public class TheRubinX extends Unit {
     public enum State {
         SPIN,
-        X
+        X,
+        LASERS
     }
 
     public final Signal<State> onStateChange = new Signal<>();
@@ -85,6 +86,12 @@ public class TheRubinX extends Unit {
                 .map(Unit::getHealth)
                 .filter(Health::isAlive)
                 .forEach(Health::kill);
+            
+            getTeam().getOpposingTeam().grantExp(100);
+
+            GameLoop.defer(() -> {
+                RandomPowerup.showScreen();
+            });
         });
 
         for (int i = 0; i < 30; i++) {
@@ -106,31 +113,35 @@ public class TheRubinX extends Unit {
         super.ready();
         getTangible().setTangible(false);
         stateChangeStopwatch.restart();
+
+        // GameLoop.safeTrack(Border.makeEntity(getTransform().position.clone(), 2_000));
     }
 
     private void lastPhaseFrame() {
         getTangible().velocity.setEq(0, 0);
         Optional<Unit> target = getTeam().findTarget(getTransform().position);
-        target.ifPresent(unit -> {
-            if (shootStopwatch.hasElapsedAdvance(Duration.ofSeconds(2))) {
-                for (int i = 0; i < weapons.size(); i++) {
-                    LaserWeapon weapon = weapons.get(i);
-                    final int j = i;
-                    GameLoop.runAfter(entity, Duration.ofMillis(100 * (i+1)), () -> {
-                        Vec2 desiredPos = null;
-                        if (weaponDirections.get(j) == null) desiredPos = getTransform().position.directionTo(unit.getTransform().position);
-                        else desiredPos = weaponDirections.get(j);
-    
-                        final Vec2 dp = desiredPos;
-                        weapon.chargeUp(() -> getTransform().position, () -> dp, entity, impending -> {
-                            // weaponDirections.set(j, impending);
-                            if (impending && weaponDirections.get(j) == null) weaponDirections.set(j, getTransform().position.directionTo(unit.getTransform().position));
-                            else weaponDirections.set(j, null);
+        if (state == State.LASERS) {
+            target.ifPresent(unit -> {
+                if (shootStopwatch.hasElapsedAdvance(Duration.ofSeconds(2))) {
+                    for (int i = 0; i < weapons.size(); i++) {
+                        LaserWeapon weapon = weapons.get(i);
+                        final int j = i;
+                        GameLoop.runAfter(entity, Duration.ofMillis(100 * (i+1)), () -> {
+                            Vec2 desiredPos = null;
+                            if (weaponDirections.get(j) == null) desiredPos = getTransform().position.directionTo(unit.getTransform().position);
+                            else desiredPos = weaponDirections.get(j);
+        
+                            final Vec2 dp = desiredPos;
+                            weapon.chargeUp(() -> getTransform().position, () -> dp, entity, impending -> {
+                                // weaponDirections.set(j, impending);
+                                if (impending && weaponDirections.get(j) == null) weaponDirections.set(j, getTransform().position.directionTo(unit.getTransform().position));
+                                else weaponDirections.set(j, null);
+                            });
                         });
-                    });
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -159,6 +170,8 @@ public class TheRubinX extends Unit {
             if (entity.isHidden()) {
                 entity.show();
                 getTangible().setTangible(true);
+                setState(State.LASERS);
+                getTransform().position.setEq(0, 0);
             }
         }
     }

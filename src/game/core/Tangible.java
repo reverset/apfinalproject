@@ -25,5 +25,9 @@ public class Tangible implements Component {
         this.velocity = velocity;
     }
 
+    public void impulse(Vec2 speed) {
+        velocity.addEq(speed);
+    }
+
     public Signal<Physics> onCollision = new Signal<>();
 }

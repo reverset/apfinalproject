@@ -134,7 +134,7 @@ public class Blahaj extends Unit {
 
                 int hp = 10 * getEffect().getLevel();
                 if (state == State.HEALING) {
-                    if (healStopwatch.hasElapsedAdvance(Duration.ofSeconds(1))) {
+                    if (healStopwatch.hasElapsedAdvance(Duration.ofMillis(400))) {
                         GameLoop.safeTrack(HealingOrb.makeEntity(getTransform().position.clone(), hp));
                     }
                 } else {
