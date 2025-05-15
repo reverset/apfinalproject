@@ -15,6 +15,7 @@ import game.Text;
 import game.ToggleButton;
 import game.Vec2;
 import game.core.rendering.Rect;
+import game.core.rendering.TextureRenderer;
 import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
@@ -150,22 +151,23 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
     private static Entity makeTitle() {
         final var title = GameLoop.track(new Entity("title")
             .addComponent(new Transform(Vec2.screenCenter().minus(0, 200)))
-            .register(new ECSystem() {
-                private Transform trans;
+            .register(new TextureRenderer("resources/shapesinspacetitle.png", 640, 280).setHudMode(true))
+            // .register(new ECSystem() {
+            //     private Transform trans;
                 
-                @Override
-                public void setup() {
-                    trans = require(Transform.class);
-                }
+            //     @Override
+            //     public void setup() {
+            //         trans = require(Transform.class);
+            //     }
                 
-                @Override
-                public void hudRender() {
-                    String text = "Shapes in Space";
-                    int fontSize = 128;
-                    int size = Raylib.MeasureText(text, fontSize);
-                    Raylib.DrawText(text, trans.position.xInt()-size/2, trans.position.yInt(), fontSize, Color.WHITE.getPointerNoUpdate());
-                }
-            })
+            //     @Override
+            //     public void hudRender() {
+            //         String text = "Shapes in Space";
+            //         int fontSize = 128;
+            //         int size = Raylib.MeasureText(text, fontSize);
+            //         Raylib.DrawText(text, trans.position.xInt()-size/2, trans.position.yInt(), fontSize, Color.WHITE.getPointerNoUpdate());
+            //     }
+            // })
         );
         menuItems.add(title);
         return title;
@@ -197,6 +199,7 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
                     "Programming \t\t\t\tSebastian\n\t\t" +
                     "Game Design \t\t\t\tSebastian\n\t\t" +
                     "Squiggy Art\t\t\t\t\tLeah\n\t\t" +
+                    "Main Menu Art\t\t\tLeah\n\t\t" +
                     "Playtesting\t\t\t\t\tAaron";
             }
 
