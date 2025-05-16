@@ -1,6 +1,5 @@
 package game.core;
 
-import java.time.Duration;
 import java.util.Optional;
 
 import game.GameLoop;
@@ -169,7 +168,11 @@ public class Health implements Component {
     }
 
     public boolean isCritical() {
-        return getHealthPercentage() < 0.50;
+        return getHealthPercentage() < 0.25;
+    }
+
+    public boolean isLessThanHalf() {
+        return getHealthPercentage() < 0.5;
     }
     
 }

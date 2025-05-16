@@ -106,8 +106,8 @@ public class HexagonWorm extends Unit {
             parts[i-1] = body;
         }
 
-        for (int i = 0; i < 20; i++) {
-            LaserWeapon laser = new LaserWeapon(BASE_DAMAGE, getTransform().position, Vec2.down(), Color.RED, 2_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 5, Optional.of(getEffect()));
+        for (int i = 0; i < 30; i++) {
+            LaserWeapon laser = new LaserWeapon(BASE_DAMAGE, getTransform().position, Vec2.down(), Color.RED, 8_000, 1_000, 15, 0, GameTags.ENEMY_TEAM_TAGS, 5, Optional.of(getEffect()));
             skyLasers.add(laser);
         }
 
@@ -193,7 +193,7 @@ public class HexagonWorm extends Unit {
                 for (int i = 0; i < skyLasers.size(); i++) {
                     LaserWeapon laser = skyLasers.get(i);
                     int j = i;
-                    laser.chargeUp(() -> pos.minus(j*100-1_000, 1_000), Vec2::down, entity, b -> {});
+                    laser.chargeUp(() -> pos.minus(j*100-1_300, 2_000), Vec2::down, entity, b -> {});
                 }
             }
         }

@@ -12,7 +12,7 @@ import game.ecs.comps.Transform;
 public class HealthSyphon extends Powerup {
     private Transform trans;
     private Color color = new Color(0, 255, 0, 200);
-    private float range = 300;
+    private float range = 200;
     private Health health;
 
     private static final Duration STEAL_INTERVAL = Duration.ofMillis(200); 

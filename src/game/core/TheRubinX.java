@@ -20,13 +20,17 @@ public class TheRubinX extends Unit {
     public enum State {
         SPIN,
         X,
-        LASERS
+        LASERS,
+        PULSING
     }
 
     public final Signal<State> onStateChange = new Signal<>();
 
-    private static final int BASE_HEALTH = 5_000;
-    private static final int BASE_DAMAGE = 2_000;
+    private static final int BASE_HEALTH = 2_000;
+    private static final int BASE_DAMAGE = 20;
+    private static final int NOVA_DAMAGE = 10;
+    private static final float NOVA_SPEED = 400;
+
     private List<TheRubinXMinion> minions = new ArrayList<>();
 
     private State state = State.X;
@@ -38,7 +42,13 @@ public class TheRubinX extends Unit {
     private ArrayList<Vec2> weaponDirections = new ArrayList<>();
 
     private ArrayList<LaserWeapon> weapons = new ArrayList<>();
+    private ArrayList<LaserWeapon> extraLasers = new ArrayList<>();
+
     private Stopwatch shootStopwatch = Stopwatch.ofGameTime();
+
+    private NovaWeapon novaWeapon;
+
+    private XRenderer xRenderer;
 
     public static EntityOf<Unit> makeEntity(Vec2 spawnPos, int level) {
         EntityOf<Unit> e = new EntityOf<Unit>("The Rubin X", Unit.class);
@@ -47,7 +57,7 @@ public class TheRubinX extends Unit {
             .addComponent(new Transform(spawnPos))
             .addComponent(new Tangible())
             .addComponent(new Effect().setLevel(level))
-            .addComponent(new Health(BASE_HEALTH))
+            .addComponent(new Health(BASE_HEALTH * Math.max(1, level / 6)))
             .addComponent(new Rect(100, 100, Color.WHITE))
             .addComponent(new X(spawnPos, Color.PINK, 50, 100))
             .register(new HealthBar(Vec2.zero(), e.name, true))
@@ -69,17 +79,26 @@ public class TheRubinX extends Unit {
         onStateChange.emit(state);
     }
 
-    private void nextState() {
+    private void nextNonFinalState() {
         State[] vals = State.values();
-        setState(vals[(state.ordinal() + 1) % vals.length]);
+
+        do {setState(vals[(state.ordinal() + 1) % vals.length]);} while (state != State.X && state != State.SPIN);
+    }
+
+    private void nextFinalState() {
+        State[] vals = State.values();
+
+        do {setState(vals[(state.ordinal() + 1) % vals.length]);} while (state != State.LASERS && state != State.PULSING);
     }
 
     public boolean isInFinalState() {
-        return entity.isVisible();
+        return xRenderer.isEnabled();
     }
 
     @Override
     public void setup() {
+        getEffect().addDamageScaling(info -> info.damage() * Math.max(1, getEffect().getLevel() / 6));
+
         getHealth().onDeath.listenOnce(n -> {
             GameLoop.safeDestroy(entity);
             minions.stream()
@@ -94,18 +113,26 @@ public class TheRubinX extends Unit {
             });
         });
 
+        xRenderer = requireSystem(XRenderer.class);
+
         for (int i = 0; i < 30; i++) {
             weapons.add(new LaserWeapon(BASE_DAMAGE, getTransform().position, new Vec2(), 1, Color.PINK, 4_000, 200, 30, 0, GameTags.ENEMY_TEAM_TAGS, 1, Optional.of(getEffect())));
             weaponDirections.add(null);
         }
 
-        entity.hide();
+        xRenderer.setEnabled(false);
         GameLoop.defer(() -> {
             for (int i = 0; i < 9; i++) {
                 final var minion = GameLoop.track(TheRubinXMinion.makeEntity(getTransform().position.clone(), getEffect().getLevel(), this, i));
                 minions.add(minion.getMainSystem());
             }
         });
+
+        for (int i = 0; i < 20; i++) {
+            extraLasers.add(new LaserWeapon(BASE_DAMAGE, new Vec2(), new Vec2(), Color.RED, 4_000, 200, 10, 0, GameTags.ENEMY_TEAM_TAGS, 1, Optional.of(getEffect())));
+        }
+
+        novaWeapon = new NovaWeapon(NOVA_DAMAGE, 5, NOVA_SPEED, Color.PINK, GameTags.ENEMY_TEAM_TAGS, 1, Duration.ofSeconds(2), Optional.of(getEffect()));
     }
 
     @Override
@@ -113,13 +140,16 @@ public class TheRubinX extends Unit {
         super.ready();
         getTangible().setTangible(false);
         stateChangeStopwatch.restart();
-
-        // GameLoop.safeTrack(Border.makeEntity(getTransform().position.clone(), 2_000));
     }
 
     private void lastPhaseFrame() {
         getTangible().velocity.setEq(0, 0);
         Optional<Unit> target = getTeam().findTarget(getTransform().position);
+
+        if (stateChangeStopwatch.hasElapsedSecondsAdvance(5)) {
+            nextFinalState();
+        }
+
         if (state == State.LASERS) {
             target.ifPresent(unit -> {
                 if (shootStopwatch.hasElapsedAdvance(Duration.ofSeconds(2))) {
@@ -127,6 +157,8 @@ public class TheRubinX extends Unit {
                         LaserWeapon weapon = weapons.get(i);
                         final int j = i;
                         GameLoop.runAfter(entity, Duration.ofMillis(100 * (i+1)), () -> {
+                            if (state != State.LASERS) return;
+
                             Vec2 desiredPos = null;
                             if (weaponDirections.get(j) == null) desiredPos = getTransform().position.directionTo(unit.getTransform().position);
                             else desiredPos = weaponDirections.get(j);
@@ -141,12 +173,40 @@ public class TheRubinX extends Unit {
                     }
                 }
             });
+
+            getTransform().position.moveTowardsEq(Border.getInstance().getCenter(), 1000 * delta());
+        } else if (state == State.PULSING) {
+            if (weapons.stream().anyMatch(LaserWeapon::isCharging)) return;
+
+            target.ifPresent(unit -> {
+                if (movementStopwatch.hasElapsedAdvance(Duration.ofMillis(600))) {
+                    desiredPosition = unit.getTransform().position.addRandomByCoeff(500);
+                }
+
+                if (getTransform().position.isApprox(desiredPosition, 1) && novaWeapon.canFire()) {
+                    novaWeapon.fire(getTransform().position.clone(), Vec2.ZERO, entity);
+                }
+
+                for (int i = 0; i < extraLasers.size(); i++) {
+                    LaserWeapon weapon = extraLasers.get(i);
+                    GameLoop.runAfter(entity, Duration.ofMillis(200 * (i+1)), () -> {
+                        if (weapon.canFire()) {
+                            Vec2 pos = Border.getInstance().getCenter().addRandomByCoeff(2_000);
+                            Vec2 dir = pos.directionTo(unit.getTransform().position);
+    
+                            weapon.chargeUp(() -> pos, () -> dir, entity, impending -> {});
+                        }
+                    });
+                }
+            });
+            
+            getTransform().position.moveTowardsEq(desiredPosition, 1500 * delta());
         }
     }
 
     @Override
     public void frame() {
-        if (entity.isVisible()) lastPhaseFrame();
+        if (xRenderer.isEnabled()) lastPhaseFrame();
         else {
             if (desiredPosition == null) desiredPosition = getTransform().position.clone();
             getTransform().position.moveTowardsEq(desiredPosition, 500 * delta());
@@ -163,15 +223,15 @@ public class TheRubinX extends Unit {
                     .map(unit -> desiredPosition = unit.getTransform().position.addRandomByCoeff(500));
             }
             if (stateChangeStopwatch.hasElapsedAdvance(Duration.ofSeconds(5))) {
-                nextState();
+                nextNonFinalState();
             }
         } else {
             // final phase
-            if (entity.isHidden()) {
-                entity.show();
+            if (!xRenderer.isEnabled()) {
+                xRenderer.setEnabled(true);
                 getTangible().setTangible(true);
                 setState(State.LASERS);
-                getTransform().position.setEq(0, 0);
+                getTransform().position = Border.getInstance().getCenter().clone();
             }
         }
     }
@@ -179,6 +239,7 @@ public class TheRubinX extends Unit {
     @Override
     public void render() {
         weapons.forEach(LaserWeapon::render);
+        extraLasers.forEach(LaserWeapon::render);
     }
 
     @Override

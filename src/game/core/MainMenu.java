@@ -200,7 +200,8 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
                     "Game Design \t\t\t\tSebastian\n\t\t" +
                     "Squiggy Art\t\t\t\t\tLeah\n\t\t" +
                     "Main Menu Art\t\t\tLeah\n\t\t" +
-                    "Playtesting\t\t\t\t\tAaron";
+                    "Playtesting\t\t\t\t\tAaron\n\t\t" +
+                    "Playtesting\t\t\t\t\tSushant";
             }
 
             @Override

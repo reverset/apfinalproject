@@ -15,12 +15,12 @@ public class Game {
 	public static void main(String[] args) { // Everything might be a bit over engineered...
 		GameLoop.init();
 
-		Shader post = new Shader("resources/post.frag");
-		post.setResetFunction(() -> {
-			post.setShaderValue("vignetteStrength", 0f);
-		});
+		// Shader post = new Shader("resources/post.frag");
+		// post.setResetFunction(() -> {
+		// 	post.setShaderValue("vignetteStrength", 0f);
+		// });
 
-		GameLoop.setPostProcessShader(post);
+		// GameLoop.setPostProcessShader(post);
 
 		SplashScreen.load();
 		// MainMenu.clearAndLoad();

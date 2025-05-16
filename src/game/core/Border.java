@@ -5,6 +5,7 @@ import com.raylib.Raylib;
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
+import game.RecoverableException;
 import game.Vec2;
 import game.ecs.ECSystem;
 import game.ecs.comps.Transform;
@@ -14,6 +15,8 @@ public class Border extends ECSystem {
     private Transform trans;
     private float radius;
     private Player player;
+
+    private static Border instance = null;
 
     public static EntityOf<Border> makeEntity(Vec2 center, float radius) {
         EntityOf<Border> e = new EntityOf<>("border", Border.class);
@@ -27,8 +30,21 @@ public class Border extends ECSystem {
 
     public Border(float radius) {
         this.radius = radius;
+
+        instance = this;
     }
 
+    public static Border getInstance() {
+        return instance;
+    }
+
+    public Vec2 getCenter() {
+        return trans.position;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
 
     @Override
     public void setup() {

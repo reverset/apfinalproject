@@ -18,16 +18,17 @@ public class SplashScreen {
 
         Entity raylib = GameLoop.track(new Entity("splash-raylib")
             .addComponent(new Transform(new Vec2(0, 1000)))
-            .register(new TextureRenderer("resources/raylib.png", 200, 200)));
+            .register(new TextureRenderer("resources/shapesinspacetitle.png", 3200/3, 1400/3)));
+
         Transform raylibTrans = raylib.getComponent(Transform.class).orElseGet(() -> new Transform());
-        GameLoop.makeTween(Tween.overEase(1_000, 0, 1), 2, val -> {
+        GameLoop.makeTween(Tween.overEase(1_000, 0, 0.8f), 1, val -> {
             raylibTrans.position.y = val;
         }).start();
 
-        Text text = new Text("", new Vec2(50, 100), 24, Color.WHITE);
+        Text text = new Text("", new Vec2(40, 90), 54, Color.WHITE);
         GameLoop.track(Text.makeEntity(text));
 
-        GameLoop.makeTween(Tween.reveal("Made with raylib. Game design and programming by Sebastian. I hope this is worth an A+ :)"), 4, val -> {
+        GameLoop.makeTween(Tween.reveal("I hope this is worthy of an A+."), 3, val -> {
             text.text = val;
         }).start();
 
@@ -40,8 +41,15 @@ public class SplashScreen {
                 }
 
                 public void frame() {
-                    if (end.hasElapsedSeconds(10) || Raylib.IsKeyPressed(Raylib.KEY_ESCAPE)) {
+                    if (end.hasElapsedSeconds(6) || Raylib.IsKeyPressed(Raylib.KEY_ESCAPE)) {
                         GameLoop.defer(() -> {
+                            Shader post = new Shader("resources/post.frag");
+                            post.setResetFunction(() -> {
+                                post.setShaderValue("vignetteStrength", 0f);
+                            });
+
+                            GameLoop.setPostProcessShader(post);
+
                             MainMenu.clearAndLoad();
                         });
                     }

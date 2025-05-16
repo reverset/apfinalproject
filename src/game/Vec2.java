@@ -433,6 +433,10 @@ public class Vec2 {
 		return isApprox(other.x, other.y);
 	}
 
+	public boolean isApprox(Vec2 other, float epsilon) {
+		return isApprox(other.x, other.y, epsilon);
+	}
+
 	@Override
 	public String toString() {
 		return "Vec2(" + x + ", " + y + ")";

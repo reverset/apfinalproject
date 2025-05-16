@@ -52,6 +52,10 @@ public class LaserWeapon extends Weapon2 {
         this(damage, position, direction, 3, color, length, knockback, laserThickness, layerMask, ignoreTags, cooldown, effect);
     }
 
+    public void setPosition(Vec2 pos) {
+        position = pos;
+    }
+
     public boolean isCharging() {
         return charging;
     }

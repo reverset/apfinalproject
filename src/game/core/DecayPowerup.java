@@ -22,6 +22,7 @@ public class DecayPowerup extends Powerup {
         if (info.isHealing()) return info;
         if (info.hasExtra("D.O.T")) return info;
         int total = info.damage();
+        if (total == 0) return info;
 
         int desiredChunks = (int) Math.ceil(total * getPercent());
         if (total > 0 && desiredChunks == 0) desiredChunks = 1;
