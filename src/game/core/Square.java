@@ -51,7 +51,7 @@ public class Square extends Unit {
         Effect effect = new Effect()
             .setLevel(level);
             
-        effect.addDamageScaling(d -> effect.getLevel()*d.damage() + Math.max(0, 2 * (effect.getLevel() / 4)));
+        effect.addDamageScaling(d -> effect.getLevel()*d.damage() + effect.getLevel() / 4);
 
         entity
             .addComponent(Shader.fromCacheOrLoad("resources/enemy.frag"))
