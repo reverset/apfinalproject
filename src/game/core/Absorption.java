@@ -11,7 +11,7 @@ public class Absorption extends Powerup {
     public void setup() {
         super.setup();
 
-        effect.addDamageRecievingResponse(this::calculateDamage);
+        effect.addDamageReceivingResponse(this::calculateDamage);
     }
 
     private int calculateDamage(DamageInfo info) {

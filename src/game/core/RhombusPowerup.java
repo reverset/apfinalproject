@@ -64,7 +64,7 @@ public class RhombusPowerup extends Powerup {
 
     @Override
     public String getDescription() {
-        return "A shield providing\nartifical health";
+        return "A shield providing\nartificial health";
     }
 
     @Override

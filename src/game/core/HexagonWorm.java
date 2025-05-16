@@ -68,7 +68,7 @@ public class HexagonWorm extends Unit {
         EntityOf<Unit> entity = new EntityOf<>("The Hexagon Worm", Unit.class);
 
         Effect effect = new Effect().setLevel(level);
-        effect.addDamageRecievingResponseExtra(d -> {
+        effect.addDamageReceivingResponseExtra(d -> {
             boolean headshot = !d.hasExtra(HexagonTail.class);
             return d.setDamageAndColor(headshot ? d.damage()*2 : d.damage(), headshot ? DamageColor.CRITICAL : DamageColor.NORMAL);
         });

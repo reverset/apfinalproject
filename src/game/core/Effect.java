@@ -78,12 +78,12 @@ public class Effect implements Component {
         return this;
     }
 
-    public Effect addDamageRecievingResponse(DamageCalculator scale) {
+    public Effect addDamageReceivingResponse(DamageCalculator scale) {
         damageResponse.add(scale);
         return this;
     }
 
-    public Effect addDamageRecievingResponseExtra(Function<DamageInfo, DamageInfo> func) {
+    public Effect addDamageReceivingResponseExtra(Function<DamageInfo, DamageInfo> func) {
         var calc = new DamageCalculator() {
 
             @Override

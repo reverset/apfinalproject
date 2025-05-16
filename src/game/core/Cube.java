@@ -101,7 +101,7 @@ public class Cube extends Unit {
             //     .ifPresent(p -> p.getExpAccumulator().accumulate(100));
         }).addWill(e -> GameLoop.defer(() -> Raylib.UnloadRenderTexture(renderTexture)));
         
-        getEffect().addDamageRecievingResponse(info -> isShieldUp ? info.asHealing().damage() : info.damage());
+        getEffect().addDamageReceivingResponse(info -> isShieldUp ? info.asHealing().damage() : info.damage());
         getEffect().addDamageScaling(info -> info.damage() * getEffect().getLevel()/10);
 
         // var playerEntity = GameLoop.findEntityByTag(GameTags.PLAYER);

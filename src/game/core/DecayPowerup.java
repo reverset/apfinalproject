@@ -66,7 +66,7 @@ public class DecayPowerup extends Powerup {
 
     @Override
     public String getDescription() {
-        return "Instead of recieving damage\ninstantly, it is spread\nover time.";
+        return "Instead of receiving damage\ninstantly, it is spread\nover time.";
     }
 
     @Override
