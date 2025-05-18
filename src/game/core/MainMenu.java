@@ -66,24 +66,24 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
 		GameLoop.track(Background.makeEntity());
 
         
-        makeButton("Play", 0, () -> {
+        makeButton("Play", 200, -50, () -> {
             GameLoop.clearAllEntities();
             GameLoop.defer(() -> {
                 Game.loadLevel();
             });
         });
 
-        makeButton("Credits", 100, () -> {
+        makeButton("Credits", 500, -50, () -> {
             menuItems.forEach(Entity::hide);
             creditsEntity.show();
         });
 
-        makeButton("Settings", 200, () -> {
+        makeButton("Settings", 800, -50, () -> {
             menuItems.forEach(Entity::hide);
             settingsEntity.show();
         });
 
-        makeButton("Exit", 300, () -> {
+        makeButton("Exit", 1100, -50, () -> {
             GameLoop.quit();
         });
 
@@ -91,7 +91,7 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
         makeTitle();
     }
 
-    private static Entity makeButton(String text, float yOffset, Runnable action) {
+    private static Entity makeButton(String text, float xOffset, float yOffset, Runnable action) {
         final var button = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
         button
             .setText(text)
@@ -102,7 +102,7 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
             .onClick.listen(n -> action.run());
         
         final var e = GameLoop.track(new Entity(text+"::button")
-            .addComponent(new Transform(Vec2.screenCenter().add(0, yOffset)))
+            .addComponent(new Transform(new Vec2(xOffset, GameLoop.SCREEN_HEIGHT + yOffset)))
             .addComponent(new Rect(200, 50, Color.WHITE))
             .register(button));
         menuItems.add(e);
@@ -150,8 +150,8 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
 
     private static Entity makeTitle() {
         final var title = GameLoop.track(new Entity("title")
-            .addComponent(new Transform(Vec2.screenCenter().minus(0, 200)))
-            .register(new TextureRenderer("resources/shapesinspacetitle.png", 640, 280).setHudMode(true))
+            .addComponent(new Transform(Vec2.screenCenter().add(40, -70)))
+            .register(new TextureRenderer("resources/shapesinspacetitle.png", 640*2, 280*2).setHudMode(true))
             // .register(new ECSystem() {
             //     private Transform trans;
                 
