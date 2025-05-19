@@ -15,7 +15,7 @@ public class Physics extends ECSystem {
         DYNAMIC,
         STATIC,
     }
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
     public Vec2 hitBoxOffset;
 
     private static final ArrayList<ArrayList<Physics>> physicsObjects = new ArrayList<>();

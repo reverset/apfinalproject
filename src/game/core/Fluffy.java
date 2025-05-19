@@ -3,6 +3,7 @@ package game.core;
 import game.Color;
 import game.EntityOf;
 import game.RecoverableException;
+import game.Vec2;
 import game.core.rendering.Rect;
 import game.core.rendering.TextureRenderer;
 import game.ecs.Entity;
@@ -13,6 +14,8 @@ public class Fluffy extends Unit { // TODO
     private Unit player;
     private int hits = 0;
     private TextureRenderer textureRenderer;
+    private Rect rect;
+    private Vec2 collisionOffset;
 
     public static EntityOf<Fluffy> makeEntity(Entity player, int level) {
         EntityOf<Fluffy> e = new EntityOf<>("Fluffy", Fluffy.class);
@@ -20,7 +23,7 @@ public class Fluffy extends Unit { // TODO
         e
             .addComponent(new Transform())
             .addComponent(new Tangible())
-            .addComponent(Health.ofInvincible())
+            .addComponent(new Health(Integer.MAX_VALUE))
             .addComponent(new Effect().setLevel(level))
             .addComponent(new Rect(50, 50, Color.WHITE))
             .register(new Physics(0, 0))
@@ -41,16 +44,28 @@ public class Fluffy extends Unit { // TODO
 
         textureRenderer = requireSystem(TextureRenderer.class);
 
-        // getTangible().onCollision.listen(info -> {
-        //     if (info.entity.getSystem(Bullet.class).isPresent()) {
-        //         hits += 1;
-        //     }
-        // }, entity);
+        getHealth().onDamage.listen(info -> {
+            getHealth().setHealth(Integer.MAX_VALUE);
+            hit();
+        }, entity);
+
+        rect = require(Rect.class);
+
+        collisionOffset = new Vec2(-rect.width/2, -rect.height/2);
+        requireSystem(Physics.class).setHitboxOffset(collisionOffset);
     }
     
     @Override
     public void frame() {
         getTangible().velocity.setEq(0, 0);
         textureRenderer.setScale(hits+1);
+    }
+
+    private void hit() {
+        hits += 1;
+        rect.width *= 1.5;
+        rect.height *= 1.5;
+        collisionOffset.x = -rect.width/2;
+        collisionOffset.y = -rect.height/2;   
     }
 }
