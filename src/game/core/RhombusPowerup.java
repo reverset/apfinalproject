@@ -24,8 +24,8 @@ public class RhombusPowerup extends Powerup {
     private static final Duration HEAL_INTERVAL = Duration.ofMillis(200);
     private static final Duration HEAL_START = Duration.ofSeconds(5);
 
-    private int artificialHealth = 20;
-    private int maxArtificialHealth = 20;
+    private int artificialHealth = 25;
+    private int maxArtificialHealth = 25;
 
     private Health health;
 
@@ -47,14 +47,28 @@ public class RhombusPowerup extends Powerup {
     }
 
     @Override
+    public void ready() {
+        super.ready();
+        setMaxAHP();
+        artificialHealth = maxArtificialHealth;
+    }
+
+    private void setMaxAHP() {
+        maxArtificialHealth = (int) (health.getMaxHealth() * getPercentage());
+    }
+
+    private double getPercentage() {
+        return 0.15 * level;
+    }
+
+    @Override
     public int getMaxLevel() {
-        return 10;
+        return 5;
     }
 
     @Override
     protected void doLevelUp() {
         level += 1;
-        maxArtificialHealth = 20 * level;
     }
 
     @Override
@@ -69,6 +83,7 @@ public class RhombusPowerup extends Powerup {
 
     @Override
     public void infrequentUpdate() {
+        setMaxAHP();
         if (initialHealingStopwatch.hasElapsedAdvance(HEAL_START)) {
             isHealing = true;
         }
@@ -115,7 +130,7 @@ public class RhombusPowerup extends Powerup {
 
     @Override
     public String getSmallHUDInfo() {
-        return "+" + maxArtificialHealth + " artifical health.";
+        return "+" + maxArtificialHealth + " artifical health. (" + (int)(getPercentage()*100) + "%)";
     }
 
     @Override
