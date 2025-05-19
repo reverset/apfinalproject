@@ -17,6 +17,7 @@ public class TextureRenderer extends ECSystem {
     private boolean enabled = true;
     private boolean flipped = false;
     private boolean hudMode = false;
+    private float scale = 1;
 
     public TextureRenderer(String path) {
         this(path, -1, -1);
@@ -73,12 +74,16 @@ public class TextureRenderer extends ECSystem {
         
         draw();
     }
+
+    public void setScale(float scale) {
+        this.scale = scale;
+    }
     
     private void draw() {
         centeredPosition.x = trans.position.x - texture.width()/2;
         centeredPosition.y = trans.position.y - texture.height()/2;
         
-        texture.render(centeredPosition, trans.rotation, flipped, false, Color.WHITE);
+        texture.render(centeredPosition, trans.rotation, flipped, false, scale, Color.WHITE);
     }
     
 }

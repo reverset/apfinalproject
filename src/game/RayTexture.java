@@ -44,14 +44,14 @@ public class RayTexture {
         }
     }
 
-    public void render(Vec2 position, float rotation, boolean hFlip, boolean vFlip, Color tint) {
+    public void render(Vec2 position, float rotation, boolean hFlip, boolean vFlip, float scale, Color tint) {
         if (srcRect == null) srcRect = new Raylib.Rectangle();
         if (destRect == null) destRect = new Raylib.Rectangle();
         if (origin == null) origin = new Raylib.Vector2();
 
         srcRect.width(width() * (hFlip ? -1 : 1)).height(height());
 
-        destRect.width(width()).height(height());
+        destRect.width(width() * scale).height(height() * scale);
         destRect.x(position.x + width()/2).y(position.y + height()/2);
 
         origin

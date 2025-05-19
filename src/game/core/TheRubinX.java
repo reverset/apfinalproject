@@ -26,9 +26,9 @@ public class TheRubinX extends Unit {
 
     public final Signal<State> onStateChange = new Signal<>();
 
-    private static final int BASE_HEALTH = 2_000;
-    private static final int BASE_DAMAGE = 20;
-    private static final int NOVA_DAMAGE = 10;
+    private static final int BASE_HEALTH = 2_200;
+    private static final int BASE_DAMAGE = 25;
+    private static final int NOVA_DAMAGE = 15;
     private static final float NOVA_SPEED = 400;
 
     private List<TheRubinXMinion> minions = new ArrayList<>();
