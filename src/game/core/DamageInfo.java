@@ -1,8 +1,11 @@
 package game.core;
 
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.IntConsumer;
+import java.util.function.Predicate;
 
 import game.Color;
 import game.Vec2;
@@ -127,5 +130,12 @@ public record DamageInfo(int damage, Entity victim, Weapon2 weapon, Optional<Vec
 
     public int absoluteDamageOrHeal() {
         return Math.abs(damage);
+    }
+
+    public DamageInfo conditionalDamageMod(BooleanSupplier pred, Function<DamageInfo, Integer> calc) {
+        if (pred.getAsBoolean()) {
+            return this.setDamage(calc.apply(this));
+        }
+        return this;
     }
 }

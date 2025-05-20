@@ -21,7 +21,7 @@ public class RhombusPowerup extends Powerup {
     private Vec2 renderPosition = new Vec2();
 
     private static final int HEALING = 2;
-    private static final Duration HEAL_INTERVAL = Duration.ofMillis(200);
+    private static final Duration HEAL_INTERVAL = Duration.ofMillis(50);
     private static final Duration HEAL_START = Duration.ofSeconds(5);
 
     private int artificialHealth = 25;

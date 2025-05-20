@@ -80,8 +80,8 @@ public class TextureRenderer extends ECSystem {
     }
     
     private void draw() {
-        centeredPosition.x = trans.position.x - texture.width()/2;
-        centeredPosition.y = trans.position.y - texture.height()/2;
+        centeredPosition.x = trans.position.x - (texture.width()/2 * scale);
+        centeredPosition.y = trans.position.y - (texture.height()/2 * scale);
         
         texture.render(centeredPosition, trans.rotation, flipped, false, scale, Color.WHITE);
     }
