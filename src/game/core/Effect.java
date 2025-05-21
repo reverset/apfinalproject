@@ -24,7 +24,7 @@ public class Effect implements Component {
 
     private int level = 1;
     
-    public Signal<Integer> onLevelUp = new Signal<>();
+    public final Signal<Integer> onLevelUp = new Signal<>();
 
     private ArrayList<DamageCalculator> damageScaling = new ArrayList<>();
     private ArrayList<DamageCalculator> damageResponse = new ArrayList<>();

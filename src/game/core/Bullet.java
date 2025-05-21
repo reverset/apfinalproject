@@ -25,7 +25,7 @@ public class Bullet extends ECSystem {
 
     RemoveAfter removeAfter;
 
-    public Signal<Physics> onHit = new Signal<>();
+    public final Signal<Physics> onHit = new Signal<>();
 
     protected Rect rect;
     protected Object[] ignoreTags;

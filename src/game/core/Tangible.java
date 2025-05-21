@@ -30,5 +30,5 @@ public class Tangible implements Component {
         velocity.addEq(speed);
     }
 
-    public Signal<Physics> onCollision = new Signal<>();
+    public final Signal<Physics> onCollision = new Signal<>();
 }

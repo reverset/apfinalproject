@@ -37,7 +37,7 @@ public class Player extends Unit implements Controllable {
     public static final Duration BULLET_LIFETIME = Duration.ofSeconds(3);
     public static final Duration iDuration = Duration.ofMillis(50);
     
-    public Signal<Square> onKillEnemy = new Signal<>();    
+    public final Signal<Square> onKillEnemy = new Signal<>();    
 
     private final Text healthText = new Text("N/A", new Vec2(15, Vec2.screen().y-64), 54, new Color(255, 255, 255, 255));
     private final Text maxHealthText = new Text("N/A", new Vec2(120, Vec2.screen().y-64+(34/2)), 34, Color.ORANGE);
