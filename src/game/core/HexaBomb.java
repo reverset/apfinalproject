@@ -99,7 +99,7 @@ public class HexaBomb extends Bullet {
         if (isLaserVarient) {
             if (detonationStopwatch.hasElapsedAdvance(lifetime) && !altDetonation.isCharging()) {
                 altDetonation.chargeUp(() -> trans.position, Vec2::right, entity, b -> {}).onFinish.listen((n) -> {
-                    GameLoop.runAfter(entity, Duration.ofMillis(500), () -> GameLoop.safeDestroy(entity));
+                    GameLoop.runAfterGameTime(entity, Duration.ofMillis(500), () -> GameLoop.safeDestroy(entity));
                 }, entity);
         
                 altDetonation2.chargeUp(() -> trans.position, Vec2::up, entity, b -> {});

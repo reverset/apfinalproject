@@ -48,39 +48,6 @@ public class Diamond extends Powerup { // Currently does not grant XP!
         }
 
         return info;
-
-        // vict.getComponent(Health.class).ifPresent(health -> {
-        //     Transform victTrans = vict.getComponent(Transform.class).orElseThrow();
-
-        //     GameLoop.runAfter(entity, DELAY, () -> {
-        //         if (health.isAlive()) {
-        //             if (Math.random() > 0.1*level) return;
-        //             DamageInfo d = info
-        //                 .addExtra("diamondSpawned")
-        //                 .setPosition(victTrans.position.clone())
-        //                 .setDamage(info.damage()*4)
-        //                 .setColor(DamageColor.SPECIAL);
-
-        //             d = effect.computeDamage(d);
-        //             health.damageOrHeal(d);
-        //             Entity damageEffect = new Entity("Diamond Effect");
-
-        //             X x = new X(victTrans.position.addRandomByCoeff(10), Color.AQUA, 8, 0);
-        //             damageEffect
-        //                 .addComponent(x)
-        //                 .register(new Tween<>(Tween.overEase(0, 50, 20), 0.2f, val -> {
-        //                     x.setLength(val);
-        //                 }).setDestroy(false).start())
-        //                 .register(new RemoveAfter(Duration.ofMillis(500)))
-        //                 .register(new XRenderer());
-                    
-        //             GameLoop.safeTrack(damageEffect);
-        //             GameLoop.safeTrack(HealingOrb.makeEntity(victTrans.position.clone(), level*10));
-        //         }
-        //     });
-        // });
-
-        // return super.outgoingDamageMod(info);
     }
 
     public int getWholePercentChance() {

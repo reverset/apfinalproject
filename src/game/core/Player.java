@@ -32,7 +32,7 @@ public class Player extends Unit implements Controllable {
     public static final int BULLET_SPEED = 800;
 
     public static final int HEALTH_BONUS_LEVEL_AMOUNT = 50;
-    public static final int BASE_HEALTH = 100;
+    public static final int BASE_HEALTH = 100 * 1000;
 
     public static final Duration BULLET_LIFETIME = Duration.ofSeconds(3);
     public static final Duration iDuration = Duration.ofMillis(50);
@@ -300,10 +300,10 @@ public class Player extends Unit implements Controllable {
     @Override
     public void frame() {
         if (isShootingToggled) tryFireWeapon();
-        if (Raylib.IsKeyPressed(Raylib.KEY_BACKSLASH)) {
-            System.out.println(getEffect().getPowerups());
-            Spirit.spawn(1);
-        }
+        // if (Raylib.IsKeyPressed(Raylib.KEY_BACKSLASH)) {
+        //     System.out.println(getEffect().getPowerups());
+        //     Spirit.spawn(1);
+        // }
 
         Vec2 moveVector = controlledMoveVector();
         if (Raylib.IsKeyPressed(Raylib.KEY_ESCAPE)) PauseMenu.open();

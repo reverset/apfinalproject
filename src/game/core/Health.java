@@ -86,6 +86,10 @@ public class Health implements Component {
         return damageOrHeal(info, true, true);
     }
 
+    public void setInvincible(boolean inv) {
+        isInvincible = inv;
+    }
+
     /**
      * This method is used for dealing damage AND healing. The only differentiation is from
      * whether or not the damage is positive or negative.

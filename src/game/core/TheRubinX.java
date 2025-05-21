@@ -156,7 +156,7 @@ public class TheRubinX extends Unit {
                     for (int i = 0; i < weapons.size(); i++) {
                         LaserWeapon weapon = weapons.get(i);
                         final int j = i;
-                        GameLoop.runAfter(entity, Duration.ofMillis(100 * (i+1)), () -> {
+                        GameLoop.runAfterGameTime(entity, Duration.ofMillis(100 * (i+1)), () -> {
                             if (state != State.LASERS) return;
 
                             Vec2 desiredPos = null;
@@ -189,7 +189,7 @@ public class TheRubinX extends Unit {
 
                 for (int i = 0; i < extraLasers.size(); i++) {
                     LaserWeapon weapon = extraLasers.get(i);
-                    GameLoop.runAfter(entity, Duration.ofMillis(200 * (i+1)), () -> {
+                    GameLoop.runAfterGameTime(entity, Duration.ofMillis(200 * (i+1)), () -> {
                         if (weapon.canFire()) {
                             Vec2 pos = Border.getInstance().getCenter().addRandomByCoeff(2_000);
                             Vec2 dir = pos.directionTo(unit.getTransform().position);

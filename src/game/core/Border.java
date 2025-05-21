@@ -46,6 +46,14 @@ public class Border extends ECSystem {
         return radius;
     }
 
+    public void setRadius(float rad) {
+        radius = rad;
+    }
+
+    public void setCenter(Vec2 center) {
+        trans.position = center;
+    }
+
     @Override
     public void setup() {
         trans = require(Transform.class);
