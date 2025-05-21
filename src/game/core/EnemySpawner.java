@@ -9,6 +9,7 @@ import java.util.Queue;
 
 import game.EntityOf;
 import game.GameLoop;
+import game.MoreMath;
 import game.Stopwatch;
 import game.Vec2;
 import game.ecs.ECSystem;
@@ -23,6 +24,9 @@ public class EnemySpawner extends ECSystem {
     private Queue<EntityOf<Unit>> spawnQueue = new LinkedList<>();
 
     private final Stopwatch stopwatch = Stopwatch.ofGameTime();
+    private final Stopwatch spiritSpawn = Stopwatch.ofGameTime();
+    
+    private int spiritSpawnSeconds = 30;
 
     private final Wave standardWave = new Wave(() -> {
         if (totalEnemiesThisWave > 5) return null;
@@ -120,6 +124,12 @@ public class EnemySpawner extends ECSystem {
             enemy.getMainSystem().getHealth().onDeath.listen(n -> {
                 enemies.remove(enemy);
             }, enemy);
+        }
+
+        if (spiritSpawn.hasElapsedSecondsAdvance(spiritSpawnSeconds)) {
+            spiritSpawnSeconds = (int)MoreMath.random(30, 150);
+            Spirit.spawn(maxLevel);
+            System.out.println("A spirit has appeared ...");
         }
         
     }

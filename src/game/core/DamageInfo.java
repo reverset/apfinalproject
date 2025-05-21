@@ -1,5 +1,6 @@
 package game.core;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -40,6 +41,14 @@ public record DamageInfo(int damage, Entity victim, Weapon2 weapon, Optional<Vec
 
     public DamageInfo setExtras(Object[] extra) {
         return new DamageInfo(damage, victim, weapon, position, Optional.of(extra), Color.WHITE, attacker, appListener);
+    }
+
+    public DamageInfo addExtra(Object extra) {
+        Object[] extras = extraInfo().orElse(new Object[]{});
+        Object[] newExtras = new Object[extras.length+1];
+        System.arraycopy(extras, 0, newExtras, 0, extras.length);
+        newExtras[newExtras.length-1] = extra;
+        return setExtras(newExtras);
     }
 
     public DamageInfo setColor(Color color) {

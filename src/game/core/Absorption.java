@@ -5,6 +5,7 @@ import game.ecs.Entity;
 public class Absorption extends Powerup {
     public Absorption(Entity entity, Weapon2 weapon, Effect effect, int level) {
         super(entity, weapon, effect, level);
+        setPriority(5);
     }
 
     @Override

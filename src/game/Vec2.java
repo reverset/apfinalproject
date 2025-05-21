@@ -205,6 +205,14 @@ public class Vec2 {
 		return new Vec2(x + scalar, y + scalar);
 	}
 
+	public Vec2 addByAngleOffset(float angle) {
+		return Vec2.fromAngle(getAngle() + angle).multiplyEq(magnitude());
+	}
+
+	public Vec2 addByAngleOffsetDegrees(float angle) {
+		return addByAngleOffset((float) Math.toRadians(angle));
+	}
+
 	public Vec2 addRandomByCoeff(float coeff) {
 		Vec2 res = randomUnit().multiplyEq(coeff);
 		res.x = x + res.x;

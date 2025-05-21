@@ -300,9 +300,10 @@ public class Player extends Unit implements Controllable {
     @Override
     public void frame() {
         if (isShootingToggled) tryFireWeapon();
-        // if (Raylib.IsKeyPressed(Raylib.KEY_BACKSLASH)) {
-        //     GameLoop.makeTemporary(Duration.ofSeconds(2), trans.position.clone(), ParticlePresets.pop(10, Color.ORANGE));
-        // }
+        if (Raylib.IsKeyPressed(Raylib.KEY_BACKSLASH)) {
+            System.out.println(getEffect().getPowerups());
+            Spirit.spawn(1);
+        }
 
         Vec2 moveVector = controlledMoveVector();
         if (Raylib.IsKeyPressed(Raylib.KEY_ESCAPE)) PauseMenu.open();
@@ -375,11 +376,11 @@ public class Player extends Unit implements Controllable {
         }
 
         Raylib.DrawText("Entities: " + GameLoop.entityCount(), 15, 50, 24, Color.WHITE.getPointer());
-        Raylib.DrawText("Velocity: " + tangible.velocity, 15, 75, 24, Color.WHITE.getPointer());
-        Raylib.DrawText("Speed: " + tangible.velocity.magnitude(), 15, 102, 24, Color.WHITE.getPointer());
-        Raylib.DrawText("Bullets: " + BulletFactory.bullets.size(), 15, 124, 24, Color.WHITE.getPointer());
-        Raylib.DrawText("Resources: " + GameLoop.getResourceManager().countLoadedResources(), 15, 148, 24, Color.WHITE.getPointer());
-        Raylib.DrawText("Position: " + trans.position, 15, 172, 24, Color.WHITE.getPointer());
+        // Raylib.DrawText("Velocity: " + tangible.velocity, 15, 75, 24, Color.WHITE.getPointer());
+        // Raylib.DrawText("Speed: " + tangible.velocity.magnitude(), 15, 102, 24, Color.WHITE.getPointer());
+        // Raylib.DrawText("Bullets: " + BulletFactory.bullets.size(), 15, 124, 24, Color.WHITE.getPointer());
+        // Raylib.DrawText("Resources: " + GameLoop.getResourceManager().countLoadedResources(), 15, 148, 24, Color.WHITE.getPointer());
+        // Raylib.DrawText("Position: " + trans.position, 15, 172, 24, Color.WHITE.getPointer());
     }
 
     public Transform getTransform() {

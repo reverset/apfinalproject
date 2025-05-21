@@ -17,8 +17,9 @@ public class Tangible implements Component {
         return isTouchable;
     }
 
-    public void setTangible(boolean t) {
+    public Tangible setTangible(boolean t) {
         isTouchable = t;
+        return this;
     }
 
     public Tangible(Vec2 velocity) {

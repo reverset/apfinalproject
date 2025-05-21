@@ -17,6 +17,7 @@ public class FluffyPowerup extends Powerup {
 
     public FluffyPowerup(Entity entity, Weapon2 weapon, Effect effect, int level) {
         super(entity, weapon, effect, level);
+        setPriority(10);
     }
 
     @Override

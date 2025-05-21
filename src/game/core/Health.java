@@ -156,6 +156,13 @@ public class Health implements Component {
         return setHealth(maxHealth);
     }
 
+    public void revive() {
+        if (!confirmedDeath) return;
+
+        health = maxHealth;
+        confirmedDeath = false;
+    }
+
     public Health kill() {
         health = 0;
         onDeath.emit(null);

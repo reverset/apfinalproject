@@ -40,7 +40,7 @@ public class Fluffy extends Unit { // TODO
         e
             .addComponent(new Transform())
             .addComponent(new Tangible())
-            .addComponent(new Health(Integer.MAX_VALUE))
+            .addComponent(new Health(100))
             .addComponent(new Effect().setLevel(level))
             .addComponent(new Rect(150, 150, Color.WHITE))
             .register(new Physics(0, 0))
@@ -63,7 +63,9 @@ public class Fluffy extends Unit { // TODO
         textureRenderer = requireSystem(TextureRenderer.class);
 
         getHealth().onDamage.listen(info -> {
-            getHealth().setHealth(Integer.MAX_VALUE);
+            GameLoop.defer(() -> {
+                getHealth().revive();
+            });
             hit();
         }, entity);
 
