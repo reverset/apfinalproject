@@ -6,6 +6,7 @@ import java.util.Optional;
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
+import game.MoreMath;
 import game.RecoverableException;
 import game.Signal;
 import game.Stopwatch;
@@ -27,6 +28,7 @@ public class Fluffy extends Unit { // TODO
     private Rect rect;
     private Vec2 collisionOffset;
     private float desiredScale = 1;
+    private float actualScale = 1;
     private Stopwatch resetStopwatch = Stopwatch.ofGameTime();
     private Stopwatch positionUpdate = Stopwatch.ofGameTime();
     private boolean isMiniMode = false;
@@ -80,7 +82,8 @@ public class Fluffy extends Unit { // TODO
             desiredPosition = Optional.of(player.getTransform().position.addRandomByCoeff(50));
         }
 
-        textureRenderer.setScale(desiredScale);
+        actualScale = MoreMath.lerp(actualScale, desiredScale, 10 * infreqDelta());
+        textureRenderer.setScale(actualScale);
     }
 
     private void setMiniMode(boolean on) {
@@ -93,7 +96,7 @@ public class Fluffy extends Unit { // TODO
         getTangible().setTangible(!on);
 
         for (int i = 0; i < 2; i++) {
-            GameLoop.safeTrack(HealingOrb.makeEntity(getTransform().position.clone(), getEffect().getLevel()*15));
+            GameLoop.safeTrack(HealingOrb.makeEntity(getTransform().position.clone(), getEffect().getLevel()*30));
         }
 
         onMiniModeChange.emit(isMiniMode);

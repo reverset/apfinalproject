@@ -51,7 +51,8 @@ public class HealingOrb extends ECSystem {
         GameLoop.findEntityByTag(GameTags.PLAYER).ifPresent(e -> {
             player = e.getSystem(Player.class);
             playerTrans = e.getComponent(Transform.class);
-        });;
+        });
+        entity.setRenderPriority(110);
     }
 
     @Override

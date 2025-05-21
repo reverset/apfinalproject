@@ -35,7 +35,7 @@ public class FluffyPowerup extends Powerup {
 
     @Override
     public DamageInfo outgoingDamageMod(DamageInfo info) {
-        return super.outgoingDamageMod(info.conditionalDamageMod(() -> isBuffActive, i -> i.damage()*(level+1)));
+        return super.outgoingDamageMod(info.conditionalDamageMod(() -> isBuffActive, i -> i.damage()*(Math.min(5, level+1))));
     }
 
     @Override
@@ -65,5 +65,10 @@ public class FluffyPowerup extends Powerup {
             return (level+1) + "x damage.";
         }
         return "DEFENDING";
+    }
+
+    @Override
+    public String getIconPath() {
+        return "resources/fluffyicon.png";
     }
 }
