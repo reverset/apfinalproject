@@ -8,7 +8,6 @@ import java.util.Optional;
 import game.Color;
 import game.EntityOf;
 import game.GameLoop;
-import game.ParticlePresets;
 import game.RayImage;
 import game.RayTexture;
 import game.RecoverableException;
@@ -24,7 +23,10 @@ public class Fractal extends Unit {
     private static final RayTexture texture = new RayImage("resources/fractal.png", 512, 512).uploadToGPU();
 
     private static final int BASE_HEXABOMB_DAMAGE = 50;
-    private static final int BASE_HORIZONTAL_LASER_DAMAGE = 200;
+    private static final int BASE_HORIZONTAL_LASER_DAMAGE = 50;
+    private static final int BASE_ARC_WEAPON_DAMAGE = 15;
+    private static final int BASE_HEALTH = 2_000;
+    private static final int MAX_TRIANGLES = 3;
 
     private Optional<Vec2> desiredPosition = Optional.empty();
     private Stopwatch movementStopwatch = Stopwatch.ofGameTime();
@@ -33,6 +35,7 @@ public class Fractal extends Unit {
     private Stopwatch circleSpawn = Stopwatch.ofGameTime();
     private Stopwatch sigmaSpawn = Stopwatch.ofGameTime();
     private Stopwatch horizontalLasersShoot = Stopwatch.ofGameTime();
+    private Stopwatch arcWeaponShoot = Stopwatch.ofGameTime();
 
     private Unit player = null;
 
@@ -42,6 +45,7 @@ public class Fractal extends Unit {
     private HexaBombLauncher hexaBombLauncher;
 
     private List<LaserWeapon> horizontalLasers = new ArrayList<>();
+    private ArcWeapon arcWeapon;
 
     public static EntityOf<Fractal> makeEntity(Vec2 pos, int level) {
         EntityOf<Fractal> e = new EntityOf<>("The Mandelbrot Fractal", Fractal.class);
@@ -50,7 +54,7 @@ public class Fractal extends Unit {
             .addComponent(new Transform(pos))
             .addComponent(new Tangible())
             .addComponent(new Effect().setLevel(level))
-            .addComponent(new Health(5000 * level))
+            .addComponent(new Health(BASE_HEALTH * level))
             .addComponent(new Rect(texture.width()/2, texture.height()/2, Color.RED))
             .register(new Physics(0, 0, new Vec2(-texture.width()/4, -texture.height()/4)))
             .register(new HealthBar(new Vec2(), e.name, true))
@@ -66,6 +70,7 @@ public class Fractal extends Unit {
         getHealth().onDeath.listenOnce(n -> {
             GameLoop.safeDestroy(entity);
             Border.getInstance().setRadius(originalBorderRadius);
+            GameLoop.defer(() -> RandomPowerup.showScreen());
         });
 
         getHealth().onDamage.listen(info -> {
@@ -79,6 +84,8 @@ public class Fractal extends Unit {
         for (int i = 0; i < 10; i++) {
             horizontalLasers.add(new LaserWeapon(BASE_HORIZONTAL_LASER_DAMAGE, new Vec2(), new Vec2(), 1, Color.PINK, 4_000, 1000, 10, 0, GameTags.ENEMY_TEAM_TAGS, 1, Optional.of(getEffect())));
         }
+
+        arcWeapon = new ArcWeapon(BASE_ARC_WEAPON_DAMAGE, (float)Math.toRadians(45), 20, 300, Color.RED, GameTags.ENEMY_TEAM_TAGS, 1, Duration.ofSeconds(2), Optional.of(getEffect()));
     }
 
     @Override
@@ -104,7 +111,7 @@ public class Fractal extends Unit {
             desiredPosition = Optional.of(player.getTransform().position.addRandomByCoeff(500));
         }
 
-        if (triangles < 5 && triangleSpawn.hasElapsedAdvance(Duration.ofSeconds(1))) {
+        if (triangles < MAX_TRIANGLES && triangleSpawn.hasElapsedAdvance(Duration.ofSeconds(1))) {
             EntityOf<Unit> tri = GameLoop.safeTrack(TriangleEnemy.makeEntity(getTransform().position.clone(), getEffect().getLevel()));
             tri.getMainSystem().getHealth().onDeath.listenOnce(n -> triangles -= 1);
             triangles += 1;
@@ -134,6 +141,10 @@ public class Fractal extends Unit {
                 });
             }
         }
+
+        if (arcWeaponShoot.hasElapsedSecondsAdvance(5)) {
+            arcWeapon.fire(getTransform().position, getTransform().position.directionTo(player.getTransform().position), entity);
+        }
     }
     
     @Override
@@ -144,6 +155,9 @@ public class Fractal extends Unit {
         desiredPosition.ifPresent(p -> {
             getTransform().position.moveTowardsEq(p, 500 * delta());
         });
+
+        Vec2 desiredBorderCenter = Vec2.fromAngle((float)GameLoop.getUnpausedTime() / 8).multiplyEq(500);
+        Border.getInstance().getCenter().moveTowardsEq(desiredBorderCenter, 1000 * delta());
     }
 
     @Override

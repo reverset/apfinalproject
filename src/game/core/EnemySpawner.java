@@ -39,7 +39,9 @@ public class EnemySpawner extends ECSystem {
     //     standardWave.clone(),
     //     new BossWave(() -> Cube.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5), 10),
     //     standardWave.clone(),
-    //     new BossWave(() -> TheRubinX.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5), 10)
+    //     new BossWave(() -> TheRubinX.makeEntity(getOffScreenPos(), maxLevel), Duration.ofSeconds(5), 10),
+    //     standardWave.clone(),
+    //     new BossWave(() -> Fractal.makeEntity(getOffScreenPos(), maxLevel).downcast(Unit.class), Duration.ofSeconds(5), 10)
     // ), this);
 
     // private Round round = new Round(List.of(new Wave(() -> {
