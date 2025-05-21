@@ -23,9 +23,9 @@ public class Fractal extends Unit {
     private static final RayTexture texture = new RayImage("resources/fractal.png", 512, 512).uploadToGPU();
 
     private static final int BASE_HEXABOMB_DAMAGE = 5;
-    private static final int BASE_HORIZONTAL_LASER_DAMAGE = 15;
+    private static final int BASE_HORIZONTAL_LASER_DAMAGE = 8;
     private static final int BASE_ARC_WEAPON_DAMAGE = 5;
-    private static final int BASE_HEALTH = 1_000;
+    private static final int BASE_HEALTH = 500; // first encounter is at level 31. so 500 * 31 = 15,500
     private static final int MAX_TRIANGLES = 3;
 
     private Optional<Vec2> desiredPosition = Optional.empty();

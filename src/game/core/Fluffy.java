@@ -37,11 +37,12 @@ public class Fluffy extends Unit {
     public static EntityOf<Fluffy> makeEntity(Entity player, int level) {
         EntityOf<Fluffy> e = new EntityOf<>("Fluffy", Fluffy.class);
 
+        Effect effect = new Effect().setLevel(level);
         e
             .addComponent(new Transform())
             .addComponent(new Tangible())
-            .addComponent(new Health(100))
-            .addComponent(new Effect().setLevel(level))
+            .addComponent(new Health(100, effect))
+            .addComponent(effect)
             .addComponent(new Rect(150, 150, Color.WHITE))
             .register(new Physics(0, 0))
             .register(new TextureRenderer("resources/fluffy.png", 150, 150))
@@ -73,6 +74,8 @@ public class Fluffy extends Unit {
 
         collisionOffset = new Vec2(-rect.width/2, -rect.height/2);
         requireSystem(Physics.class).setHitboxOffset(collisionOffset);
+        
+        getEffect().addDamageReceivingResponseExtra(info -> DamageInfo.ofNone());
     }
     
     @Override

@@ -39,7 +39,7 @@ public class TriangleEnemy extends Unit {
         EntityOf<Unit> entity = new EntityOf<>("Triangle", Unit.class);
 
         Effect effect = new Effect().setLevel(level);
-        effect.addDamageScaling(d -> d.damage() + (effect.getLevel()-1)*10);
+        effect.addDamageScaling(d -> d.damage() + (effect.getLevel()-1)*7);
 
         entity
             .addComponent(new Transform(position))

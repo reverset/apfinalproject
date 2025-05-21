@@ -34,9 +34,13 @@ public class FluffyPowerup extends Powerup {
         }, entity);
     }
 
+    private int getDamageMultiplier() {
+        return Math.min(5, level+1);
+    }
+
     @Override
     public DamageInfo outgoingDamageMod(DamageInfo info) {
-        return super.outgoingDamageMod(info.conditionalDamageMod(() -> isBuffActive, i -> i.damage()*(Math.min(5, level+1))));
+        return super.outgoingDamageMod(info.conditionalDamageMod(() -> isBuffActive, i -> i.damage()*(getDamageMultiplier())));
     }
 
     @Override
@@ -63,7 +67,7 @@ public class FluffyPowerup extends Powerup {
     @Override
     public String getSmallHUDInfo() {
         if (isBuffActive) {
-            return (level+1) + "x damage.";
+            return getDamageMultiplier() + "x damage.";
         }
         return "DEFENDING";
     }
