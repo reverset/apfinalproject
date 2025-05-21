@@ -16,7 +16,7 @@ import game.core.rendering.TextureRenderer;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
-public class Fluffy extends Unit { // TODO
+public class Fluffy extends Unit {
 
     public final Signal<Boolean> onMiniModeChange = new Signal<>();
 
@@ -83,6 +83,8 @@ public class Fluffy extends Unit { // TODO
         if (positionUpdate.hasElapsedAdvance(Duration.ofMillis(500))) {
             desiredPosition = Optional.of(player.getTransform().position.addRandomByCoeff(50));
         }
+
+        getHealth().setMaxHealthAndHealth(player.getHealth().getMaxHealth());
 
         actualScale = MoreMath.lerp(actualScale, desiredScale, 10 * infreqDelta());
         textureRenderer.setScale(actualScale);

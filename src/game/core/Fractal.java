@@ -22,10 +22,10 @@ public class Fractal extends Unit {
 
     private static final RayTexture texture = new RayImage("resources/fractal.png", 512, 512).uploadToGPU();
 
-    private static final int BASE_HEXABOMB_DAMAGE = 50;
-    private static final int BASE_HORIZONTAL_LASER_DAMAGE = 50;
-    private static final int BASE_ARC_WEAPON_DAMAGE = 15;
-    private static final int BASE_HEALTH = 2_000;
+    private static final int BASE_HEXABOMB_DAMAGE = 5;
+    private static final int BASE_HORIZONTAL_LASER_DAMAGE = 15;
+    private static final int BASE_ARC_WEAPON_DAMAGE = 5;
+    private static final int BASE_HEALTH = 1_000;
     private static final int MAX_TRIANGLES = 3;
 
     private Optional<Vec2> desiredPosition = Optional.empty();
@@ -67,6 +67,8 @@ public class Fractal extends Unit {
 
     @Override
     public void setup() {
+        getEffect().addDamageScaling(info -> info.damage()*getEffect().getLevel());
+
         getHealth().onDeath.listenOnce(n -> {
             GameLoop.safeDestroy(entity);
             Border.getInstance().setRadius(originalBorderRadius);
