@@ -36,7 +36,8 @@ public class RandomPowerup {
             () -> new Absorption(null, null, null, 0),
             () -> new BlahajPowerup(null, null, null, 0),
             () -> new RhombusPowerup(null, null, null, 0),
-            () -> new FluffyPowerup(null, null, null, 0)
+            () -> new FluffyPowerup(null, null, null, 0),
+            () -> new DashPowerup(null, null, null, 0)
         );
             
         ArrayList<Powerup> select = new ArrayList<>();

@@ -161,7 +161,7 @@ public class ParticleEmitter extends ECSystem {
     
     @Override
     public void frame() {
-        if ((totalMaxParticles == -1 || particlesSpawned < totalMaxParticles) && particles.size() <= maxParticles && spawnStopwatch.hasElapsedAdvance(nextParticleDuration)) {
+        while ((totalMaxParticles == -1 || particlesSpawned < totalMaxParticles) && particles.size() <= maxParticles && (nextParticleDuration.isZero() || spawnStopwatch.hasElapsedAdvance(nextParticleDuration))) {
             Particle particle = new Particle();
             particle.lifetime = (particleLifetime.toMillis() / 1_000.0) + (MoreMath.random(0, lifetimeVariation.toMillis()) / 1_000.0);
             

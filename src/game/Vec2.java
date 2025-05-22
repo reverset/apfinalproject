@@ -346,13 +346,13 @@ public class Vec2 {
 		return this;
 	}
 
-	public void setMagnitudeEq(float mag) {
-		if (x == 0 && y == 0) return;
+	public Vec2 setMagnitudeEq(float mag) {
+		if (x == 0 && y == 0) return this;
 
 		float m = magnitude();
-		if (m == mag) return;
+		if (m == mag) return this;
 
-		multiplyEq(mag / m);
+		return multiplyEq(mag / m);
 	}
 
 	public Vec2 screenToWorld() {
