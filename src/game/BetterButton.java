@@ -82,7 +82,6 @@ public class BetterButton extends Button {
         //     hoverAnimation.stop();
         //     if (!unhoverAnimation.isRunning()) unhoverAnimation.start();
         // }
-
         try (final Rectangle rectangle = new Rectangle()) {
             text.position = trans.position.add(rect.width/2, rect.height/2);
             Vec2 textDim = text.dimensions();

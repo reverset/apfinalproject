@@ -7,11 +7,13 @@ import java.util.function.Supplier;
 
 import com.raylib.Raylib;
 
+import game.BetterButton;
 import game.Button;
 import game.Color;
 import game.GameLoop;
 import game.RecoverableException;
 import game.Shader;
+import game.Signal;
 import game.Text;
 import game.Tween;
 import game.Vec2;
@@ -21,25 +23,24 @@ import game.ecs.ECSystem;
 import game.ecs.Entity;
 import game.ecs.comps.Transform;
 
+// this class is ugly. I'm sorry, its 1:34 am.
 public class RandomPowerup {
-    public static void showScreen() {
-        final var player = GameLoop.findEntityByTag(GameTags.PLAYER);
-        if (player.isEmpty()) return; // player died do not show screen.
-        final var playerC = player.get().getComponent(Effect.class).orElseThrow(() -> new RecoverableException("Player is missing Effect."));
+    private static final Signal<Void> rerollSignal = new Signal<>();
+    
+    private static final List<Supplier<Powerup>> powerups = List.of(
+        () -> new Diamond(null, null, null, 0),
+        () -> new HealthSyphon(null, null, null, 0),
+        () -> new HealthRegenPowerup(null, null, null, 0),
+        () -> new DecayPowerup(null, null, null, 0),
+        () -> new SquiggyPowerup(null, null, null, 0),
+        () -> new Absorption(null, null, null, 0),
+        () -> new BlahajPowerup(null, null, null, 0),
+        () -> new RhombusPowerup(null, null, null, 0),
+        () -> new FluffyPowerup(null, null, null, 0),
+        () -> new DashPowerup(null, null, null, 0)
+    );
 
-        final var powerups = List.<Supplier<Powerup>>of(
-            () -> new Diamond(null, null, null, 0),
-            () -> new HealthSyphon(null, null, null, 0),
-            () -> new HealthRegenPowerup(null, null, null, 0),
-            () -> new DecayPowerup(null, null, null, 0),
-            () -> new SquiggyPowerup(null, null, null, 0),
-            () -> new Absorption(null, null, null, 0),
-            () -> new BlahajPowerup(null, null, null, 0),
-            () -> new RhombusPowerup(null, null, null, 0),
-            () -> new FluffyPowerup(null, null, null, 0),
-            () -> new DashPowerup(null, null, null, 0)
-        );
-            
+    private static ArrayList<Powerup> getSelectables(Effect playerC) {
         ArrayList<Powerup> select = new ArrayList<>();
         for (final var pow : powerups) {
             final var playerPow = playerC.getPowerUp(pow.get().getClass());
@@ -49,15 +50,58 @@ public class RandomPowerup {
             
             select.add(pow.get());
         }
+        return select;
+    }
 
+    public static void showScreen() {
+        final var player = GameLoop.findEntityByTag(GameTags.PLAYER);
+        if (player.isEmpty()) return; // player died do not show screen.
+        final var playerC = player.get().getComponent(Effect.class).orElseThrow(() -> new RecoverableException("Player is missing Effect."));
+            
+        ArrayList<Powerup> select = getSelectables(playerC);
+        
         if (select.size() == 0) return; // All powerups at max level;
+
+        if (playerC.getPowerups().size() == 0) {
+            GameLoop.defer(() -> {
+                final var button = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
+                button
+                    .setText("Reroll")
+                    .setFontSize(34)
+                    .setOutlineThickness(4)
+                    .setTextColor(Color.WHITE)
+                    .centerize()
+                    .onClick.listen(n -> rerollSignal.emit(null));
+                
+                final var e = GameLoop.track(new Entity("rerollbutton")
+                    .addComponent(new Transform(Vec2.screenCenter().add(0, 300)))
+                    .addComponent(new Rect(200, 50, Color.WHITE))
+                    .register(button))
+                    .addTags("powerupselect")
+                    .setPauseBehavior(true);
+                
+                rerollSignal.listen(n -> GameLoop.defer(() -> spawnPowerups(getSelectables(playerC))), e);
+
+                final var t = e.getComponent(Transform.class).orElseThrow(() -> new RecoverableException("impossible"));
+
+                GameLoop.makeTween(Tween.overEase(0, 100, 1), 1, val -> {
+                    t.position.y = GameLoop.SCREEN_HEIGHT - val;
+                }).start().runWhilePaused(true);
+            });
+        }
 
         GameLoop.pause();
 
         GameLoop.track(makeBackground());
         Text text = new Text("SELECT A POWERUP", Vec2.screenCenter().addEq(0, -200), 54, Color.WHITE).center();
         GameLoop.track(Text.makeEntity(text).addTags("powerupselect"));
-            
+        
+        spawnPowerups(select);
+    }
+
+    private static void spawnPowerups(List<Powerup> select) {
+        GameLoop.destroyAll(e -> e.name.equals("random powerup"));
+
         GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter(), select.remove((int) (Math.random()*select.size()))));
         if (select.size() > 0) GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(400, 0), select.remove((int) (Math.random()*select.size()))));
         if (select.size() > 0) GameLoop.track(RandomPowerup.makeButton(Vec2.screenCenter().addEq(-400, 0), select.remove((int) (Math.random()*select.size()))));

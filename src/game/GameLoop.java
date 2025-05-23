@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
+import java.util.function.Predicate;
 
 import com.raylib.Jaylib;
 import com.raylib.Raylib;
@@ -225,6 +226,13 @@ public class GameLoop {
 				destroy(entity);
 			}
 		});
+	}
+
+	public static void destroyAll(Predicate<Entity> pred) {
+		for (int i = entities.size() - 1; i >= 0; i--) {
+			Entity e = entities.get(i);
+			if (pred.test(e)) destroy(e);
+		}
 	}
 	
 	public static Iterator<Entity> getEntitiesIterator() {
@@ -449,7 +457,9 @@ public class GameLoop {
 	private static void frameUpdate() {
         // if (Raylib.IsKeyPressed(Raylib.KEY_P)) GameLoop.togglePause(); // for testing
 		if (!GameLoop.isPaused()) unpausedTime += Raylib.GetFrameTime() * GameLoop.timeScale;
-		if (Raylib.IsKeyPressed(Raylib.KEY_GRAVE)) consoleEnabled = !consoleEnabled;
+
+		// for debugging
+		// if (Raylib.IsKeyPressed(Raylib.KEY_GRAVE)) consoleEnabled = !consoleEnabled;
 		forEachEntitySafe(Entity::frame, false);
 	}
 	
