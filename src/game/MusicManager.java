@@ -2,17 +2,23 @@ package game;
 
 import com.raylib.Raylib;
 
+import game.core.Settings;
+
 public class MusicManager {
     private static AudioThread thread;
 
     public static AudioThread init() {
+        Raylib.InitAudioDevice();
         thread = new AudioThread();
         thread.setDaemon(true);
+
+        thread.start();
         return thread;
     }
 
     public static void deinit() {
         thread.interrupt();
+        Raylib.CloseAudioDevice();
     }
 
     public static Music fromCacheOrLoad(String path) {
@@ -20,6 +26,8 @@ public class MusicManager {
     }
 
     public static void play(Music music) {
+        if (!Settings.musicEnabled) return; // TODO
+
         queueAction(() -> {
             Raylib.PlayMusicStream(music.getPointer());
             thread.track(music);

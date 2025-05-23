@@ -63,7 +63,7 @@ public class Music implements Resource {
     }
 
     public boolean isPlaying() {
-        return Raylib.IsMusicStreamPlaying(internal);
+        return internal != null && Raylib.IsMusicStreamPlaying(internal);
     }
 
     public Duration getLength() {

@@ -30,6 +30,7 @@ public class AudioThread extends Thread {
     }
 
     private void runDeferred() {
+        if (deferments.size() == 0) return;
         synchronized (deferments) {
             final var action = deferments.remove(0);
             action.run();
