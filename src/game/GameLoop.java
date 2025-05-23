@@ -323,6 +323,10 @@ public class GameLoop {
 			.y((Raylib.GetScreenHeight() - (SCREEN_HEIGHT * scale))*0.5f)
 			.width(SCREEN_WIDTH * scale)
 			.height(SCREEN_HEIGHT * scale);
+
+
+		MusicManager.init();
+		
 		compileAllShaders();
 	}
 
@@ -391,6 +395,8 @@ public class GameLoop {
 	
 	public static void deinit() {
 		onShutdown.emit(Duration.ofMillis((long) (Raylib.GetTime()*1_000))); 
+		
+		MusicManager.deinit();
 
 		final int totalResources = resourceManager.countLoadedResources();
 		int resourcesCleared = 0;

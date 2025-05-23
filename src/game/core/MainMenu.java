@@ -10,6 +10,8 @@ import game.CameraSettings;
 import game.Color;
 import game.Game;
 import game.GameLoop;
+import game.Music;
+import game.MusicManager;
 import game.Shader;
 import game.Text;
 import game.ToggleButton;
@@ -89,6 +91,11 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
 
 
         makeTitle();
+
+        GameLoop.defer(() -> {
+            Music m = MusicManager.fromCacheOrLoad("resources/mainMenu.mp3");
+            m.play();
+        });
     }
 
     private static Entity makeButton(String text, float xOffset, float yOffset, Runnable action) {
