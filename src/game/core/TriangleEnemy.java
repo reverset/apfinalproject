@@ -78,7 +78,7 @@ public class TriangleEnemy extends Unit {
             GameLoop.safeDestroy(entity);
             Team.getTeamByTagOf(entity).grantExp(10);
 
-            GameLoop.makeTemporary(Duration.ofSeconds(800), getTransform().position.clone(), ParticlePresets.pop(10, Color.ORANGE));
+            GameLoop.makeTemporary(Duration.ofSeconds(1), getTransform().position.clone(), ParticlePresets.pop(10, Color.ORANGE));
         }, entity);
     }
 

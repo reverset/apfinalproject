@@ -268,6 +268,10 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
             () -> Settings.cameraShake = true, 
             () -> Settings.cameraShake = false);
 
+        makeSettingsToggleButton("Crosshair", 300, Settings.crosshairEnabled, 
+            () -> Settings.crosshairEnabled = true, 
+            () -> Settings.crosshairEnabled = false);
+
         return entity;
     }
 }

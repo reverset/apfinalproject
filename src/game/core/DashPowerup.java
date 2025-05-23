@@ -16,7 +16,7 @@ import game.ecs.comps.Transform;
 public class DashPowerup extends Powerup {
     private boolean canDash = true;
     private Stopwatch dashReset = Stopwatch.ofGameTime();
-    private Duration dashCooldown = Duration.ofSeconds(1);
+    private Duration dashCooldown = Duration.ofSeconds(5);
     private double resetTimestamp = -1;
 
     private float dashMagnitude = 200;
@@ -91,8 +91,12 @@ public class DashPowerup extends Powerup {
     public String getSmallHUDInfo() {
         if (canDash) {
             return "Press Shift to Dash!";
-        } // FIXME
-        System.out.println(dashReset.millisElapsed());
-        return "" + (int)(dashReset.millisUntil((long)(resetTimestamp * 1_000))/1_000) + " seconds";
+        }
+        return (int)(Math.ceil(resetTimestamp - GameLoop.getUnpausedTime())) + " seconds";
+    }
+
+    @Override
+    public String getIconPath() {
+        return "resources/dash.png";
     }
 }

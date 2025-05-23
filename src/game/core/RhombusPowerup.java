@@ -63,7 +63,7 @@ public class RhombusPowerup extends Powerup {
 
     @Override
     public int getMaxLevel() {
-        return 5;
+        return 8;
     }
 
     @Override

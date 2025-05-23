@@ -45,6 +45,8 @@ public class Player extends Unit implements Controllable {
 
     private boolean allowLowHealthNotification = true;
 
+    private Color fadedRed = Color.RED.clone().setAlpha(100);
+
     private Tangible tangible;
     private Physics physics;
     private Transform trans;
@@ -170,6 +172,8 @@ public class Player extends Unit implements Controllable {
     @Override
     public void ready() {
         super.ready();
+
+        StartTip.spawn();
 
         GameLoop.safeTrack(HUD.makeEntity(this));
 
@@ -343,6 +347,11 @@ public class Player extends Unit implements Controllable {
 
     @Override
     public void hudRender() {
+        if (Settings.crosshairEnabled) {
+            Vec2 mouse = GameLoop.getMouseScreenPosition();
+            Raylib.DrawCircle(mouse.xInt(), mouse.yInt(), 30, fadedRed.getPointer());
+        }
+
         healthText.text = "" + health.getHealth();
         if (health.isCritical()) {
 

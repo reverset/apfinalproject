@@ -50,6 +50,10 @@ public class Stopwatch {
         startTime = timeSupp.getAsDouble();
     }
 
+    public double getStartTime() {
+        return startTime;
+    }
+
     public boolean hasElapsedSecondsAdvance(double seconds) {
         if (hasElapsedSeconds(seconds)) {
             restart();

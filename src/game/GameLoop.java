@@ -382,7 +382,7 @@ public class GameLoop {
 	}
 	
 	public static void deinit() {
-		onShutdown.emit(Duration.ofMillis((long) (Raylib.GetTime()*1_000)));
+		onShutdown.emit(Duration.ofMillis((long) (Raylib.GetTime()*1_000))); 
 
 		final int totalResources = resourceManager.countLoadedResources();
 		int resourcesCleared = 0;
