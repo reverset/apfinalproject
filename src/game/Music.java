@@ -5,9 +5,13 @@ import java.time.Duration;
 import com.raylib.Raylib;
 
 public class Music implements Resource {
+    public final Signal<Void> onStart = new Signal<>();
+    public final Signal<Void> onLoop = new Signal<>();
+
     private Raylib.Music internal = null;
     private String path;
     private boolean stopFlag = false;
+    private boolean loop = false;
 
     public Music(Raylib.Music internal) {
         this.internal = internal;
@@ -25,16 +29,25 @@ public class Music implements Resource {
     }
 
     @Override
-    public void init() {
+    public synchronized void init() {
         if (internal == null) {
             internal = Raylib.LoadMusicStream(path);
         }
     }
 
     @Override
-    public void deinit() {
+    public synchronized void deinit() {
         if (internal == null) return;
-        Raylib.UnloadMusicStream(internal);
+        if (MusicManager.isThreadActive()) {
+            stop();
+            MusicManager.queueAction(() -> {
+                Raylib.UnloadMusicStream(internal);
+                internal = null;
+            });
+        } else {
+            Raylib.UnloadMusicStream(internal);
+            internal = null;
+        }
     }
 
     @Override
@@ -43,66 +56,83 @@ public class Music implements Resource {
     }
 
     @Override
-    public boolean isLoaded() {
+    public synchronized boolean isLoaded() {
         return internal != null && Raylib.IsMusicReady(internal);
     }
 
-    public void play() {
-        if (isPlaying()) return;
-        MusicManager.play(this);
+    public synchronized Music setLooping(boolean loop) {
+        this.loop = loop;
+        return this;
     }
 
-    public void stop() {
+    public synchronized boolean shouldLoop() {
+        return loop;
+    }
+
+    public synchronized void play() {
+        if (isPlaying()) return;
+        stopFlag = false;
+        MusicManager.play(this);
+        onStart.emit(null);
+    }
+
+    public synchronized void play(Duration start) {
+        if (isPlaying()) return;
+        play();
+        seek(start);
+    }
+
+    public synchronized void stop() {
         if (!isPlaying()) return;
         stopFlag = true;
         MusicManager.stop(this);
     }
 
-    protected boolean isStopFlagRaised() {
+    protected synchronized boolean isStopFlagRaised() {
         return stopFlag;
     }
 
-    public boolean isPlaying() {
+    public synchronized boolean isPlaying() {
         return internal != null && Raylib.IsMusicStreamPlaying(internal);
     }
 
-    public Duration getLength() {
+    public synchronized Duration getLength() {
         return Duration.ofMillis((int)(Raylib.GetMusicTimeLength(internal) * 1000));
     }
 
-    public Duration getPlayedTime() {
+    public synchronized Duration getPlayedTime() {
         return Duration.ofMillis((int)(Raylib.GetMusicTimePlayed(internal) * 1000));
     }
 
-    public void seek(Duration duration) {
-        MusicManager.queueAction(() -> {
-            Raylib.SeekMusicStream(internal, duration.toMillis() / 1_000f);
-        });
+    public synchronized float getPlayedTimeSeconds() {
+        return Raylib.GetMusicTimePlayed(internal);
     }
 
-    public boolean isFinished() {
-        return getPlayedTime().compareTo(getLength()) >= 0;
+    public synchronized float getLengthSeconds() {
+        return Raylib.GetMusicTimeLength(internal);
     }
 
-    public void setVolume(float normal) {
+    public synchronized void seek(Duration duration) {
+        Raylib.SeekMusicStream(internal, duration.toMillis() / 1_000f);
+    }
+
+    public synchronized boolean isFinished() {
+        return MoreMath.isApprox(getPlayedTimeSeconds(), getLengthSeconds(), 0.02f);
+    }
+
+    public synchronized void setVolume(float normal) {
         if (normal > 1.0 || normal < 0) {
             throw new IllegalArgumentException();
         }
-        MusicManager.queueAction(() -> {
-            Raylib.SetMusicVolume(internal, normal);
-        });
+        Raylib.SetMusicVolume(internal, normal);
     }
 
-    public void setPitch(float pitch) {
-        MusicManager.queueAction(() -> {
-            Raylib.SetMusicPitch(internal, pitch);
-        });
+    public synchronized void setPitch(float pitch) {
+        Raylib.SetMusicPitch(internal, pitch);
     }
 
-    public void setPan(float pan) {
-        MusicManager.queueAction(() -> {
-            Raylib.SetMusicPan(internal, pan);
-        });
+    public synchronized void setPan(float pan) {
+        Raylib.SetMusicPan(internal, pan);
     }
 
     public Raylib.Music getPointer() {

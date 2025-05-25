@@ -48,7 +48,7 @@ public class Fractal extends Unit {
     private ArcWeapon arcWeapon;
 
     public static EntityOf<Fractal> makeEntity(Vec2 pos, int level) {
-        EntityOf<Fractal> e = new EntityOf<>("The Mandelbrot Fractal", Fractal.class);
+        EntityOf<Fractal> e = new EntityOf<>("THE FINAL FRACTAL", Fractal.class);
         
         e
             .addComponent(new Transform(pos))

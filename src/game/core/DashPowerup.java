@@ -47,7 +47,7 @@ public class DashPowerup extends Powerup {
     @Override
     public void frame() {
         super.frame();
-        if (canDash && Raylib.IsKeyPressed(Raylib.KEY_LEFT_SHIFT)) {
+        if (canDash && Raylib.IsKeyPressed(Raylib.KEY_SPACE)) {
             if (tangible.velocity.isApprox(0, 0)) return;
 
             canDash = false;
@@ -90,7 +90,7 @@ public class DashPowerup extends Powerup {
     @Override
     public String getSmallHUDInfo() {
         if (canDash) {
-            return "Press Shift to Dash!";
+            return "Press Space to Dash!";
         }
         return (int)(Math.ceil(resetTimestamp - GameLoop.getUnpausedTime())) + " seconds";
     }

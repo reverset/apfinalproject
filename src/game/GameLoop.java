@@ -288,6 +288,7 @@ public class GameLoop {
 		ListIterator<Entity> iter = entities.listIterator();
 		while (iter.hasNext()) {
 			Entity entity = iter.next();
+			if (entity.isIndestructible()) continue;
 			entity.destroy();
 			iter.remove();
 			orderedEntityRenderList.remove(entity);
@@ -396,8 +397,6 @@ public class GameLoop {
 	public static void deinit() {
 		onShutdown.emit(Duration.ofMillis((long) (Raylib.GetTime()*1_000))); 
 		
-		MusicManager.deinit();
-
 		final int totalResources = resourceManager.countLoadedResources();
 		int resourcesCleared = 0;
 
@@ -409,6 +408,7 @@ public class GameLoop {
 			
 			long start = System.currentTimeMillis();
 			Resource res = iter.next();
+			System.out.println("Unloading " + res.getResourcePath() + " ...");
 			resourceManager.unload(res);
 			resourcesCleared += 1;
 			long elapsed = System.currentTimeMillis() - start;
@@ -420,6 +420,8 @@ public class GameLoop {
 			Raylib.EndDrawing();
 
 		}
+		System.out.println("Deinitialzing MusicManger");
+		MusicManager.deinit();
 
 		System.gc();
 		manageCleanupQueue();

@@ -5,5 +5,5 @@ public class Settings {
     public static boolean cameraShake = true;
     public static boolean dust = true;
     public static boolean crosshairEnabled = true;
-    public static boolean musicEnabled = false;
+    public static boolean musicEnabled = true;
 }

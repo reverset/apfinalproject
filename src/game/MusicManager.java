@@ -18,7 +18,16 @@ public class MusicManager {
 
     public static void deinit() {
         thread.interrupt();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Raylib.CloseAudioDevice();
+    }
+
+    public static boolean isThreadActive() {
+        return thread != null && !thread.isInterrupted() && thread.isAlive();
     }
 
     public static Music fromCacheOrLoad(String path) {
@@ -38,6 +47,10 @@ public class MusicManager {
         queueAction(() -> {
             Raylib.StopMusicStream(music.getPointer());
         });
+    }
+
+    public static void stopAll() {
+        thread.stopAll();
     }
 
     public static void queueAction(Runnable action) {

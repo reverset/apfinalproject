@@ -1,11 +1,13 @@
 package game.core;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import com.raylib.Raylib;
 
 import game.Color;
 import game.GameLoop;
+import game.ParticlePresets;
 import game.RemoveAfter;
 import game.Signal;
 import game.Vec2;
@@ -84,6 +86,8 @@ public class Bullet extends ECSystem {
                 GameLoop.safeDestroy(entity);
 
                 onHit.emit(otherPhysics);
+
+                GameLoop.makeTemporary(Duration.ofSeconds(1), trans.position.clone(), ParticlePresets.pop(3, rect.color));
             }
         }, entity);
     }

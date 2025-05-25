@@ -1,5 +1,6 @@
 package game.core;
 
+import java.time.Duration;
 import java.util.ArrayList;
 
 import com.raylib.Raylib;
@@ -92,10 +93,7 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
 
         makeTitle();
 
-        GameLoop.defer(() -> {
-            Music m = MusicManager.fromCacheOrLoad("resources/mainMenu.mp3");
-            m.play();
-        });
+        GameMusic.get().getMainSystem().transitionToMenu();
     }
 
     private static Entity makeButton(String text, float xOffset, float yOffset, Runnable action) {

@@ -34,10 +34,18 @@ public class Entity {
 	private boolean hidden = false;
 
 	private boolean manifested = false;
-
+	private boolean dontDestroy = false;
 
 	public Entity(String name) {
 		this.name = name;
+	}
+
+	public boolean isIndestructible() {
+		return dontDestroy;
+	}
+
+	public void setDestructibility(boolean des) {
+		dontDestroy = !des;
 	}
 
 	public static Entity ofFalliable(String message) { // for testing.

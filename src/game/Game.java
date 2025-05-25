@@ -4,7 +4,6 @@ import game.core.Background;
 import game.core.Border;
 import game.core.EnemySpawner;
 import game.core.GameTags;
-import game.core.MainMenu;
 import game.core.Player;
 import game.core.RandomPowerup;
 import game.core.Settings;
