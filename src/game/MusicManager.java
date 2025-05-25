@@ -35,7 +35,7 @@ public class MusicManager {
     }
 
     public static void play(Music music) {
-        if (!Settings.musicEnabled) return; // TODO
+        if (!Settings.isMusicEnabled()) return;
 
         queueAction(() -> {
             Raylib.PlayMusicStream(music.getPointer());

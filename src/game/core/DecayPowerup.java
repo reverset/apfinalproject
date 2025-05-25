@@ -51,7 +51,7 @@ public class DecayPowerup extends Powerup {
 
     @Override
     public int getMaxLevel() {
-        return 3;
+        return 2;
     }
 
     @Override

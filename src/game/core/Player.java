@@ -249,6 +249,7 @@ public class Player extends Unit implements Controllable {
                                 GameLoop.defer(() -> {
                                     Game.loadLevel();
                                 });
+                                GameMusic.get().getMainSystem().transitionToMenu();
                             });
     
                             final BetterButton mainMenuButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
@@ -263,6 +264,7 @@ public class Player extends Unit implements Controllable {
                                 GameLoop.defer(() -> {
                                     MainMenu.clearAndLoad();
                                 });
+                                GameMusic.get().getMainSystem().transitionToMenu();
                             });
     
                             GameLoop.safeTrack(new Entity("retryButton")

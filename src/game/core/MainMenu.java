@@ -206,7 +206,8 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
                     "Squiggy Art\t\t\t\t\tLeah\n\t\t" +
                     "Main Menu Art\t\t\tLeah\n\t\t" +
                     "Playtesting\t\t\t\t\tAaron\n\t\t" +
-                    "Playtesting\t\t\t\t\tSushant";
+                    "Playtesting\t\t\t\t\tSushant\n\t\t" +
+                    "Music\t\t\t\t\t\t\t\t\tAaron";
             }
 
             @Override
@@ -257,9 +258,9 @@ public class MainMenu { // not a fan of this implementation, but I didn't feel l
         });
         settingsItems.add(backButton);
 
-        makeSettingsToggleButton("Music", -200, Settings.musicEnabled, 
-            () -> Settings.musicEnabled = true, 
-            () -> Settings.musicEnabled = false);
+        makeSettingsToggleButton("Music", -200, Settings.isMusicEnabled(), 
+            () -> Settings.setMusicEnabled(true), 
+            () -> Settings.setMusicEnabled(false));
 
         makeSettingsToggleButton("Space Dust", -100, Settings.dust, 
             () -> Settings.dust = true, 

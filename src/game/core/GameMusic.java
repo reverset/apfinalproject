@@ -16,6 +16,7 @@ public class GameMusic extends ECSystem {
     private Music mainMenuMusic = null; // ugly but whatever, one day ill improve
     private Duration mainMenuStart = Duration.ofSeconds(45).plus(Duration.ofMillis(600));
     private Music bossMusic = null;
+    private Duration bossStart = Duration.ofSeconds(3);
 
     public static EntityOf<GameMusic> get() {
         if (instance == null) {
@@ -38,45 +39,51 @@ public class GameMusic extends ECSystem {
         mainMenuMusic.play(mainMenuStart);
 
         bossMusic = MusicManager.fromCacheOrLoad("resources/boss.mp3");
+
+        Settings.onMusicEnableChange.listen(enabled -> {
+            if (!enabled) {
+                mainMenuMusic.setVolume(0);
+                bossMusic.setVolume(0);
+            } else {
+                mainMenuMusic.setVolume(1);
+                bossMusic.setVolume(1);
+            }
+        }, entity);
     }
 
     public void transitionToBoss() {
+        if (!Settings.isMusicEnabled()) return;
+        if (bossMusic.isPlaying()) return;
+
         GameLoop.makeTween(Tween.lerp(1, 0), 3, val -> {
             mainMenuMusic.setVolume(val);
         }).start().runWhilePaused(true).onFinish.listenOnce(n -> {
             mainMenuMusic.stop();
-            mainMenuMusic.setVolume(1); // so when it is restarted, the volume is normal.
         });
-        bossMusic.play();
+
+        bossMusic.play(bossStart);
+        GameLoop.makeTween(Tween.lerp(0, 1), 3, val -> {
+            bossMusic.setVolume(val);
+        }).start().runWhilePaused(true);
     }
 
     public void transitionToMenu() {
-        GameLoop.makeTween(Tween.lerp(1, 0), 3, val -> {
-            bossMusic.setVolume(val);
-        }).start().runWhilePaused(true).onFinish.listenOnce(n -> {
-            bossMusic.stop();
-            bossMusic.setVolume(1); // so when it is restarted, the volume is normal.
-        });
-        mainMenuMusic.play(mainMenuStart);
-    }
+        if (!Settings.isMusicEnabled()) return;
+        if (mainMenuMusic.isPlaying()) return;
 
-    public void transitionToQuiet() {
-        if (mainMenuMusic.isPlaying()) {
-            GameLoop.makeTween(Tween.lerp(1, 0), 3, val -> {
-                mainMenuMusic.setVolume(val);
-            }).start().runWhilePaused(true).onFinish.listenOnce(n -> {
-                mainMenuMusic.stop();
-                mainMenuMusic.setVolume(1); // so when it is restarted, the volume is normal.
-            });
-        }
-        if (bossMusic.isPlaying()) {
-            GameLoop.makeTween(Tween.lerp(1, 0), 3, val -> {
-                bossMusic.setVolume(val);
-            }).start().runWhilePaused(true).onFinish.listenOnce(n -> {
-                bossMusic.stop();
-                bossMusic.setVolume(1); // so when it is restarted, the volume is normal.
-            });
-        }
+        Tween<Float> tween = GameLoop.makeTween(Tween.lerp(1, 0), 3, val -> {
+            bossMusic.setVolume(val);
+        }).start().runWhilePaused(true);
+        tween.entity.setDestructibility(false); // avoid tween being destroyed during scene changes.
+
+        tween.onFinish.listenOnce(n -> {
+            bossMusic.stop();
+        });
+
+        mainMenuMusic.play(mainMenuStart);
+        GameLoop.makeTween(Tween.lerp(0, 1), 3, val -> {
+            mainMenuMusic.setVolume(val);
+        }).start().runWhilePaused(true).entity.setDestructibility(false);;
+        
     }
-    
 }

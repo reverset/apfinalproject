@@ -74,6 +74,8 @@ public class DamageNumber extends ECSystem {
             })
         ));
 
+        entity.setRenderPriority(120);
+
         entity.register(animation);
     }
 
