@@ -17,13 +17,13 @@ public class SplashScreen {
         GameLoop.setBackgroundColor(Color.SPLASH_BLUE);
 
         Entity raylib = GameLoop.track(new Entity("splash-raylib")
-            .addComponent(new Transform(new Vec2(0, 1000)))
+            .addComponent(new Transform(new Vec2(0, 0)))
             .register(new TextureRenderer("resources/shapesinspacetitle.png", 3200/3, 1400/3)));
 
-        Transform raylibTrans = raylib.getComponent(Transform.class).orElseGet(() -> new Transform());
-        GameLoop.makeTween(Tween.overEase(1_000, 0, 0.8f), 1, val -> {
-            raylibTrans.position.y = val;
-        }).start();
+        // Transform raylibTrans = raylib.getComponent(Transform.class).orElseGet(() -> new Transform());
+        // // GameLoop.makeTween(Tween.overEase(1_000, 0, 0.8f), 1, val -> {
+        // //     raylibTrans.position.y = val;
+        // // }).start();
 
         Text text = new Text("", new Vec2(40, 90), 54, Color.WHITE);
         GameLoop.track(Text.makeEntity(text));
@@ -55,6 +55,24 @@ public class SplashScreen {
                     }
                 }
                 
+            }));
+        
+        GameLoop.track(new Entity("fade")
+            .register(new ECSystem() {
+                private Color color = new Color(0, 0, 0, 255);
+
+                @Override
+                public void setup() {
+                    GameLoop.makeTween(Tween.lerp(255, 0), 2, val -> {
+                        color.a = val.byteValue();
+                    }).start();
+
+                    entity.setRenderPriority(200);
+                };
+
+                public void hudRender() {
+                    Raylib.DrawRectangle(0, 0, GameLoop.SCREEN_WIDTH, GameLoop.SCREEN_HEIGHT, color.getPointer());
+                };
             }));
     }
 }
