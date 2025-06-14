@@ -1,6 +1,8 @@
 package game.core;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 import game.EntityOf;
 import game.GameLoop;
@@ -13,10 +15,15 @@ public class GameMusic extends ECSystem {
 
     private static EntityOf<GameMusic> instance = null;
 
-    private Music mainMenuMusic = null; // ugly but whatever, one day ill improve
-    private Duration mainMenuStart = Duration.ofSeconds(45).plus(Duration.ofMillis(600));
+    private Music mainMenuMusic = null; // ugly but whatever, EOL for this game now.
+    private Duration mainMenuStart = Duration.ofSeconds(0);
     private Music bossMusic = null;
-    private Duration bossStart = Duration.ofSeconds(3);
+    private Duration bossStart = Duration.ofSeconds(0);
+    
+    private Music deathMusic = null;
+    private Music baseTheme = null;
+
+    private List<Music> songs = new ArrayList<>();
 
     public static EntityOf<GameMusic> get() {
         if (instance == null) {
@@ -27,18 +34,54 @@ public class GameMusic extends ECSystem {
         return instance;
     }
 
+    private Music loadSong(String path) {
+        final var song = MusicManager.fromCacheOrLoad(path);
+        if (song == null) return null;
+
+        songs.add(song);
+
+        return song;
+    }
+
+    private void playOnly(Music music, Duration start) {
+        if (!Settings.isMusicEnabled()) return;
+        if (music.isPlaying()) return;
+        final var others = songs.stream().filter(m -> m != music).toList();
+        
+        for (final var song : others) {
+            if (song.isPlaying()) {
+                final var tween = GameLoop.makeTween(Tween.lerp(1, 0), 3, val -> {
+                    song.setVolume(val);
+                }).start();
+                tween.entity.setDestructibility(false);
+                tween.runWhilePaused(true).onFinish.listenOnce(n -> {
+                    song.stop();
+                });
+            }
+        }
+
+        music.play(start);
+        final var tween = GameLoop.makeTween(Tween.lerp(0, 1), 3, val -> {
+            music.setVolume(val);
+        }).start().runWhilePaused(true);
+        tween.entity.setDestructibility(false);
+    }
+
     @Override
     public void setup() {
         entity.setDestructibility(false);
 
-        mainMenuMusic = MusicManager.fromCacheOrLoad("resources/mainMenu.mp3").setLooping(true);
-        mainMenuMusic.onLoop.listen(n -> {
+        mainMenuMusic = loadSong("resources/mainMenu.mp3").setLooping(true);
+        mainMenuMusic.onLoop.listen(n -> { // old but too lazy to remove
             mainMenuMusic.seek(mainMenuStart);
         });
 
         mainMenuMusic.play(mainMenuStart);
 
-        bossMusic = MusicManager.fromCacheOrLoad("resources/boss.mp3");
+        bossMusic = loadSong("resources/boss.mp3").setLooping(true);
+        deathMusic = loadSong("resources/death.mp3");
+
+        baseTheme = loadSong("resources/basetheme.mp3").setLooping(true);
 
         Settings.onMusicEnableChange.listen(enabled -> {
             if (!enabled) {
@@ -52,38 +95,18 @@ public class GameMusic extends ECSystem {
     }
 
     public void transitionToBoss() {
-        if (!Settings.isMusicEnabled()) return;
-        if (bossMusic.isPlaying()) return;
-
-        GameLoop.makeTween(Tween.lerp(1, 0), 3, val -> {
-            mainMenuMusic.setVolume(val);
-        }).start().runWhilePaused(true).onFinish.listenOnce(n -> {
-            mainMenuMusic.stop();
-        });
-
-        bossMusic.play(bossStart);
-        GameLoop.makeTween(Tween.lerp(0, 1), 3, val -> {
-            bossMusic.setVolume(val);
-        }).start().runWhilePaused(true);
+        playOnly(bossMusic, bossStart);
     }
 
     public void transitionToMenu() {
-        if (!Settings.isMusicEnabled()) return;
-        if (mainMenuMusic.isPlaying()) return;
+        playOnly(mainMenuMusic, mainMenuStart);
+    }
 
-        Tween<Float> tween = GameLoop.makeTween(Tween.lerp(1, 0), 3, val -> {
-            bossMusic.setVolume(val);
-        }).start().runWhilePaused(true);
-        tween.entity.setDestructibility(false); // avoid tween being destroyed during scene changes.
+    public void transitionToBaseTheme() {
+        playOnly(baseTheme, Duration.ofSeconds(0));
+    }
 
-        tween.onFinish.listenOnce(n -> {
-            bossMusic.stop();
-        });
-
-        mainMenuMusic.play(mainMenuStart);
-        GameLoop.makeTween(Tween.lerp(0, 1), 3, val -> {
-            mainMenuMusic.setVolume(val);
-        }).start().runWhilePaused(true).entity.setDestructibility(false);;
-        
+    public void transitionToDeath() {
+        playOnly(deathMusic, Duration.ofSeconds(0));
     }
 }

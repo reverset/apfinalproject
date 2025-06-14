@@ -11,6 +11,7 @@ import game.Stopwatch;
 import game.Tween;
 import game.Vec2;
 import game.ecs.Entity;
+import game.ecs.RequireException;
 import game.ecs.comps.Transform;
 
 public class DashPowerup extends Powerup {
@@ -24,6 +25,7 @@ public class DashPowerup extends Powerup {
     private Tangible tangible;
     private Transform trans;
     private Health health;
+    private Controllable control;
 
     public DashPowerup(Entity entity, Weapon2 weapon, Effect effect, int level) {
         super(entity, weapon, effect, level);
@@ -35,6 +37,21 @@ public class DashPowerup extends Powerup {
         tangible = require(Tangible.class);
         trans = require(Transform.class);
         health = require(Health.class);
+        
+        final var iter = entity.systemIterator();
+        boolean found = false;
+        while (iter.hasNext()) {
+            final var sys = iter.next();
+            if (sys instanceof Controllable c) {
+                control = c;
+                found = true;
+
+                break;
+            }
+        }
+        if (!found) {
+            throw new RequireException("missing Controllable system");
+        }
     }
 
     @Override
@@ -54,7 +71,9 @@ public class DashPowerup extends Powerup {
             resetTimestamp = GameLoop.getUnpausedTime() + dashCooldown.toSeconds();
             dashReset.restart();
 
-            Vec2 target = trans.position.add(tangible.velocity.normalize().multiplyEq(dashMagnitude));
+            Vec2 dir = control.controlledMoveVector();
+            Vec2 target = trans.position.add(dir.clone().multiplyEq(dashMagnitude));
+            tangible.velocity.setEq(dir.x, dir.y).multiplyEq(dashMagnitude); // will get clamped by player
 
             health.setInvincible(true);
 

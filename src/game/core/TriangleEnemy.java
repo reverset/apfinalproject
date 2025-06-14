@@ -20,7 +20,7 @@ public class TriangleEnemy extends Unit {
     public static final float SHOOT_DISTANCE = 2_000;
 
     public static final int BASE_HEALTH = 60;
-    public static final int BASE_DAMAGE = 50;
+    public static final int BASE_DAMAGE = 25;
 
     Triangle triangle;
 
@@ -39,7 +39,7 @@ public class TriangleEnemy extends Unit {
         EntityOf<Unit> entity = new EntityOf<>("Triangle", Unit.class);
 
         Effect effect = new Effect().setLevel(level);
-        effect.addDamageScaling(d -> d.damage() + (effect.getLevel()-1)*7);
+        effect.addDamageScaling(d -> d.damage() * effect.getLevel()*3 + (int)Math.pow(1.21, effect.getLevel()));
 
         entity
             .addComponent(new Transform(position))

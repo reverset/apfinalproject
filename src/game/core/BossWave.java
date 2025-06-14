@@ -36,7 +36,7 @@ public class BossWave extends Wave {
 
             enemy.getMainSystem().getHealth().onDeath.listen(n -> {
                 finished = true;
-                GameMusic.get().getMainSystem().transitionToMenu();
+                GameMusic.get().getMainSystem().transitionToBaseTheme();
             }, enemy);
 
         }

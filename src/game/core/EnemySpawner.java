@@ -28,8 +28,10 @@ public class EnemySpawner extends ECSystem {
     
     private int spiritSpawnSeconds = 30;
 
+    private int randomMaxEnemies = 20;
+
     private final Wave standardWave = new Wave(() -> {
-        if (totalEnemiesThisWave > 5) return null;
+        if (totalEnemiesThisWave > randomMaxEnemies) return null;
 
         return randomEntity(getOffScreenPos());
     }, 5, Duration.ofSeconds(1));
@@ -114,10 +116,16 @@ public class EnemySpawner extends ECSystem {
         maxLevel += amount;
     }
 
+    private void resetRandomMaxEnemies() {
+        randomMaxEnemies = (int)MoreMath.random(20, 80);
+        System.out.println("max enemies this wave: " + randomMaxEnemies);
+    }
+
     @Override
     public void frame() {
         boolean waveChange = round.update();
         if (waveChange) {
+            resetRandomMaxEnemies();
             stopwatch.start();
             totalEnemiesThisWave = 0;
         }
@@ -145,6 +153,7 @@ public class EnemySpawner extends ECSystem {
     @Override
     public void setup() {
         stopwatch.start();
+        // resetRandomMaxEnemies();
 
         round.getWave().start();
     }

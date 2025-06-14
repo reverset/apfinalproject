@@ -172,6 +172,7 @@ public class Player extends Unit implements Controllable {
     @Override
     public void ready() {
         super.ready();
+        GameMusic.get().getMainSystem().transitionToBaseTheme();
 
         StartTip.spawn();
 
@@ -220,8 +221,17 @@ public class Player extends Unit implements Controllable {
                         private int blackX = 0;
                         private int blackHeight = 500;
 
+                        private String motivationalText = "Perhaps, you should be more *determined*? ;)";
+                        private Text motivationTextObject = new Text(motivationalText, Vec2.screenCenter().add(0, 100), 24, Color.WHITE).center();
+
                         @Override
                         public void setup() {
+                            GameMusic.get().getMainSystem().transitionToDeath();
+                            motivationTextObject.text = "";
+                            GameLoop.makeTween(Tween.reveal(motivationalText), 3, val -> {
+                                motivationTextObject.text = val;
+                            }).start().runWhilePaused(true);
+
                             textTween = GameLoop.makeTween(Tween.lerp(400, 200), 0.2f, val -> {
                                 text.fontSize = val.intValue();
                                 text.position.x = originalX - text.measure()*0.35f;
@@ -249,7 +259,7 @@ public class Player extends Unit implements Controllable {
                                 GameLoop.defer(() -> {
                                     Game.loadLevel();
                                 });
-                                GameMusic.get().getMainSystem().transitionToMenu();
+                                GameMusic.get().getMainSystem().transitionToBaseTheme();
                             });
     
                             final BetterButton mainMenuButton = new BetterButton(Color.WHITE, Color.BLUE, 8, 8);
@@ -294,6 +304,9 @@ public class Player extends Unit implements Controllable {
                         public void hudRender() {
                             Raylib.DrawRectangle(blackX, GameLoop.SCREEN_HEIGHT/2 - blackHeight/2, GameLoop.SCREEN_WIDTH, blackHeight, blackColor.getPointer());
                             text.render();
+
+
+                            motivationTextObject.render();
                         }
                         
                     }));
@@ -386,7 +399,7 @@ public class Player extends Unit implements Controllable {
             };
         }
 
-        Raylib.DrawText("Entities: " + GameLoop.entityCount(), 15, 50, 24, Color.WHITE.getPointer());
+        // Raylib.DrawText("Entities: " + GameLoop.entityCount(), 15, 50, 24, Color.WHITE.getPointer());
         // Raylib.DrawText("Velocity: " + tangible.velocity, 15, 75, 24, Color.WHITE.getPointer());
         // Raylib.DrawText("Speed: " + tangible.velocity.magnitude(), 15, 102, 24, Color.WHITE.getPointer());
         // Raylib.DrawText("Bullets: " + BulletFactory.bullets.size(), 15, 124, 24, Color.WHITE.getPointer());

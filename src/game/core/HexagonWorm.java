@@ -31,7 +31,7 @@ public class HexagonWorm extends Unit {
 
     public static final float BULLET_SPEED = 600;
 
-    public static final int BASE_HEALTH = 500;
+    public static final int BASE_HEALTH = 4000;
     public static final int BASE_HEXABOMB_DAMAGE = 35;
     public static final int BASE_DEATH_HEALING = 35;
     

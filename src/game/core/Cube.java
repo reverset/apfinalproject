@@ -22,7 +22,7 @@ import game.core.rendering.Rect;
 import game.ecs.comps.Transform;
 
 public class Cube extends Unit {
-    public static final int BASE_HEALTH = 1_000;
+    public static final int BASE_HEALTH = 8_000;
     public static final int BASE_DAMAGE = 20;
     public static final int BULLET_SPEED = 1_500;
     public static final Duration BULLET_LIFETIME = Duration.ofSeconds(5);
