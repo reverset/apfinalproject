@@ -72,9 +72,9 @@ public class GameMusic extends ECSystem {
         entity.setDestructibility(false);
 
         mainMenuMusic = loadSong("resources/mainMenu.mp3").setLooping(true);
-        mainMenuMusic.onLoop.listen(n -> { // old but too lazy to remove
-            mainMenuMusic.seek(mainMenuStart);
-        });
+        // mainMenuMusic.onLoop.listen(n -> { // old but too lazy to remove
+        //     mainMenuMusic.seek(mainMenuStart);
+        // });
 
         mainMenuMusic.play(mainMenuStart);
 
@@ -85,11 +85,9 @@ public class GameMusic extends ECSystem {
 
         Settings.onMusicEnableChange.listen(enabled -> {
             if (!enabled) {
-                mainMenuMusic.setVolume(0);
-                bossMusic.setVolume(0);
+                songs.forEach(s -> s.setVolume(0));
             } else {
-                mainMenuMusic.setVolume(1);
-                bossMusic.setVolume(1);
+                songs.forEach(s -> s.setVolume(1));
             }
         }, entity);
     }
