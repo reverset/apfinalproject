@@ -60,11 +60,11 @@ public class Health implements Component {
     }
 
     public boolean isDead() {
-        return health == 0;
+        return health == 0 && confirmedDeath;
     }
 
     public boolean isAlive() {
-        return health > 0;
+        return health > 0 && !confirmedDeath;
     }
 
     public boolean isHealthSaturated() {
