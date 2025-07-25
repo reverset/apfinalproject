@@ -63,22 +63,22 @@ See list of powerups later in the README.
 | Sigma | Starts slow, but will quickly gain a lot of speed. Will explode on contact. |
 | **Hexagon Worm** | Large enemy made up of multiple segments. Headshots deal double damage. Shoots 'Hexa-Bombs'. |
 | **Cube** | A 3D Cube? In a 2D game? I wish I made this boss more interesting though. Blue phase converts incoming damage into healing. Will also summon many 'Sigmas' |
-| **The Rubin X** | An X made up of Xs. Consist of two phases. Very chaotic |
+| **The Rubin X** | An X made up of Xs. Consists of two phases. Very chaotic |
 | **The Final Fractal** | Final boss. It will throw everything at you. |
 
 ## Powerup list
-| Powerup | Description |
-|---------|-------------|
-| Absorption | Reduces incoming damage by a percentage. |
-| Blahaj  | Summons a friendly shark to help you in battle. See the Friendlies table earlier in the README. |
-| Dash | Allows you to quickly move and avoid attacks. Press SPACE to use. |
-| Decay | Divides incoming damage and applies it over time. |
-| D'amico Diamond | Percentage chance to quadruple your damage on an enemy, will also provide healing on successful attacks. |
-| Fluffy | Summons a space sheep to aid you in your defenses. |
-| Health Regen | Health regeneration over time. |
-| Health Syphon | Steals health from nearby enemies. |
-| Richmond Rhombus | Grants you 'artificial' health. As long as you have at least 1 AHP, it will absorb all incoming damage. |
-| Squiggy | A friendly octopus to aid you in your battles. |
+| Powerup | Description | Icon |
+|---------|-------------|------|
+| Absorption | Reduces incoming damage by a percentage. | ![absorption](resources/absorption.png) |
+| Blahaj  | Summons a friendly shark to help you in battle. See the Friendlies table earlier in the README. | ![blahaj](resources/blahajicon.png) |
+| Dash | Allows you to quickly move and avoid attacks. Press SPACE to use. | ![dash](resources/dash.png) |
+| Decay | Divides incoming damage and applies it over time. | ![decay](resources/decay.png) |
+| D'amico Diamond | Percentage chance to quadruple your damage on an enemy, will also provide healing on successful attacks. | ![diamond](resources/diamond.png) |
+| Fluffy | Summons a space sheep to aid you in your defenses. | ![fluffy](resources/fluffyicon.png) |
+| Health Regen | Health regeneration over time. | ![health regen](resources/healthregen.png) |
+| Health Syphon | Steals health from nearby enemies. | ![health syphon](resources/healthsyphon.png) |
+| Richmond Rhombus | Grants you 'artificial' health. As long as you have at least 1 AHP, it will absorb all incoming damage. | ![rhombus](resources/rhombusicon.png) |
+| Squiggy | A friendly octopus to aid you in your battles. | ![squiggy](resources/squiggyicon.png) |
 
 ## Final comments
 Total of 9,198 lines of java code. (Pretty small!)
