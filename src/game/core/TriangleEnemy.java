@@ -69,17 +69,18 @@ public class TriangleEnemy extends Unit {
         getHealth().setMaxHealthAndHealth(BASE_HEALTH + (getEffect().getLevel()-1)*10);
         
         weapon = new LaserWeapon(BASE_DAMAGE, getTransform().position, getFacing(), Color.ORANGE, SHOOT_DISTANCE, 1_000, 15, 0, new Object[]{GameTags.ENEMY_TEAM}, 0.1f, Optional.of(getEffect()));
+        
+        getHealth().onDeath.listenOnce(n -> {
+            GameLoop.safeDestroy(entity);
+            Team.getTeamByTagOf(entity).grantExp(10);
+    
+            GameLoop.makeTemporary(Duration.ofSeconds(1), getTransform().position.clone(), ParticlePresets.pop(10, Color.ORANGE));
+        });
     }
 
     @Override
     public void ready() {
         super.ready();
-        getHealth().onDeath.listen(n -> {
-            GameLoop.safeDestroy(entity);
-            Team.getTeamByTagOf(entity).grantExp(10);
-
-            GameLoop.makeTemporary(Duration.ofSeconds(1), getTransform().position.clone(), ParticlePresets.pop(10, Color.ORANGE));
-        }, entity);
     }
 
     @Override

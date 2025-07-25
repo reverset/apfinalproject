@@ -5,7 +5,7 @@ uniform float time;
 
 uniform vec3 cubeColorCoeffs;
 
-out vec4 color;
+out vec4 fragColor;
 
 void main() {
     // normalization for easier calculations
@@ -72,5 +72,5 @@ void main() {
     float shade = 0.9 - 2*totalDist / maxDist;
     vec3 finalColor = vec3(shade * cubeColorCoeffs.x, shade * cubeColorCoeffs.y, shade * cubeColorCoeffs.z);
     
-    color = vec4(finalColor, hit ? 1.0 : 0.0);
+    fragColor = vec4(finalColor, hit ? 1.0 : 0.0);
 }

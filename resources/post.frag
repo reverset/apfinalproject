@@ -25,7 +25,7 @@ vec4 bloom() {
     vec4 sum = vec4(0);
     vec2 sizeFactor = vec2(1)/size*quality;
     
-    vec4 source = texture2D(texture0, fragTexCoord);
+    vec4 source = texture(texture0, fragTexCoord);
     
     const int range = int((samples-1.0)/2.0);
 
@@ -33,7 +33,7 @@ vec4 bloom() {
     {
         for (int y = -range; y <= range; y++)
         {
-            sum += texture2D(texture0, fragTexCoord + vec2(x, y)*sizeFactor);
+            sum += texture(texture0, fragTexCoord + vec2(x, y)*sizeFactor);
         }
     }
 

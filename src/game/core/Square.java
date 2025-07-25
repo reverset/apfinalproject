@@ -83,6 +83,13 @@ public class Square extends Unit {
         movementStopwatch.start();
         
         weapon = new SimpleWeapon(BASE_DAMAGE, BULLET_SPEED, Color.RED, new Object[]{GameTags.ENEMY_TEAM}, BULLET_LIFETIME, BULLET_COOLDOWN, Optional.of(getEffect()));
+        
+        getHealth().onDeath.listenOnce(n -> {
+            GameLoop.safeDestroy(entity);
+            GameLoop.safeTrack(DestroyEffect.makeEntity(rect.dimensions(), getTransform().position.clone()));
+    
+            Team.getTeamByTagOf(entity).grantExp(10);
+        });
     }
 
     @Override
@@ -94,12 +101,6 @@ public class Square extends Unit {
     @Override
     public void ready() {
         super.ready();
-        getHealth().onDeath.listen(n -> {
-            GameLoop.safeDestroy(entity);
-            GameLoop.safeTrack(DestroyEffect.makeEntity(rect.dimensions(), getTransform().position.clone()));
-
-            Team.getTeamByTagOf(entity).grantExp(10);
-        }, entity);
     }
 
     @Override
