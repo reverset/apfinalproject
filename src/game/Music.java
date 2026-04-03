@@ -57,7 +57,7 @@ public class Music implements Resource {
 
     @Override
     public synchronized boolean isLoaded() {
-        return internal != null && Raylib.IsMusicReady(internal);
+        return internal != null && Raylib.IsMusicValid(internal);
     }
 
     public synchronized Music setLooping(boolean loop) {

@@ -20,8 +20,8 @@ import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Predicate;
 
-import com.raylib.Jaylib;
 import com.raylib.Raylib;
+import com.raylib.Colors;
 
 import game.Tween.TweenFunction;
 import game.ecs.ECSystem;
@@ -490,7 +490,7 @@ public class GameLoop {
 		Raylib.EndTextureMode();
 		
 		Raylib.BeginDrawing();
-		Raylib.ClearBackground(Jaylib.BLACK);
+		Raylib.ClearBackground(Colors.BLACK);
 		
 		boolean shaderEnabled = false;
 		if (postProcesShader != null && postProcessShaderEnabled) {

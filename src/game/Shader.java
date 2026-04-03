@@ -7,8 +7,6 @@ import java.util.HashMap;
 import org.bytedeco.javacpp.FloatPointer;
 import org.bytedeco.javacpp.IntPointer;
 
-import com.raylib.Jaylib;
-
 public class Shader implements Component, Resource {
     public static final int UNIFORM_FLOAT = 0;
     public static final int UNIFORM_VEC2 = 1;
@@ -26,7 +24,7 @@ public class Shader implements Component, Resource {
     
     public Shader(String path) {
         this.path = path;
-        internal = Jaylib.LoadShader(VERTEX_SHADER, path);
+        internal = Raylib.LoadShader(VERTEX_SHADER, path);
         Janitor.register(this, () -> Raylib.UnloadShader(internal));
     }
 
@@ -149,6 +147,6 @@ public class Shader implements Component, Resource {
 
     @Override
     public boolean isLoaded() {
-        return internal != null && Raylib.IsShaderReady(internal);
+        return internal != null && Raylib.IsShaderValid(internal);
     }
 }

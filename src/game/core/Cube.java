@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.raylib.Jaylib;
 import com.raylib.Raylib;
+import com.raylib.Colors;
 
 import game.Color;
 import game.EntityOf;
@@ -138,7 +138,7 @@ public class Cube extends Unit {
         shader.setShaderValue("cubeColorCoeffs", getCubeColorCoeffs());
         shader.with(() -> {
             Raylib.BeginTextureMode(renderTexture);
-            Raylib.ClearBackground(Jaylib.BLANK);
+            Raylib.ClearBackground(Colors.BLANK);
             Raylib.DrawTexture(renderTexture.texture(), 0, 0, Color.WHITE.getPointerNoUpdate());
             Raylib.EndTextureMode();
         });

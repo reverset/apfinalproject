@@ -3,8 +3,6 @@ package game.core;
 import game.Vec2;
 
 import com.raylib.Raylib;
-import com.raylib.Jaylib;
-
 
 public interface Controllable {
     default void controlledLeft() {};
@@ -23,8 +21,8 @@ public interface Controllable {
     default void controlledClickOnce() {};
 
     default Vec2 controlledMoveVector() {
-        float x = (Raylib.IsKeyDown(Jaylib.KEY_D) ? 1.0f : 0.0f) - (Raylib.IsKeyDown(Jaylib.KEY_A) ? 1.0f : 0.0f);
-        float y = (Raylib.IsKeyDown(Jaylib.KEY_S) ? 1.0f : 0.0f) - (Raylib.IsKeyDown(Jaylib.KEY_W) ? 1.0f : 0.0f);
+        float x = (Raylib.IsKeyDown(Raylib.KEY_D) ? 1.0f : 0.0f) - (Raylib.IsKeyDown(Raylib.KEY_A) ? 1.0f : 0.0f);
+        float y = (Raylib.IsKeyDown(Raylib.KEY_S) ? 1.0f : 0.0f) - (Raylib.IsKeyDown(Raylib.KEY_W) ? 1.0f : 0.0f);
         return new Vec2(x, y).normalizeEq();
     }
 }
