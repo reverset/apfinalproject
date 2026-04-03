@@ -90,7 +90,7 @@ public class BetterButton extends Button {
 
             rectangle.x(trans.position.x).y(trans.position.y).width(rect.width).height(rect.height);
             Raylib.DrawRectangleRounded(rectangle, roundedness, segments, color.getPointer());
-            // Raylib.DrawRectangleRoundedLines(rectangle, roundedness, segments, outlineThickness, outlineColor.getPointer());
+            Raylib.DrawRectangleRoundedLinesEx(rectangle, roundedness, segments, outlineThickness, outlineColor.getPointer());
             text.render();
         }
 
