@@ -31,7 +31,7 @@ public class EnemySpawner extends ECSystem {
     private int randomMaxEnemies = 20;
 
     private final Wave standardWave = new Wave(() -> {
-        if (totalEnemiesThisWave > randomMaxEnemies) return null;
+        if (totalEnemiesThisWave >= randomMaxEnemies) return null;
 
         return randomEntity(getOffScreenPos());
     }, 5, Duration.ofSeconds(1));
@@ -140,6 +140,8 @@ public class EnemySpawner extends ECSystem {
             enemy.getMainSystem().getHealth().onDeath.listen(n -> {
                 enemies.remove(enemy);
             }, enemy);
+
+            enemy.onDestroy.listenOnce(n -> enemies.remove(enemy));
         }
 
         if (spiritSpawn.hasElapsedSecondsAdvance(spiritSpawnSeconds)) {

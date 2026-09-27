@@ -41,7 +41,6 @@ public class Physics extends ECSystem {
         this.layer = layer;
         this.layerMask = layerMask;
         this.hitBoxOffset = hitBoxOffset;
-        physicsObjects.get(layer).add(this);
     }
 
     public Physics(Kind kind, int layer, int layerMask) {
@@ -108,6 +107,12 @@ public class Physics extends ECSystem {
         collisionRect = require(Rect.class);
         trans = require(Transform.class);
         tangible = require(Tangible.class);
+    }
+
+    @Override
+    public void ready() {
+        // registering earlier may cause entities to get hit before they fully enter the game
+        if (!physicsObjects.get(layer).contains(this)) physicsObjects.get(layer).add(this);
     }
 
     @Override

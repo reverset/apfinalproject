@@ -39,6 +39,8 @@ public class BossWave extends Wave {
                 GameMusic.get().getMainSystem().transitionToBaseTheme();
             }, enemy);
 
+            // don't get stuck if the boss is removed without dying
+            enemy.onDestroy.listenOnce(n -> finished = true);
         }
     }
 
